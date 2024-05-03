@@ -181,18 +181,20 @@ const UserDropdown = () => {
     }
   }, [])
 
-  useEffect(() => {
-    checkUser()
-  }, [])
-
   const checkUser = async () => {
     try {
       const data = await Auth.currentAuthenticatedUser()
       setUser(data)
     } catch (error) {
-      console.error("error checking user", error)
+      // Handle the case where no user is signed in
+      setUser(null)
+      console.error("No user signed in:", error)
     }
   }
+
+  useEffect(() => {
+    checkUser()
+  }, [])
 
   const handleSignInSuccess = () => {
     setIsUserOpen(false) // Close the dropdown after successful sign-in
@@ -332,7 +334,7 @@ const UserDropdown = () => {
           {showSignUp && (
             // Show sign up form
             <DropdownWrapper>
-              <SignUp isUserOpen={isUserOpen} />
+              <SignUpPage isUserOpen={isUserOpen} />
             </DropdownWrapper>
           )}
         </AccDropdown>

@@ -36,7 +36,7 @@ const NavbarWrapper = styled.div`
 
 const Navbar = styled.div`
   display: grid;
-  grid-template-columns: 3.5fr 2fr 13fr 9fr 1fr;
+  grid-template-columns: 3fr 2fr 13fr 9fr 1fr;
   grid-template-rows: 1fr;
   padding: 5px 20px;
   grid-gap: 20px;

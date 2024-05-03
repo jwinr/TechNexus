@@ -2,9 +2,9 @@ import Layout from "../layouts/layout"
 import React from "react"
 import { Helmet, HelmetProvider } from "react-helmet-async"
 import "../styles/globals.css"
-import { Amplify, Auth } from "aws-amplify"
-import awsconfig from "../src/aws-exports"
-Amplify.configure(awsconfig)
+import { Amplify } from "aws-amplify"
+import amplifyconfig from "../src/amplifyconfiguration.json"
+Amplify.configure(amplifyconfig)
 import { ContextProviderComponent } from "../context/mainContext"
 import { MobileViewProvider } from "../components/common/MobileViewDetector"
 
