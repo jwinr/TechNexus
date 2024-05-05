@@ -22,7 +22,6 @@ function TechNexus({ Component, pageProps, categories }) {
                 crossorigin
               />
             </Helmet>
-
             <Layout categories={categories}>
               <Component {...pageProps} />
             </Layout>

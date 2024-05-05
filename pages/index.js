@@ -7,7 +7,7 @@ import HeroBanner from "../components/hero/HeroBanner"
 import CategoryNavigation from "../components/categories/CategoryNavigation"
 import TopDeals from "../components/shopping/TopDeals"
 import styled, { keyframes } from "styled-components"
-import LargeContainerFixed from "../components/common/LargeContainerFixed"
+import FullPageContainer from "../components/common/FullPageContainer"
 import MainWrapper from "../components/common/MainWrapper"
 
 const HomeContainer = styled.div`
@@ -77,7 +77,7 @@ const Home = () => {
         />
         <meta property="og:title" content="TechNexus" key="title" />
       </Head>
-      <LargeContainerFixed>
+      <FullPageContainer>
         <HomeContainer>
           <HeroBanner />
           <CatTitle>
@@ -96,7 +96,7 @@ const Home = () => {
           </TopDealsTitle>
           <TopDeals />
         </HomeContainer>
-      </LargeContainerFixed>
+      </FullPageContainer>
     </>
   )
 }

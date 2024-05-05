@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { signUp } from "aws-amplify/auth"
 import * as Styled from "../components/auth/SignStyles"
 import styled from "styled-components"
-import LargeContainerFixed from "../components/common/LargeContainerFixed"
+import FullPageContainer from "../components/common/FullPageContainer"
 import { useRouter } from "next/router"
 import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
 import LogoSymbol from "../public/logo_n.svg"
@@ -33,6 +33,12 @@ const SignupPageWrapper = styled.div`
 const HeaderText = styled.h1`
   font-weight: 800;
   font-size: 23px;
+  padding: 5px;
+`
+
+const SubheaderText = styled.h1`
+  font-weight: 500;
+  font-size: 18px;
   padding: 5px;
 `
 
@@ -140,6 +146,7 @@ const ResetText = styled.a`
 
   &:hover {
     text-decoration: underline;
+    cursor: pointer;
   }
 `
 
@@ -159,6 +166,29 @@ const Logo = styled.div`
       margin: 3px;
       grid-area: nav-logo;
     }
+  }
+`
+
+const CtaShopBtn = styled.button`
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease-in 0s;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 12px 0px;
+  border-radius: 20px;
+  padding: 8px 20px;
+  color: #fff;
+  border: medium;
+  width: 250px;
+  text-align: center;
+  background-color: #00599c;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #002d62;
+  }
+
+  &:active {
+    background-color: #002d62;
   }
 `
 
@@ -185,6 +215,10 @@ const SignUpPage = ({ toggleSignUp }) => {
   })
 
   const router = useRouter()
+
+  const handleRedirect = () => {
+    router.push("/")
+  }
 
   const validateEmailDomain = (email) => {
     // Simplified regex to catch some invalid formats
@@ -352,20 +386,21 @@ const SignUpPage = ({ toggleSignUp }) => {
         <meta name="description" content={`Sign up`} />
         <meta property="og:title" content="TechNexus - Sign Up" key="title" />
       </Head>
-      <LargeContainerFixed>
+      <FullPageContainer>
         <SignupPageWrapper>
           <Logo>
             <LogoSymbol />
           </Logo>
           {/* Conditional rendering based on signUpResponse */}
-          {signUpResponse &&
-          signUpResponse.nextStep &&
-          signUpResponse.nextStep.signUpStep === "CONFIRM_SIGN_UP" ? (
+          {/* Conditional rendering based on signUpStep */}
+          {true ? ( // Change this to signUpResponse && signUpResponse.nextStep && signUpResponse.nextStep.signUpStep === "CONFIRM_SIGN_UP" for actual use
             // Display confirmation message when signUpStep is CONFIRM_SIGN_UP
             <>
-              <HeaderText>
-                Please confirm your email to complete sign up.
-              </HeaderText>
+              <HeaderText>Your TechNexus acccount has been created.</HeaderText>
+              <SubheaderText>You're ready to start shopping!</SubheaderText>
+              <CtaShopBtn onClick={handleRedirect} type="button">
+                Shop now
+              </CtaShopBtn>
               {/* Additional message or instructions for email confirmation */}
             </>
           ) : (
@@ -482,7 +517,7 @@ const SignUpPage = ({ toggleSignUp }) => {
             </>
           )}
         </SignupPageWrapper>
-      </LargeContainerFixed>
+      </FullPageContainer>
     </>
   )
 }

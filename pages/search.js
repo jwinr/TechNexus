@@ -3,7 +3,7 @@ import React from "react"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
 import Head from "next/head"
-import LargeContainerFixed from "../components/common/LargeContainerFixed"
+import FullPageContainer from "../components/common/FullPageContainer"
 import Breadcrumb from "../components/common/Breadcrumb"
 import CategoryTitle from "../components/categories/CategoryTitle"
 import ItemFilter from "../components/items/ItemFilter"
@@ -193,7 +193,7 @@ const SearchResultsPage = ({ productQuery }) => {
         />
         <meta name="keywords" content={`${productQuery.keywords}`}></meta>
       </Head>
-      <LargeContainerFixed>
+      <FullPageContainer>
         <Breadcrumb title={productQuery.name} />
         <SearchGridContainer>
           <TitleWrapper>
@@ -248,7 +248,7 @@ const SearchResultsPage = ({ productQuery }) => {
                 ))}
           </CategorizedItems>
         </SearchGridContainer>
-      </LargeContainerFixed>
+      </FullPageContainer>
     </>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import Head from "next/head"
-import LargeContainerFixed from "../components/common/LargeContainerFixed"
+import FullPageContainer from "../components/common/FullPageContainer"
 import styled from "styled-components"
 import Breadcrumb from "../components/common/Breadcrumb"
 
@@ -63,7 +63,7 @@ const Sitemap = () => {
           key="title"
         />
       </Head>
-      <LargeContainerFixed>
+      <FullPageContainer>
         <Breadcrumb />
         <PageWrapper>
           <SitemapTitle>Sitemap</SitemapTitle>
@@ -77,7 +77,7 @@ const Sitemap = () => {
             ))}
           </CategoryList>
         </PageWrapper>
-      </LargeContainerFixed>
+      </FullPageContainer>
     </div>
   )
 }

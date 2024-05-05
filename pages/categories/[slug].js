@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from "react"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 import Head from "next/head"
-import LargeContainerFixed from "../../components/common/LargeContainerFixed"
+import FullPageContainer from "../../components/common/FullPageContainer"
 import Breadcrumb from "../../components/common/Breadcrumb"
 import CategoryTitle from "../../components/categories/CategoryTitle"
 import ListItem from "../../components/items/ListItem"
@@ -240,7 +240,7 @@ export default function CategoryPage() {
         />
         <meta name="keywords" content={`${categoryData.keywords}`}></meta>
       </Head>
-      <LargeContainerFixed>
+      <FullPageContainer>
         <Breadcrumb title={categoryData.name} />
         <CategoryGridContainer>
           <TitleWrapper>
@@ -321,7 +321,7 @@ export default function CategoryPage() {
             </ErrorBoundary>
           </React.Suspense>
         </CategoryGridContainer>
-      </LargeContainerFixed>
+      </FullPageContainer>
     </>
   )
 }

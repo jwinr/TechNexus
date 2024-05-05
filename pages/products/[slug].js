@@ -11,7 +11,7 @@ import ProductSpecifications from "../../components/products/ProductSpecificatio
 import ProductReviews from "../../components/products/ProductReviews"
 import ProductHighlights from "../../components/products/ProductHighlights"
 import styled from "styled-components"
-import LargeContainerFixed from "../../components/common/LargeContainerFixed"
+import FullPageContainer from "../../components/common/FullPageContainer"
 import { Accordion, AccordionItem as Item } from "@szhsin/react-accordion"
 import ChevronDown from "../../public/chevron-down.svg"
 import LoadingSpinner from "../../components/common/LoadingSpinner"
@@ -441,7 +441,7 @@ function ProductDetails() {
           key="title"
         />
       </Head>
-      <LargeContainerFixed>
+      <FullPageContainer>
         <Breadcrumb categoryName={categoryName} categorySlug={categorySlug} />
         <PageWrapper>
           <MainImageContainer>
@@ -556,7 +556,7 @@ function ProductDetails() {
             </Accordion>
           </Wrapper>
         </PageWrapper>
-      </LargeContainerFixed>
+      </FullPageContainer>
     </div>
   )
 }

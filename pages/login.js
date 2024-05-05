@@ -3,7 +3,7 @@ import Head from "next/head"
 import { signIn, signOut, resetPassword } from "aws-amplify/auth"
 import { useRouter } from "next/router"
 import styled, { keyframes } from "styled-components"
-import LargeContainerFixed from "../components/common/LargeContainerFixed"
+import FullPageContainer from "../components/common/FullPageContainer"
 import Checkbox from "../components/common/Checkbox"
 import Cookies from "js-cookie"
 import { jwtDecode } from "jwt-decode"
@@ -504,7 +504,7 @@ const Login = () => {
               key="title"
             />
           </Head>
-          <LargeContainerFixed>
+          <FullPageContainer>
             <LoginPageWrapper>
               <Logo>
                 <LogoSymbol />
@@ -591,7 +591,7 @@ const Login = () => {
                 <a href="/privacy">TechNexus privacy policy</a>
               </PolicyContainer>
             </LoginPageWrapper>
-          </LargeContainerFixed>
+          </FullPageContainer>
         </>
       )}
     </>
