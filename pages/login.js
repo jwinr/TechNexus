@@ -10,6 +10,7 @@ import { jwtDecode } from "jwt-decode"
 import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
 import SignUpPage from "./signup"
 import LogoSymbol from "../public/logo_n.svg"
+import { config } from "../utils/config.js"
 
 // Custom error messages based on Cognito error codes
 const cognitoErrorMessages = {
@@ -95,11 +96,11 @@ const InfoButton = styled.button`
   .info-icon {
     appearance: none;
     background-color: transparent;
-    border: 2px solid #4fbbff;
+    border: 2px solid #00599c;
     border-radius: 50%;
     width: 17px;
     height: 17px;
-    color: #4fbbff;
+    color: #00599c;
     background-color: #fff;
     font-weight: 800;
     display: flex;
@@ -217,6 +218,9 @@ const TooltipContainer = styled.div`
 
 const ErrorMessage = styled.div`
   display: flex;
+  color: #d32f2f;
+  font-size: 14px;
+  padding: 10px 0;
 `
 
 const InputIconWrapper = styled.div`
@@ -245,16 +249,15 @@ const EntryBtnWrapper = styled.div`
 const ValidationMessage = styled.div`
   display: inline-flex;
   position: absolute;
-  color: red;
+  color: #d32f2f;
   font-size: 14px;
-  font-weight: 600;
 `
 
 const PolicyContainer = styled.div`
   display: grid;
   text-align: center;
   font-size: 12px;
-  color: rgb(102, 102, 102);
+  color: #595959;
   margin: 10px 0px 0px;
 `
 
@@ -270,7 +273,7 @@ const Logo = styled.div`
   }
 
   @media (max-width: 768px) {
-    .Tech_Haven {
+    .Tech_Nexus {
       margin: 3px;
       grid-area: nav-logo;
     }
@@ -354,10 +357,25 @@ const Login = () => {
   }
 
   // Apply red border/text if information is invalid
-  const invalidStyle = { borderColor: "red", color: "red" }
+  const invalidStyle = { borderColor: "#D32F2F", color: "#D32F2F" }
+
+  // Mock signIn function for development environment
+  const signInMock = async ({ username, password }) => {
+    // Simulate successful sign-in
+    return {
+      accessToken: {
+        jwtToken: "dummyToken",
+        expiresIn: 3600,
+      },
+    }
+  }
 
   const handleSignIn = async () => {
     try {
+      // Conditionally use the mock signIn function
+      const signInFunction =
+        config.envType === "development" ? signInMock : signIn
+
       let formValid = true // Flag to track overall form validity
 
       // Loop through the input fields
@@ -392,7 +410,7 @@ const Login = () => {
       }
 
       // Call signIn with username and password
-      const isSignedIn = await signIn({ username, password })
+      const isSignedIn = await signInFunction({ username, password })
 
       // TODO: implement the nextStep property?
 
@@ -492,6 +510,7 @@ const Login = () => {
                 <LogoSymbol />
               </Logo>
               <HeaderText>Sign in to TechNexus</HeaderText>
+              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
               <NameWrapper>
                 <AccountText htmlFor="username">Email address</AccountText>
                 <InputIconWrapper>
@@ -571,7 +590,6 @@ const Login = () => {
                 <a href="/terms">TechNexus terms and conditions</a>
                 <a href="/privacy">TechNexus privacy policy</a>
               </PolicyContainer>
-              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             </LoginPageWrapper>
           </LargeContainerFixed>
         </>

@@ -9,4 +9,5 @@ dotenv.config()
 export const config = {
   cognitoUserPoolId: process.env.COGNITO_USER_POOL_ID,
   databaseCreds: process.env.DATABASE_URL,
+  envType: process.env.NODE_ENV,
 }

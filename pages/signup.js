@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { Auth } from "aws-amplify"
+import React, { useState, useEffect } from "react"
+import { signUp } from "aws-amplify/auth"
 import * as Styled from "../components/auth/SignStyles"
 import styled from "styled-components"
 import LargeContainerFixed from "../components/common/LargeContainerFixed"
@@ -7,6 +7,14 @@ import { useRouter } from "next/router"
 import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
 import LogoSymbol from "../public/logo_n.svg"
 import Head from "next/head"
+
+// Custom error messages based on Cognito error codes
+const cognitoErrorMessages = {
+  UsernameExistsException:
+    "An account with the given email already exists. Please use a different email.",
+  LimitExceededException:
+    "You have exceeded the allowed number of registration attempts. Please try again later.",
+}
 
 const SignupPageWrapper = styled.div`
   display: flex;
@@ -60,6 +68,13 @@ const EntryContainer = styled.input`
   &.focus {
     box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
   }
+`
+
+const ErrorMessage = styled.div`
+  display: flex;
+  color: #d32f2f;
+  font-size: 14px;
+  padding: 10px 0;
 `
 
 const InputIconWrapper = styled.div`
@@ -140,7 +155,7 @@ const Logo = styled.div`
   }
 
   @media (max-width: 768px) {
-    .Tech_Haven {
+    .Tech_Nexus {
       margin: 3px;
       grid-area: nav-logo;
     }
@@ -159,6 +174,8 @@ const SignUpPage = ({ toggleSignUp }) => {
   const [emailValid, setEmailValid] = useState(true)
   const [firstNameValid, setFirstNameValid] = useState(true)
   const [lastNameValid, setLastNameValid] = useState(true)
+  const [signUpResponse, setSignUpResponse] = useState(null)
+  const [errorMessage, setErrorMessage] = useState("")
 
   const [formData, setFormData] = useState({
     username: "",
@@ -170,8 +187,8 @@ const SignUpPage = ({ toggleSignUp }) => {
   const router = useRouter()
 
   const validateEmailDomain = (email) => {
-    // Standard regex pattern for email validation
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    // Simplified regex to catch some invalid formats
+    const regex = /.+@\S+\.\S+$/
     return regex.test(email)
   }
 
@@ -215,6 +232,7 @@ const SignUpPage = ({ toggleSignUp }) => {
 
   const onChange = (e) => {
     const { name, value } = e.target
+    console.log(`Updating state for ${name} with value:`, value) // Log the value being set
     if (name === "username") {
       setUsername(value)
       setEmailValid(true) // Reset email validity when username changes
@@ -263,10 +281,9 @@ const SignUpPage = ({ toggleSignUp }) => {
   }
 
   // Apply red border/text if information is invalid
-  const invalidStyle = { borderColor: "red", color: "red" }
+  const invalidStyle = { borderColor: "#D32F2F", color: "#D32F2F" }
 
-  const signUp = async () => {
-    const { username, given_name, family_name, password } = formData
+  const handleSignUp = async () => {
     try {
       let formValid = true
 
@@ -292,23 +309,38 @@ const SignUpPage = ({ toggleSignUp }) => {
         return // Exit the function early if any field is empty so we don't send a query to Cognito
       }
 
-      const signUpResponse = await Auth.signUp({
+      // Validate the email before making the API call
+      const isEmailValid = validateEmailDomain(username)
+      if (!isEmailValid) {
+        setEmailValid(false)
+        return
+      }
+
+      // Validate the password before making the API call
+      const isPasswordValid = validatePassword(password)
+      if (!isPasswordValid) {
+        setPasswordValid(false)
+        return
+      }
+
+      const signUpResponse = await signUp({
         username,
         password,
-        attributes: {
-          given_name,
-          family_name,
+        options: {
+          userAttributes: {
+            given_name,
+            family_name,
+          },
         },
       })
+      setSignUpResponse(signUpResponse)
       console.log("Sign-up response:", signUpResponse)
       // Navigate to another page or handle the sign-up logic
     } catch (error) {
-      if (error.code === "UsernameExistsException") {
-        alert(
-          "An account with the given email already exists. Please use a different email."
-        )
+      if (error.name && cognitoErrorMessages[error.name]) {
+        setErrorMessage(cognitoErrorMessages[error.name])
       } else {
-        alert("Error signing up. Please try again.")
+        setErrorMessage("An unexpected error occurred. Please try again later.")
       }
     }
   }
@@ -325,113 +357,130 @@ const SignUpPage = ({ toggleSignUp }) => {
           <Logo>
             <LogoSymbol />
           </Logo>
-          <HeaderText>Create your TechNexus account</HeaderText>
-          <NameWrapper>
-            <AccountText htmlFor="username">Email address</AccountText>
-            <InputIconWrapper>
-              <EntryContainer
-                onChange={onChange}
-                name="username"
-                id="username"
-                type="text"
-                placeholder=""
-                style={!emailValid ? invalidStyle : {}}
-                onBlur={handleEmailBlur}
-              />
-            </InputIconWrapper>
-            {!emailValid && (
-              <ValidationMessage>
-                Please enter a valid email address.
-              </ValidationMessage>
-            )}
-          </NameWrapper>
-          <NameWrapper>
-            <AccountText htmlFor="given_name">First Name</AccountText>
-            <InputIconWrapper>
-              <EntryContainer
-                onChange={onChange}
-                name="given_name"
-                id="given_name"
-                type="text"
-                placeholder=""
-                style={!firstNameValid ? invalidStyle : {}}
-                onBlur={handleFirstNameBlur}
-              />
-            </InputIconWrapper>
-            {!firstNameValid && (
-              <ValidationMessage>
-                Please enter a valid first name.
-              </ValidationMessage>
-            )}
-          </NameWrapper>
-          <NameWrapper>
-            <AccountText htmlFor="family_name">Last Name</AccountText>
-            <InputIconWrapper>
-              <EntryContainer
-                onChange={onChange}
-                name="family_name"
-                id="family_name"
-                type="text"
-                placeholder=""
-                style={!lastNameValid ? invalidStyle : {}}
-                onBlur={handleLastNameBlur}
-              />
-            </InputIconWrapper>
-            {!lastNameValid && (
-              <ValidationMessage>
-                Please enter a valid last name.
-              </ValidationMessage>
-            )}
-          </NameWrapper>
-          <PasswordWrapper>
-            <AccountText htmlFor="password">Password</AccountText>
-            <InputIconWrapper>
-              <EntryContainer
-                onChange={onChange}
-                name="password"
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder=""
-                style={!passwordValid ? invalidStyle : {}}
-                onBlur={handlePasswordBlur}
-              />
-              <IconButton onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
-              </IconButton>
-            </InputIconWrapper>
-            {!passwordValid && (
-              <ValidationMessage>
-                Please enter a valid password.
-              </ValidationMessage>
-            )}
-          </PasswordWrapper>
-          <PasswordWrapper>
-            <AccountText htmlFor="password">Confirm Password</AccountText>
-            <InputIconWrapper>
-              <EntryContainer
-                onChange={onChange}
-                name="confirmPassword"
-                id="confirmPassword"
-                type={showPassword ? "text" : "password"}
-                placeholder=""
-                style={!confirmPasswordValid ? invalidStyle : {}}
-                onBlur={handleConfirmPasswordBlur}
-              />
-              <IconButton onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
-              </IconButton>
-            </InputIconWrapper>
-            {!confirmPasswordValid && (
-              <ValidationMessage>Passwords do not match.</ValidationMessage>
-            )}
-          </PasswordWrapper>
-          <EntryBtnWrapper>
-            <SignInBtn onClick={signUp} type="button">
-              Sign Up
-            </SignInBtn>
-            {/* Next.js Link component for navigation or router.push() */}
-            <ResetText onClick={toggleSignUp}>Existing user?</ResetText>
-          </EntryBtnWrapper>
+          {/* Conditional rendering based on signUpResponse */}
+          {signUpResponse &&
+          signUpResponse.nextStep &&
+          signUpResponse.nextStep.signUpStep === "CONFIRM_SIGN_UP" ? (
+            // Display confirmation message when signUpStep is CONFIRM_SIGN_UP
+            <>
+              <HeaderText>
+                Please confirm your email to complete sign up.
+              </HeaderText>
+              {/* Additional message or instructions for email confirmation */}
+            </>
+          ) : (
+            // Display sign-up form when signUpResponse does not exist or signUpStep is not CONFIRM_SIGN_UP
+            <>
+              <HeaderText>Create your TechNexus account</HeaderText>
+              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+              <NameWrapper>
+                <AccountText htmlFor="username">Email address</AccountText>
+                <InputIconWrapper>
+                  <EntryContainer
+                    onChange={onChange}
+                    name="username"
+                    id="username"
+                    type="text"
+                    placeholder=""
+                    style={!emailValid ? invalidStyle : {}}
+                    onBlur={handleEmailBlur}
+                  />
+                </InputIconWrapper>
+                {!emailValid && (
+                  <ValidationMessage>
+                    Please enter a valid email address.
+                  </ValidationMessage>
+                )}
+              </NameWrapper>
+              <NameWrapper>
+                <AccountText htmlFor="given_name">First Name</AccountText>
+                <InputIconWrapper>
+                  <EntryContainer
+                    onChange={onChange}
+                    name="given_name"
+                    id="given_name"
+                    type="text"
+                    placeholder=""
+                    style={!firstNameValid ? invalidStyle : {}}
+                    onBlur={handleFirstNameBlur}
+                  />
+                </InputIconWrapper>
+                {!firstNameValid && (
+                  <ValidationMessage>
+                    Please enter a valid first name.
+                  </ValidationMessage>
+                )}
+              </NameWrapper>
+              <NameWrapper>
+                <AccountText htmlFor="family_name">Last Name</AccountText>
+                <InputIconWrapper>
+                  <EntryContainer
+                    onChange={onChange}
+                    name="family_name"
+                    id="family_name"
+                    type="text"
+                    placeholder=""
+                    style={!lastNameValid ? invalidStyle : {}}
+                    onBlur={handleLastNameBlur}
+                  />
+                </InputIconWrapper>
+                {!lastNameValid && (
+                  <ValidationMessage>
+                    Please enter a valid last name.
+                  </ValidationMessage>
+                )}
+              </NameWrapper>
+              <PasswordWrapper>
+                <AccountText htmlFor="password">Password</AccountText>
+                <InputIconWrapper>
+                  <EntryContainer
+                    onChange={onChange}
+                    name="password"
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder=""
+                    style={!passwordValid ? invalidStyle : {}}
+                    onBlur={handlePasswordBlur}
+                  />
+                  <IconButton onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
+                  </IconButton>
+                </InputIconWrapper>
+                {!passwordValid && (
+                  <ValidationMessage>
+                    Please enter a valid password.
+                  </ValidationMessage>
+                )}
+              </PasswordWrapper>
+              <PasswordWrapper>
+                <AccountText htmlFor="password">Confirm Password</AccountText>
+                <InputIconWrapper>
+                  <EntryContainer
+                    onChange={onChange}
+                    name="confirmPassword"
+                    id="confirmPassword"
+                    type={showPassword ? "text" : "password"}
+                    placeholder=""
+                    style={!confirmPasswordValid ? invalidStyle : {}}
+                    onBlur={handleConfirmPasswordBlur}
+                  />
+                  <IconButton onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
+                  </IconButton>
+                </InputIconWrapper>
+                {!confirmPasswordValid && (
+                  <ValidationMessage>Passwords do not match.</ValidationMessage>
+                )}
+              </PasswordWrapper>
+              <EntryBtnWrapper>
+                <SignInBtn onClick={handleSignUp} type="button">
+                  Sign Up
+                </SignInBtn>
+                {/* Next.js Link component for navigation or router.push() */}
+                <ResetText onClick={toggleSignUp}>Existing user?</ResetText>
+              </EntryBtnWrapper>
+            </>
+          )}
         </SignupPageWrapper>
       </LargeContainerFixed>
     </>
