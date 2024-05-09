@@ -68,7 +68,7 @@ const AccDropdown = styled.div`
 const AccPillBtn = styled.button`
   font-size: 15px;
   cursor: pointer;
-  color: #fff;
+  color: #333;
   padding-left: 16px;
   padding-right: 8px;
   height: 100%;
@@ -78,15 +78,15 @@ const AccPillBtn = styled.button`
   display: flex;
   width: fit-content;
   justify-content: flex-end;
-  background-color: ${({ isOpen }) => (isOpen ? "#00599c" : "#266aca")};
+  background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "white")};
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: ${({ isOpen }) => (isOpen ? "#00599c" : "#00599c")};
+    background-color: ${({ isOpen }) => (isOpen ? "#00599c" : "#f7f7f7")};
   }
 
   &:active {
-    background-color: ${({ isOpen }) => (isOpen ? "#00599c" : "#00599c")};
+    background-color: ${({ isOpen }) => (isOpen ? "f7f7f7" : "f7f7f7")};
   }
 
   &:hover .arrow-icon,
@@ -108,7 +108,7 @@ const IconContainer = styled.div`
 const AccTextContainer = styled.div`
   font-size: 15px;
   font-weight: 500;
-  color: #fff;
+  color: #333;
   align-content: center;
   display: grid;
   padding-left: 5px;

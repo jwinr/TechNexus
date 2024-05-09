@@ -20,7 +20,7 @@ const CatPillBtn = styled.button`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
-  color: #fff;
+  color: #333;
   padding-left: 16px;
   padding-right: 8px;
   height: 100%;
@@ -29,15 +29,15 @@ const CatPillBtn = styled.button`
   align-items: center;
   display: flex;
   width: 100%;
-  background-color: ${({ isOpen }) => (isOpen ? "#00599c" : "#266aca")};
+  background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "white")};
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: ${({ isOpen }) => (isOpen ? "#00599c" : "#00599c")};
+    background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "#f7f7f7")};
   }
 
   &:active {
-    background-color: ${({ isOpen }) => (isOpen ? "#00599c" : "#00599c")};
+    background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "#f7f7f7")};
   }
 
   &:hover .arrow-icon,

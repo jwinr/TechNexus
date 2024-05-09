@@ -20,7 +20,7 @@ const Container = styled.div`
 const Button = styled.button`
   font-size: 15px;
   cursor: pointer;
-  color: #fff;
+  color: #333;
   padding: 7px 10px;
   border-radius: 10px;
   position: relative;
@@ -28,11 +28,10 @@ const Button = styled.button`
   display: flex;
   width: fit-content;
   justify-content: flex-end;
-  background-color: #266aca;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #00599c;
+    background-color: #f7f7f7;
   }
 `
 

@@ -9,7 +9,7 @@ import Cookies from "js-cookie"
 import SavedItems from "../components/shopping/SavedItems"
 import LocationEstimator from "../components/shopping/LocationEstimator"
 import styled from "styled-components"
-import LargeContainerFixed from "../components/common/LargeContainerFixed"
+import FullPageContainer from "../components/common/FullPageContainer"
 import QuantityPicker from "../components/shopping/QuantityPicker"
 
 const CartPageWrapper = styled.div`
@@ -122,7 +122,7 @@ const Cart = ({ context }) => {
         <meta name="description" content={`TechNexus - Shopping cart`} />
         <meta property="og:title" content="TechNexus - Cart" key="title" />
       </Head>
-      <LargeContainerFixed>
+      <FullPageContainer>
         <CartPageWrapper>
           <CartPageTitle>Cart</CartPageTitle>
           {cartEmpty ? (
@@ -230,7 +230,7 @@ const Cart = ({ context }) => {
             <SavedItems moveBackToCart={moveBackToCart} />
           </div>
         </CartPageWrapper>
-      </LargeContainerFixed>
+      </FullPageContainer>
     </>
   )
 }

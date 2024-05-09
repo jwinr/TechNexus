@@ -14,7 +14,7 @@ const NavbarContainer = styled.div`
   color: #000;
   display: flex;
   position: sticky;
-  background-color: #266aca;
+  background-color: white;
   box-shadow: 0 8px 21px -12px rgba(0, 0, 0, 0.2);
   top: 0;
   z-index: 300;
@@ -26,11 +26,8 @@ const NavbarContainer = styled.div`
 
 const NavbarWrapper = styled.div`
   display: flex;
-  background-color: #266aca !important;
-  border-style: solid;
-  border-width: 0 0 1px; /* Border only at the bottom */
-  border-color: #00599c;
-  box-shadow: 0 6px 21px -12px rgba(0, 0, 0, 0.4);
+  background-color: white !important;
+  border-bottom: 1px solid #e4e4e4;
   padding: 7px 0px 7px 0px;
 `
 

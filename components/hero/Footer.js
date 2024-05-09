@@ -1,21 +1,23 @@
 import React from "react"
 import Link from "next/link"
 import styled from "styled-components"
+import { BiSolidBookHeart } from "react-icons/bi"
 import {
-  BiLogoFacebook,
-  BiLogoTwitter,
-  BiLogoInstagram,
-  BiLogoYoutube,
-  BiSolidBookHeart,
-} from "react-icons/bi"
+  RiFacebookFill,
+  RiTwitterXFill,
+  RiInstagramLine,
+  RiYoutubeFill,
+} from "react-icons/ri"
 
 const FooterContainer = styled.footer`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  background-color: #f0f0f0;
+  background-color: #212121;
+  color: white;
   text-align: center;
   position: relative;
   padding: 25px 0px;
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
 
   &::after {
     content: "";
@@ -25,7 +27,7 @@ const FooterContainer = styled.footer`
     margin: 10px;
     left: calc(25% - 10px);
     width: 1px;
-    background-color: #ccc;
+    background-color: rgba(243, 245, 248, 0.5);
   }
 `
 
@@ -58,7 +60,6 @@ const Email = styled.p`
 const FooterLink = styled.div`
   text-decoration: none;
   font-size: 12px;
-  color: #333;
   &:hover {
     text-decoration: underline;
   }
@@ -68,15 +69,14 @@ const FooterQuestionLink = styled.div`
   text-decoration: none;
   font-size: 16px;
   font-weight: 600;
-  color: #333;
   &:hover {
-    color: #004066;
+    text-decoration: underline;
   }
 `
 
 const BottomFlexContainer = styled.div`
-  background-color: #004066;
-  color: #fff;
+  background-color: #212121;
+  color: rgba(243, 245, 248, 0.5);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -110,10 +110,6 @@ const HelpCenter = styled.div`
   font-size: 24px;
   gap: 5px;
   margin-bottom: 10px;
-
-  &:hover {
-    color: #004066;
-  }
 `
 
 const Footer = () => {
@@ -159,10 +155,34 @@ const Footer = () => {
         <FooterColumn>
           <FooterTitle>Follow Us</FooterTitle>
           <SocialMedia>
-            <BiLogoFacebook />
-            <BiLogoTwitter />
-            <BiLogoInstagram />
-            <BiLogoYoutube />
+            <a
+              href="https://www.facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <RiFacebookFill />
+            </a>
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <RiTwitterXFill />
+            </a>
+            <a
+              href="https://www.instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <RiInstagramLine />
+            </a>
+            <a
+              href="https://www.youtube.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <RiYoutubeFill />
+            </a>
           </SocialMedia>
         </FooterColumn>
       </FooterContainer>
@@ -173,16 +193,11 @@ const Footer = () => {
           <Link href="/privacy-policy">
             <FooterLinkBottom>Privacy Policy</FooterLinkBottom>
           </Link>
-          <Link href="/terms-and-conditions">
+          <Link href="/terms-conditions">
             <FooterLinkBottom>Terms and Conditions</FooterLinkBottom>
           </Link>
           <Link href="/sitemap">
             <FooterLinkBottom>Site Map</FooterLinkBottom>
-          </Link>
-          <Link href="/do-not-sell">
-            <FooterLinkBottom href="/do-not-sell">
-              Do Not Sell Or Share My Personal Information
-            </FooterLinkBottom>
           </Link>
         </BottomLinksWrapper>
       </BottomFlexContainer>
