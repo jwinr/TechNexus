@@ -497,12 +497,7 @@ const Login = () => {
         <>
           <Head>
             <title>Login: TechNexus</title>
-            <meta name="description" content={`Sign In to TechNexus`} />
-            <meta
-              property="og:title"
-              content="Sign In to TechNexus"
-              key="title"
-            />
+            <meta property="og:title" content="Login: TechNexus" key="title" />
           </Head>
           <FullPageContainer>
             <LoginPageWrapper>

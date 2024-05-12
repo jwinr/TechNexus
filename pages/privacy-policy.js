@@ -36,12 +36,12 @@ const PrivacyPolicy = () => {
   return (
     <>
       <Head>
-        <title>TechNexus - Privacy Policy</title>
+        <title>Privacy Policy</title>
         <meta
           name="description"
-          content="TechNexus is a modern web ecommerce application powered by React, Next.js, AWS, and PostgreSQL."
+          content="Your privacy is important to us. This page discloses the privacy policy of TechNexus. We are concerned about your privacy and the security of your important personal information. We want you to be aware of what kind of information we obtain from you, how we use this information, and how you can control its use."
         />
-        <meta property="og:title" content="TechNexus" key="title" />
+        <meta property="og:title" content="Privacy Policy" key="title" />
       </Head>
       <FullPageContainer>
         <PrivacyPageWrapper>

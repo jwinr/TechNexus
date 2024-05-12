@@ -118,9 +118,12 @@ const Cart = ({ context }) => {
   return (
     <>
       <Head>
-        <title>TechNexus - Cart</title>
-        <meta name="description" content={`TechNexus - Shopping cart`} />
-        <meta property="og:title" content="TechNexus - Cart" key="title" />
+        <title>Cart - TechNexus</title>
+        <meta
+          name="description"
+          content="A cart overview of your TechNexus store items, shipping method, and total cost."
+        />
+        <meta property="og:title" content="Cart - TechNexus" key="title" />
       </Head>
       <FullPageContainer>
         <CartPageWrapper>

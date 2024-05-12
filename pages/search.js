@@ -67,7 +67,7 @@ const SearchResultsPage = ({ productQuery }) => {
   const router = useRouter()
   const { query } = router.query
 
-  //console.log(productQuery)
+  console.log(productQuery)
 
   // Initial non-filtered state
   const [showFilteredItems, setShowFilteredItems] = useState(false)
@@ -76,7 +76,9 @@ const SearchResultsPage = ({ productQuery }) => {
   const [isFilterActive, setIsFilterActive] = useState(false)
 
   // State to manage filtered items
-  const [filteredItems, setFilteredItems] = useState(productQuery)
+  const [filteredItems, setFilteredItems] = useState(
+    productQuery ? productQuery.products : []
+  )
 
   // State to manage sorting criteria
   const [sortBy, setSortBy] = useState("Most Popular")
@@ -92,7 +94,7 @@ const SearchResultsPage = ({ productQuery }) => {
     }
   }, [query]) // Listen for changes to the category title
 
-  if (!productQuery) {
+  if (!productQuery || !productQuery.products) {
     return (
       <SpinnerContainer>
         <LoadingSpinner />
@@ -100,7 +102,7 @@ const SearchResultsPage = ({ productQuery }) => {
     )
   }
 
-  //console.log(productQuery)
+  console.log(productQuery)
 
   // Callback function to update filtered items
   const handleFilterChange = (filteredItems) => {
@@ -173,7 +175,9 @@ const SearchResultsPage = ({ productQuery }) => {
   // Calculate the total item count based on the items to be displayed
   const totalItemCount = isFilterActive
     ? filteredItems.length
-    : productQuery.products.length
+    : productQuery && productQuery.products
+    ? productQuery.products.length
+    : 0
 
   // Auto-capitalize the query
   const capitalizedQuery = query

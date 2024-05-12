@@ -382,9 +382,8 @@ const SignUpPage = ({ toggleSignUp }) => {
   return (
     <>
       <Head>
-        <title>TechNexus - Sign Up</title>
-        <meta name="description" content={`Sign up`} />
-        <meta property="og:title" content="TechNexus - Sign Up" key="title" />
+        <title>Login: TechNexus</title>
+        <meta property="og:title" content="Login: TechNexus" key="title" />
       </Head>
       <FullPageContainer>
         <SignupPageWrapper>

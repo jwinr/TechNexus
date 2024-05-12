@@ -29,12 +29,12 @@ const TermsService = () => {
   return (
     <>
       <Head>
-        <title>TechNexus - Terms of Service</title>
+        <title>Terms of Service</title>
         <meta
           name="description"
-          content="TechNexus is a modern web ecommerce application powered by React, Next.js, AWS, and PostgreSQL."
+          content="See terms and conditions of using the TechNexus website. By using this web site, you agree to these terms of use."
         />
-        <meta property="og:title" content="TechNexus" key="title" />
+        <meta property="og:title" content="Terms of Service" key="title" />
       </Head>
       <FullPageContainer>
         <PrivacyPageWrapper>

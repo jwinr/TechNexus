@@ -73,7 +73,7 @@ const Home = () => {
         <title>TechNexus</title>
         <meta
           name="description"
-          content="TechNexus is a modern web ecommerce application powered by React, Next.js, AWS, and PostgreSQL."
+          content="Shop TechNexus for electronics, computers, laptops & more new tech. Free 2-day shipping on hundreds of items."
         />
         <meta property="og:title" content="TechNexus" key="title" />
       </Head>
