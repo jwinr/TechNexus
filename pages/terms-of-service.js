@@ -25,14 +25,6 @@ const SubheaderText = styled.h2`
   font-size: 16px;
 `
 
-const ListWrapper = styled.div`
-  padding-left: 40px;
-`
-
-const UnbulletedItem = styled.ul`
-  margin: 5px 0;
-`
-
 const TermsService = () => {
   return (
     <>
@@ -55,7 +47,11 @@ const TermsService = () => {
             site to you, the user, conditioned upon your acceptance of all
             terms, conditions, policies, and notices stated here. This site is
             for demonstration purposes only and does not facilitate any real
-            transactions or sales.
+            transactions or sales. It is not affiliated with, endorsed by, or
+            connected to any of the brands or companies whose products are
+            featured, including but not limited to Intel, Logitech, Nvidia, and
+            others. All trademarks and product names are the property of their
+            respective owners.
           </p>
           <p>
             By visiting our site and/or engaging with our demo services, you
