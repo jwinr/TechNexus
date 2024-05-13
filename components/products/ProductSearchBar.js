@@ -1,98 +1,119 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import { IoIosSearch } from "react-icons/io"
+import { useRouter } from "next/router"
 import Link from "next/link"
-import Backdrop from "../common/Backdrop"
+import styled from "styled-components"
+
+const InputForm = styled.form`
+  display: flex;
+  width: 100%;
+`
+
+const SearchBar = styled.div`
+  position: relative;
+  display: flex;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    display: grid;
+    grid-area: nav-search;
+  }
+`
+
+const SearchContainer = styled.div`
+  position: relative;
+  align-items: center;
+  display: flex;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    display: flex; /* Take up the full width of the parent container */
+  }
+`
+
+const SearchInput = styled.input`
+  padding: 8px;
+  border-radius: 10px;
+  outline: none;
+  font-size: 15px;
+  height: 100%;
+  width: 100%;
+  background-color: #f7f7f7;
+`
+
+const SubmitButton = styled.button`
+  right: 31px;
+  position: relative;
+  color: #333;
+  width: 35px;
+  height: 38px;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border-radius: 0 8px 8px 0;
+
+  @media (max-width: 768px) {
+    right: 5px;
+    top: 5px;
+    position: absolute;
+  }
+`
+
+const ClearButton = styled.button`
+  position: absolute;
+  right: 80px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 18px;
+
+  &hover: {
+    color: #003f66;
+  }
+`
 
 const ProductSearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("")
-  const [searchResults, setSearchResults] = useState([])
-  const [isBackdropOpen, setIsBackdropOpen] = useState(false)
+  const router = useRouter()
 
-  const fetchSearchResults = async (query) => {
-    try {
-      const response = await fetch(`/api/search?query=${query}`)
-      const data = await response.json()
-      if (response.ok) {
-        setSearchResults(data.products)
-      } else {
-        console.error(data.error)
-        setSearchResults([])
-      }
-    } catch (error) {
-      console.error("Error fetching search results:", error)
-      setSearchResults([])
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (searchTerm.trim()) {
+      router.push(`/search?query=${searchTerm}`)
     }
   }
-
-  useEffect(() => {
-    if (searchTerm.trim()) {
-      fetchSearchResults(searchTerm)
-      setIsBackdropOpen(true)
-    } else {
-      setSearchResults([])
-      setIsBackdropOpen(false)
-    }
-  }, [searchTerm])
 
   const clearSearch = () => {
     setSearchTerm("")
-    setSearchResults([])
-    setIsBackdropOpen(false)
   }
 
   return (
-    <>
-      <Backdrop isOpen={isBackdropOpen} onClick={clearSearch} />
-
-      <div className="product-search-bar">
-        <div className="search-container">
-          <input
+    <SearchBar>
+      <SearchContainer>
+        <InputForm onSubmit={handleSearch}>
+          <SearchInput
             type="text"
             placeholder="What can we help you find?"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-            onFocus={() => setIsBackdropOpen(true)}
           />
-          <button className="submit-button" aria-label="submit search">
-            <Link href={`/search?query=${searchTerm}`}>
-              <IoIosSearch />
-            </Link>
-          </button>
-          {searchTerm && (
-            <button className="clear-button" onClick={clearSearch}>
-              <FontAwesomeIcon icon={faTimes} />
-            </button>
-          )}
-        </div>
-        {searchResults.length > 0 && (
-          <div className="search-results">
-            <ul>
-              {searchResults.map((product) => (
-                <li key={product.product_id}>
-                  <Link href={`/product/${product.slug}`}>
-                    {product.images.length > 0 && (
-                      <img
-                        src={
-                          product.images.find((img) => img.is_main)
-                            ?.image_url || product.images[0].image_url
-                        }
-                        alt={product.name}
-                        width="50"
-                        height="50"
-                      />
-                    )}
-                    <span>{product.name}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <SubmitButton type="submit" aria-label="submit search">
+            <IoIosSearch />
+          </SubmitButton>
+        </InputForm>
+        {searchTerm && (
+          <ClearButton onClick={clearSearch}>
+            <FontAwesomeIcon icon={faTimes} />
+          </ClearButton>
         )}
-      </div>
-    </>
+      </SearchContainer>
+    </SearchBar>
   )
 }
 

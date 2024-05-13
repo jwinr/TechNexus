@@ -1,6 +1,5 @@
 import { useRouter } from "next/router"
-import React from "react"
-import { useEffect, useState } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import Head from "next/head"
 import FullPageContainer from "../components/common/FullPageContainer"
@@ -67,8 +66,6 @@ const SearchResultsPage = ({ productQuery }) => {
   const router = useRouter()
   const { query } = router.query
 
-  console.log(productQuery)
-
   // Initial non-filtered state
   const [showFilteredItems, setShowFilteredItems] = useState(false)
 
@@ -86,13 +83,13 @@ const SearchResultsPage = ({ productQuery }) => {
   // Mobile view tracking
   const isMobileView = useMobileView()
 
-  // Reset isFilterActive when the category changes (new page is loaded)
+  // Reset isFilterActive when the query changes (new page is loaded)
   useEffect(() => {
     if (query) {
-      setIsFilterActive(false) // Reset to false when category changes
+      setIsFilterActive(false) // Reset to false when query changes
       setSortBy("Most Popular")
     }
-  }, [query]) // Listen for changes to the category title
+  }, [query]) // Listen for changes to the query
 
   if (!productQuery || !productQuery.products) {
     return (
@@ -101,8 +98,6 @@ const SearchResultsPage = ({ productQuery }) => {
       </SpinnerContainer>
     )
   }
-
-  console.log(productQuery)
 
   // Callback function to update filtered items
   const handleFilterChange = (filteredItems) => {
@@ -127,7 +122,7 @@ const SearchResultsPage = ({ productQuery }) => {
                 style={{
                   color: "#fdc220",
                   animation:
-                    "toastZoom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)forwards",
+                    "toastZoom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
                   animationDelay: "100ms",
                 }}
               />
@@ -193,15 +188,15 @@ const SearchResultsPage = ({ productQuery }) => {
         <title>{`${capitalizedQuery} - TechNexus`}</title>
         <meta
           name="description"
-          content={`Discover ${productQuery.name} on TechNexus`}
+          content={`Discover ${capitalizedQuery} on TechNexus`}
         />
-        <meta name="keywords" content={`${productQuery.keywords}`}></meta>
+        <meta name="keywords" content={productQuery.keywords?.join(", ")} />
       </Head>
       <FullPageContainer>
-        <Breadcrumb title={productQuery.name} />
+        <Breadcrumb title={capitalizedQuery} />
         <SearchGridContainer>
           <TitleWrapper>
-            <CategoryTitle title="Search.." />
+            <CategoryTitle title="Search Results" />
           </TitleWrapper>
           <SearchSortPanel>
             <TotalItems>
@@ -225,19 +220,19 @@ const SearchResultsPage = ({ productQuery }) => {
           <ItemFilter
             inventoryItems={productQuery.products}
             onFilterChange={handleFilterChange}
-            attributes={productQuery.attributes}
+            attributes={productQuery.attributes || []} // Provide a default empty array
           />
           <CategorizedItems isVisible={showFilteredItems}>
             {isFilterActive
               ? filteredItems.map((item, index) => (
                   <ListItem
-                    key={index}
                     link={`/products/${item.slug}`}
                     title={item.name}
                     price={item.price}
                     brand={item.brand}
                     rating={item.rating}
-                    imageSrc={item.image_url}
+                    image={item.images}
+                    id={item.product_id}
                   />
                 ))
               : productQuery.products.map((item) => (
@@ -247,7 +242,8 @@ const SearchResultsPage = ({ productQuery }) => {
                     price={item.price}
                     brand={item.brand}
                     rating={item.rating}
-                    imageSrc={item.image_url}
+                    image={item.images}
+                    id={item.product_id}
                   />
                 ))}
           </CategorizedItems>
@@ -289,7 +285,10 @@ export async function getServerSideProps(context) {
     console.error("Error fetching search results:", error)
     return {
       props: {
-        productQuery: [],
+        productQuery: {
+          products: [],
+          attributes: [],
+        },
       },
     }
   }
