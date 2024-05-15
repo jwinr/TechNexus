@@ -286,6 +286,7 @@ export default function CategoryPage() {
                 {isFilterActive
                   ? currentProducts.map((item) => (
                       <ListItem
+                        key={item.product_id}
                         link={`/products/${item.slug}`}
                         title={item.name}
                         price={item.price}
@@ -298,6 +299,7 @@ export default function CategoryPage() {
                     ))
                   : categoryData.products.map((item) => (
                       <ListItem
+                        key={item.product_id}
                         link={`/products/${item.slug}`}
                         title={item.name}
                         price={item.price}

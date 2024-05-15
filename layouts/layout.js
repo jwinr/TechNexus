@@ -51,7 +51,7 @@ const Navbar = styled.div`
 `
 
 const MainContainer = styled.div`
-  background-color: white;
+  background-color: #f3f5f8;
   display: flex;
   justify-content: center;
   z-index: 100;

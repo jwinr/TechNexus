@@ -44,7 +44,7 @@ body {
 }
 
 .brand-filter-container {
-  background: #fff;
+  background: #f3f5f8;
   grid-area: info;
   display: flex;
   flex-wrap: wrap;

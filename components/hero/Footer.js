@@ -133,7 +133,7 @@ const Footer = () => {
           <Link href="/hc">
             <FooterLink>Order Status</FooterLink>
           </Link>
-          <Link href="/hc">
+          <Link href="/shipping-policy">
             <FooterLink>Shipping Policy</FooterLink>
           </Link>
           <Link href="/hc">
@@ -142,13 +142,13 @@ const Footer = () => {
         </FooterColumn>
         <FooterColumn>
           <FooterTitle>Company</FooterTitle>
-          <Link href="/hc">
+          <Link href="/about-us">
             <FooterLink>About Us</FooterLink>
           </Link>
-          <Link href="/hc">
+          <Link href="/contact-us">
             <FooterLink>Contact Us</FooterLink>
           </Link>
-          <Link href="/hc">
+          <Link href="/blog">
             <FooterLink>Blog</FooterLink>
           </Link>
         </FooterColumn>
@@ -163,7 +163,7 @@ const Footer = () => {
               <RiFacebookFill />
             </a>
             <a
-              href="https://twitter.com"
+              href="https://www.x.com"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -195,9 +195,6 @@ const Footer = () => {
           </Link>
           <Link href="/terms-conditions">
             <FooterLinkBottom>Terms and Conditions</FooterLinkBottom>
-          </Link>
-          <Link href="/sitemap">
-            <FooterLinkBottom>Site Map</FooterLinkBottom>
           </Link>
         </BottomLinksWrapper>
       </BottomFlexContainer>

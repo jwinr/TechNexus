@@ -73,7 +73,7 @@ const ClearButton = styled.button`
   color: #9ca3af;
   font-size: 18px;
 
-  &hover: {
+  &:hover {
     color: #003f66;
   }
 `

@@ -5,14 +5,20 @@ import Head from "next/head"
 import FullPageContainer from "../components/common/FullPageContainer"
 import Breadcrumb from "../components/common/Breadcrumb"
 import CategoryTitle from "../components/categories/CategoryTitle"
-import ItemFilter from "../components/items/ItemFilter"
-import CategorizedItems from "../components/items/CategorizedItemsContainer"
 import ListItem from "../components/items/ListItem"
 import LoadingSpinner from "../components/common/LoadingSpinner"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
 import toast from "react-hot-toast"
 import { useMobileView } from "../components/common/MobileViewDetector"
+import ErrorBoundary from "../components/common/ErrorBoundary"
+
+// Lazy-loaded components
+const ItemFilter = React.lazy(() => import("../components/items/ItemFilter"))
+const CategorizedItems = React.lazy(() =>
+  import("../components/items/CategorizedItemsContainer")
+)
+const Pagination = React.lazy(() => import("../components/common/Pagination"))
 
 const SearchGridContainer = styled.div`
   display: grid;
@@ -22,7 +28,8 @@ const SearchGridContainer = styled.div`
     "promo promo promo"
     "sort sort sort"
     "items items items"
-    "items items items"; /* Define grid areas */
+    "items items items"
+    "pagination pagination pagination";
 `
 
 const SearchSortPanel = styled.div`
@@ -65,6 +72,10 @@ const SpinnerContainer = styled.div`
 const SearchResultsPage = ({ productQuery }) => {
   const router = useRouter()
   const { query } = router.query
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const productsPerPage = 16
 
   // Initial non-filtered state
   const [showFilteredItems, setShowFilteredItems] = useState(false)
@@ -134,6 +145,7 @@ const SearchResultsPage = ({ productQuery }) => {
         // Update the filtered items
         setFilteredItems(filteredItems)
         setIsFilterActive(true)
+        setCurrentPage(1) // Reset to the first page when filters change
       }
 
       setShowFilteredItems(true) // Show items to trigger the fade-in animation
@@ -170,9 +182,7 @@ const SearchResultsPage = ({ productQuery }) => {
   // Calculate the total item count based on the items to be displayed
   const totalItemCount = isFilterActive
     ? filteredItems.length
-    : productQuery && productQuery.products
-    ? productQuery.products.length
-    : 0
+    : productQuery.products.length
 
   // Auto-capitalize the query
   const capitalizedQuery = query
@@ -182,6 +192,23 @@ const SearchResultsPage = ({ productQuery }) => {
   // Add quotes around the query for the results
   const quotedQuery = `"${query}"`
 
+  // Calculate the range of products to display for the current page
+  const indexOfLastProduct = currentPage * productsPerPage
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage
+  const currentProducts = isFilterActive
+    ? filteredItems.slice(indexOfFirstProduct, indexOfLastProduct)
+    : productQuery.products.slice(indexOfFirstProduct, indexOfLastProduct)
+
+  // Function to handle pagination
+  const handlePageChange = (newPage) => {
+    if (currentPage !== newPage) {
+      setCurrentPage(newPage)
+    }
+  }
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(totalItemCount / productsPerPage)
+
   return (
     <>
       <Head>
@@ -190,7 +217,6 @@ const SearchResultsPage = ({ productQuery }) => {
           name="description"
           content={`Discover ${capitalizedQuery} on TechNexus`}
         />
-        <meta name="keywords" content={productQuery.keywords?.join(", ")} />
       </Head>
       <FullPageContainer>
         <Breadcrumb title={capitalizedQuery} />
@@ -224,8 +250,9 @@ const SearchResultsPage = ({ productQuery }) => {
           />
           <CategorizedItems isVisible={showFilteredItems}>
             {isFilterActive
-              ? filteredItems.map((item, index) => (
+              ? currentProducts.map((item) => (
                   <ListItem
+                    key={item.product_id}
                     link={`/products/${item.slug}`}
                     title={item.name}
                     price={item.price}
@@ -237,6 +264,7 @@ const SearchResultsPage = ({ productQuery }) => {
                 ))
               : productQuery.products.map((item) => (
                   <ListItem
+                    key={item.product_id}
                     link={`/products/${item.slug}`}
                     title={item.name}
                     price={item.price}
@@ -247,6 +275,15 @@ const SearchResultsPage = ({ productQuery }) => {
                   />
                 ))}
           </CategorizedItems>
+          <React.Suspense fallback={<LoadingSpinner />}>
+            <ErrorBoundary>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                handlePageChange={handlePageChange}
+              />
+            </ErrorBoundary>
+          </React.Suspense>
         </SearchGridContainer>
       </FullPageContainer>
     </>
