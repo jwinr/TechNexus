@@ -1,31 +1,69 @@
 import Head from "next/head"
 import styled from "styled-components"
 import FullPageContainer from "../components/common/FullPageContainer"
-import Link from "next/link"
+import { IoMail } from "react-icons/io5"
 
 const ContactPageWrapper = styled.div`
-  display: flex;
-  padding: 30px 30px 30px 30px;
-  flex-direction: column;
-  gap: 15px;
+  display: grid;
+  grid-template-areas:
+    "header"
+    "card";
+  padding: 30px;
+  gap: 20px;
 
   @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
+    padding: 20px;
   }
 `
 
 const HeaderText = styled.h1`
   font-weight: 800;
-  font-size: 29px;
+  font-size: 32px;
+  margin-bottom: 10px;
 `
 
 const SubheaderText = styled.h2`
-  font-weight: 800;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 5px;
+  grid-area: header;
 `
 
-const TermsService = () => {
+const EmailText = styled.h2`
+  font-weight: 700;
+  font-size: 22px;
+`
+
+const ContactCard = styled.div`
+  background-color: #fff;
+  width: 100%;
+  border-radius: 10px;
+  max-width: 66.67%;
+  display: flex;
+  justify-self: center;
+  align-self: center;
+  grid-area: card;
+  box-shadow: 6px 6px 14px 1px rgba(0, 0, 0, 0.16);
+`
+
+const CardDetails = styled.div`
+  background-color: #fff;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  border-radius: 10px;
+  width: 100%;
+  padding: 40px;
+  display: flex;
+`
+
+const EmailWrapper = styled.div`
+  display: flex;
+  gap: 5px;
+  align-items: center;
+`
+
+const ContactUs = () => {
   return (
     <>
       <Head>
@@ -39,12 +77,23 @@ const TermsService = () => {
       <FullPageContainer>
         <ContactPageWrapper>
           <HeaderText>Contact Us</HeaderText>
-          <p>OVERVIEW</p>
-          <p>Placeholder..</p>
+          <ContactCard>
+            <CardDetails>
+              <SubheaderText>Need help or support?</SubheaderText>
+              <p>
+                If you have an order related question, a technical issue or just
+                want to say hi? Feel free to reach out to us through email and
+                we will get back to you shortly.
+              </p>
+              <EmailWrapper>
+                <IoMail size="36" /> <EmailText>help@jwtechnexus.com</EmailText>
+              </EmailWrapper>
+            </CardDetails>
+          </ContactCard>
         </ContactPageWrapper>
       </FullPageContainer>
     </>
   )
 }
 
-export default TermsService
+export default ContactUs
