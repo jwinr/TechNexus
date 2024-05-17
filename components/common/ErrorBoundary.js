@@ -1,5 +1,16 @@
 // ErrorBoundary.js
 import React, { Component } from "react"
+import styled from "styled-components"
+
+const ErrorWrapper = styled.div`
+  display: flex;
+  align-content: center;
+`
+
+const ErrorMessage = styled.h1`
+  font-size: 42px;
+  font-weight: 800;
+`
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -17,7 +28,13 @@ class ErrorBoundary extends Component {
 
   render() {
     if (this.state.hasError) {
-      return <div>Something went wrong. Please try again later.</div>
+      return (
+        <ErrorWrapper>
+          <ErrorMessage>
+            Oops! Something went wrong! Please try again.
+          </ErrorMessage>
+        </ErrorWrapper>
+      )
     }
 
     return this.props.children

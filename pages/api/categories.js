@@ -53,8 +53,14 @@ function organizeCategories(rows) {
     categoriesMap.set(row.category_id, category) // Add category to the map
   })
 
-  // Retrieve all categories with parent-child relationships
+  // Sort the main categories and their subcategories by ID
   const allCategories = Array.from(categoriesMap.values())
+    .filter((category) => category.parent_category === null)
+    .sort((a, b) => a.id - b.id)
+
+  allCategories.forEach((mainCategory) => {
+    mainCategory.subCategories.sort((a, b) => a.id - b.id)
+  })
 
   return allCategories
 }

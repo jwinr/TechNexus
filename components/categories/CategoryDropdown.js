@@ -1,22 +1,24 @@
 import React, { useState, useEffect, useRef } from "react"
-import { FiMenu } from "react-icons/fi"
-import Link from "next/link"
-import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
 import styled from "styled-components"
-import { StyleSheetManager } from "styled-components"
-import { useMobileView } from "../../components/common/MobileViewDetector"
-import Backdrop from "../common/Backdrop"
+import { CSSTransition } from "react-transition-group"
+import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
+import Link from "next/link"
 
 const Dropdown = styled.div`
-  display: flex;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    grid-area: nav-cat;
-  }
+  position: absolute;
+  top: 65px;
+  width: 275px;
+  background-color: #fff;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px 20px;
+  overflow: hidden;
+  z-index: -100;
+  transition: height var(--speed) ease;
+  box-sizing: content-box;
 `
 
-const CatPillBtn = styled.button`
+const CatDropBtn = styled.button`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -25,80 +27,51 @@ const CatPillBtn = styled.button`
   padding-right: 8px;
   height: 100%;
   border-radius: 10px;
-  position: relative;
   align-items: center;
-  display: flex;
   width: 100%;
-  background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "white")};
-  transition: background-color 0.2s;
+  background-color: ${({ isOpen }) => (isOpen ? "#e0e0e0" : "#f7f7f7")};
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s;
 
   &:hover {
-    background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "#f7f7f7")};
+    background-color: #e0e0e0;
   }
 
-  &:active {
-    background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "#f7f7f7")};
+  &:focus {
+    outline: none;
   }
 
-  &:hover .arrow-icon,
-  &.arrow-icon-visible .arrow-icon {
+  .arrow-icon {
+    margin-left: auto;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+  }
+
+  &:hover .arrow-icon {
     opacity: 1;
   }
 
   @media (max-width: 768px) {
-    font-size: 28px;
+    font-size: 18px;
   }
 `
 
-const CategoryList = styled.div`
-  position: absolute;
-  top: 65px;
-  background-color: #fff;
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 10px 20px;
-  width: 275px;
-  display: none;
-  z-index: -100;
-
-  &.active {
-    display: block;
-    opacity: 1;
-    visibility: visible;
-    transition: 0.3s cubic-bezier(0.3, 0.85, 0, 1);
-    transform-origin: top;
-  }
-
-  &.inactive {
-    display: block;
-    opacity: 0;
-    visibility: hidden;
-    transition: 0.3s cubic-bezier(0.3, 0.85, 0, 1);
-    top: -1000px;
-    transform-origin: top;
-  }
-
-  a {
-    width: 100%; // Override to make the full span class clickable
-    padding: 10px 0; // And for the height..
-  }
-
-  div {
-    width: 100%; // Override the div too for the subcategory parent
-    cursor: pointer;
-    align-items: center;
-  }
+const Menu = styled.div`
+  width: 100%;
 `
 
-const CategoryItem = styled.span`
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
+const MenuItem = styled.span`
+  height: 50px;
   display: flex;
   align-items: center;
-  position: relative;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background var(--speed);
   font-size: 16px;
-  text-decoration: none;
   color: #000;
   width: 100%;
+  padding: 0.5rem;
+  text-decoration: none;
 
   &:hover {
     text-decoration: underline;
@@ -116,191 +89,137 @@ const ListHeader = styled.div`
 `
 
 const CategoryDropdown = () => {
-  const [isCatOpen, setIsCatOpen] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState(null)
-  const isMobileView = useMobileView()
-  const [categoriesData, setCategories] = useState([])
+  const [categories, setCategories] = useState([])
 
-  const toggleDropdown = () => {
-    setIsCatOpen(!isCatOpen)
-  }
-
-  const closeMenu = () => {
-    setIsCatOpen(false)
-    setSelectedCategory(null) // Clear the selected category when closing the menu
-  }
-
-  const goBackToMainCategories = () => {
-    setSelectedCategory(null)
-  }
-
-  const selectCategory = (category) => {
-    const showAllSubcategories = (selectedCategory) => {
-      if (
-        selectedCategory.subCategories &&
-        selectedCategory.subCategories.length > 0
-      ) {
-        // If the selected category has subcategories, update the state to show only its subcategories
-        setSelectedCategory(selectedCategory)
-      } else if (selectedCategory.parent_category !== null) {
-        // If the selected category has no subcategories and has a parent category,
-        // find the parent category and recursively show all its subcategories
-        const parentCategory = categoriesData.find(
-          (parent) => parent.id === selectedCategory.parent_category
-        )
-        showAllSubcategories(parentCategory)
-      } else {
-        // If the selected category has no subcategories and no parent category, close the menu
-        closeMenu()
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/categories")
+        const data = await response.json()
+        console.log("Fetched categories:", data) // Log the fetched categories
+        setCategories(data)
+      } catch (error) {
+        console.error("Error fetching categories:", error)
       }
     }
 
-    showAllSubcategories(category)
-  }
-
-  let catRef = useRef()
-
-  useEffect(() => {
-    let handler = (e) => {
-      if (!catRef.current.contains(e.target)) {
-        setIsCatOpen(false)
-        setSelectedCategory(null) // Clear the selected category when closing the menu
-      }
-    }
-
-    document.addEventListener("mousedown", handler)
-
-    return () => {
-      document.removeEventListener("mousedown", handler)
-    }
+    fetchCategories()
   }, [])
-
-  useEffect(() => {
-    // Fetch categories data only if it hasn't been fetched before
-    if (categoriesData.length === 0) {
-      fetch("/api/categories")
-        .then((response) => response.json())
-        .then((data) => {
-          // Filter out categories with a parent_category value (main categories)
-          const mainCategories = data.filter(
-            (category) => category.parent_category === null
-          )
-
-          // Sort main categories by ID before setting the state
-          const sortedMainCategories = mainCategories.sort(
-            (a, b) => a.id - b.id
-          )
-          setCategories(sortedMainCategories)
-        })
-        .catch((error) =>
-          console.error("Error fetching category names:", error)
-        )
-    }
-  }, [])
-
-  useEffect(() => {
-    // Function to disable scroll
-    const disableScroll = () => {
-      document.body.style.overflowY = "hidden"
-      document.body.style.paddingRight = "15px"
-      document.body.style.touchAction = "none"
-      document.body.style.overscrollBehavior = "none"
-    }
-
-    // Function to enable scroll
-    const enableScroll = () => {
-      document.body.style.overflowY = "auto"
-      document.body.style.paddingRight = "inherit"
-      document.body.style.touchAction = "auto"
-      document.body.style.overscrollBehavior = "auto"
-    }
-
-    // Event listeners to disable/enable scroll based on dropdown state
-    if (isCatOpen) {
-      disableScroll()
-    } else {
-      enableScroll()
-    }
-
-    // Cleanup function to enable scroll when component unmounts
-    return () => {
-      enableScroll()
-    }
-  }, [isCatOpen])
 
   return (
-    <StyleSheetManager shouldForwardProp={(prop) => prop !== "isOpen"}>
-      <Dropdown ref={catRef}>
-        {isMobileView ? (
-          <CatPillBtn isOpen={isCatOpen} onClick={toggleDropdown}>
-            <FiMenu />
-          </CatPillBtn>
-        ) : (
-          <CatPillBtn
-            isOpen={isCatOpen}
-            onClick={toggleDropdown}
-            className={isCatOpen ? "arrow-icon-visible" : ""}
-          >
-            <span>Categories</span>
-            <div
-              className={`arrow-icon ${isCatOpen ? "rotate-arrow" : ""}`}
-              onClick={toggleDropdown}
+    <NavItem>
+      <DropdownMenu categories={categories} />
+    </NavItem>
+  )
+}
+
+function NavItem(props) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <CatDropBtn onClick={() => setOpen(!open)}>
+        <span>Categories</span>
+        <div className={`arrow-icon ${open ? "rotate-arrow" : ""}`}>
+          <RiArrowDownSLine />
+        </div>
+      </CatDropBtn>
+      {open && props.children}
+    </>
+  )
+}
+
+function DropdownItem({
+  children,
+  goToMenu,
+  hasSubCategories,
+  href,
+  setActiveMenu,
+}) {
+  return hasSubCategories ? (
+    <MenuItem onClick={() => goToMenu && setActiveMenu(goToMenu)}>
+      {children}
+    </MenuItem>
+  ) : (
+    <Link href={href} passHref>
+      <MenuItem>{children}</MenuItem>
+    </Link>
+  )
+}
+
+function DropdownMenu({ categories }) {
+  const [activeMenu, setActiveMenu] = useState("main")
+  const [menuHeight, setMenuHeight] = useState(null)
+  const dropdownRef = useRef(null)
+
+  useEffect(() => {
+    setMenuHeight(dropdownRef.current?.firstChild.offsetHeight)
+  }, [])
+
+  function calcHeight(el) {
+    const height = el.offsetHeight
+    setMenuHeight(height)
+  }
+
+  const mainCategories = categories
+  const subCategories = (parentId) => {
+    const subs =
+      categories.find((category) => category.id === parentId)?.subCategories ||
+      []
+    return subs
+  }
+
+  return (
+    <Dropdown style={{ height: menuHeight }} ref={dropdownRef}>
+      <CSSTransition
+        in={activeMenu === "main"}
+        timeout={500}
+        classNames="menu-primary"
+        unmountOnExit
+        onEnter={calcHeight}
+      >
+        <Menu>
+          <ListHeader>Categories</ListHeader>
+          {mainCategories.map((category) => (
+            <DropdownItem
+              key={category.id}
+              goToMenu={category.subCategories.length > 0 ? category.id : null}
+              hasSubCategories={category.subCategories.length > 0}
+              href={`/${category.slug}`}
+              setActiveMenu={setActiveMenu} // Pass setActiveMenu to DropdownItem
             >
-              <RiArrowDownSLine />
-            </div>
-          </CatPillBtn>
-        )}
-        <Backdrop isOpen={isCatOpen} onClick={closeMenu} />
-        <CategoryList className={isCatOpen ? "active" : "inactive"}>
-          {selectedCategory ? (
-            // Display the back button when a subcategory is selected
-            // Hardcoded since we only have one subcategory
-            <ListHeader onClick={goBackToMainCategories}>
-              <div className="left-arrow-icon">
-                <RiArrowLeftSLine />
-              </div>
-              <span style={{ cursor: "pointer" }}>Accessories</span>
+              {category.name}
+              {category.subCategories.length > 0 && (
+                <RiArrowDownSLine className="arrow-icon" />
+              )}
+            </DropdownItem>
+          ))}
+        </Menu>
+      </CSSTransition>
+
+      {mainCategories.map((category) => (
+        <CSSTransition
+          key={category.id}
+          in={activeMenu === category.id}
+          timeout={500}
+          classNames="menu-secondary"
+          unmountOnExit
+          onEnter={calcHeight}
+        >
+          <Menu>
+            <ListHeader onClick={() => setActiveMenu("main")}>
+              <RiArrowLeftSLine />
+              {category.name}
             </ListHeader>
-          ) : (
-            // Display the main categories header when no subcategory is selected
-            <ListHeader>All Categories</ListHeader>
-          )}
-          {selectedCategory
-            ? // If a category with subcategories is selected, show only its subcategories
-              selectedCategory.subCategories.map((subcategory, index) => (
-                <div key={index} onClick={() => selectCategory(subcategory)}>
-                  {/* Conditionally render Link or div based on whether there are subcategories */}
-                  <CategoryItem>
-                    {subcategory.subCategories &&
-                    subcategory.subCategories.length > 0 ? (
-                      <div style={{ padding: "10px 0" }}>{category.name}</div>
-                    ) : (
-                      <Link href={`/categories/${subcategory.slug}`}>
-                        {subcategory.name}
-                      </Link>
-                    )}
-                  </CategoryItem>
-                </div>
-              ))
-            : // Show main categories when no category with subcategories is selected
-              categoriesData.map((category, index) => (
-                <div key={index} onClick={() => selectCategory(category)}>
-                  {/* Conditionally render Link or div based on whether there are subcategories */}
-                  <CategoryItem>
-                    {category.subCategories &&
-                    category.subCategories.length > 0 ? (
-                      <div style={{ padding: "10px 0" }}>{category.name}</div>
-                    ) : (
-                      <Link href={`/categories/${category.slug}`}>
-                        {category.name}
-                      </Link>
-                    )}
-                  </CategoryItem>
-                </div>
-              ))}
-        </CategoryList>
-      </Dropdown>
-    </StyleSheetManager>
+            {subCategories(category.id).map((subCategory) => (
+              <DropdownItem key={subCategory.id} href={`/${subCategory.slug}`}>
+                {subCategory.name}
+              </DropdownItem>
+            ))}
+          </Menu>
+        </CSSTransition>
+      ))}
+    </Dropdown>
   )
 }
 

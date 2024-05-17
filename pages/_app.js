@@ -7,6 +7,7 @@ import amplifyconfig from "../src/amplifyconfiguration.json"
 Amplify.configure(amplifyconfig)
 import { ContextProviderComponent } from "../context/mainContext"
 import { MobileViewProvider } from "../components/common/MobileViewDetector"
+import ErrorBoundary from "../components/common/ErrorBoundary"
 
 function TechNexus({ Component, pageProps, categories }) {
   return (
@@ -22,9 +23,11 @@ function TechNexus({ Component, pageProps, categories }) {
                 crossorigin
               />
             </Helmet>
-            <Layout categories={categories}>
-              <Component {...pageProps} />
-            </Layout>
+            <ErrorBoundary>
+              <Layout categories={categories}>
+                <Component {...pageProps} />
+              </Layout>
+            </ErrorBoundary>
           </HelmetProvider>
         </ContextProviderComponent>
       </MobileViewProvider>

@@ -1,5 +1,5 @@
 // pages/categories/[slug].js
-import React, { useEffect, useState, useContext } from "react"
+import React, { useEffect, useState, lazy, Suspense, useContext } from "react"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 import Head from "next/head"
@@ -16,13 +16,11 @@ import ErrorBoundary from "../../components/common/ErrorBoundary"
 import { SiteContext } from "../../context/mainContext"
 
 // Lazy-loaded components
-const ItemFilter = React.lazy(() => import("../../components/items/ItemFilter"))
-const CategorizedItems = React.lazy(() =>
+const ItemFilter = lazy(() => import("../../components/items/ItemFilter"))
+const CategorizedItems = lazy(() =>
   import("../../components/items/CategorizedItemsContainer")
 )
-const Pagination = React.lazy(() =>
-  import("../../components/common/Pagination")
-)
+const Pagination = lazy(() => import("../../components/common/Pagination"))
 
 const CategoryGridContainer = styled.div`
   display: grid;
@@ -271,7 +269,7 @@ export default function CategoryPage() {
               </SortDropdown>
             </SortText>
           </CategorySortPanel>
-          <React.Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<LoadingSpinner />}>
             <ErrorBoundary>
               <ItemFilter
                 inventoryItems={categoryData.products}
@@ -279,8 +277,8 @@ export default function CategoryPage() {
                 attributes={categoryData.attributes}
               />
             </ErrorBoundary>
-          </React.Suspense>
-          <React.Suspense fallback={<LoadingSpinner />}>
+          </Suspense>
+          <Suspense fallback={<LoadingSpinner />}>
             <ErrorBoundary>
               <CategorizedItems isVisible={showFilteredItems}>
                 {isFilterActive
@@ -312,8 +310,8 @@ export default function CategoryPage() {
                     ))}
               </CategorizedItems>
             </ErrorBoundary>
-          </React.Suspense>
-          <React.Suspense fallback={<LoadingSpinner />}>
+          </Suspense>
+          <Suspense fallback={<LoadingSpinner />}>
             <ErrorBoundary>
               <Pagination
                 currentPage={currentPage}
@@ -321,7 +319,7 @@ export default function CategoryPage() {
                 handlePageChange={handlePageChange}
               />
             </ErrorBoundary>
-          </React.Suspense>
+          </Suspense>
         </CategoryGridContainer>
       </FullPageContainer>
     </>
