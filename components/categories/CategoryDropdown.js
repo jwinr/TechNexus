@@ -12,11 +12,11 @@ const Dropdown = styled.div`
   background-color: #fff;
   border-radius: 0 0 8px 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 10px 20px;
+  padding: 0 20px;
   overflow: hidden;
   z-index: -100;
-  transition: height var(--speed) ease;
   box-sizing: content-box;
+  transition: height var(--speed) ease;
   left: ${(props) => props.left}px; // Dynamic left position
 `
 
@@ -31,7 +31,7 @@ const CatDropBtn = styled.button`
   border-radius: 10px;
   align-items: center;
   width: 100%;
-  background-color: ${({ isOpen }) => (isOpen ? "#e0e0e0" : "#f7f7f7")};
+  background-color: ${({ isOpen }) => (isOpen ? "#e0e0e0" : "#fff")};
   display: flex;
   align-items: center;
   transition: background-color 0.3s;
@@ -76,13 +76,15 @@ const MenuItem = styled.span`
 `
 
 const ListHeader = styled.div`
-  margin: 10px 0 15px 0;
+  height: 50px;
   display: flex;
-  height: 30px; // Prevent the subcategory button from pushing the text contents down
+  align-items: center;
+  transition: background var(--speed);
   font-size: 18px;
   font-weight: 600;
-  cursor: text !important;
-  width: fit-content !important; // so the headers don't act like a button
+  color: #000;
+  width: 100%;
+  text-decoration: none;
 `
 
 const ReturnBtn = styled.div`
