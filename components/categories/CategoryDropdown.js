@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { CSSTransition } from "react-transition-group"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
 import Link from "next/link"
+import Backdrop from "../common/Backdrop"
 
 const Dropdown = styled.div`
   position: absolute;
@@ -16,6 +17,7 @@ const Dropdown = styled.div`
   z-index: -100;
   transition: height var(--speed) ease;
   box-sizing: content-box;
+  left: ${(props) => props.left}px; // Dynamic left position
 `
 
 const CatDropBtn = styled.button`
@@ -42,13 +44,8 @@ const CatDropBtn = styled.button`
     outline: none;
   }
 
-  .arrow-icon {
-    margin-left: auto;
-    opacity: 0.6;
-    transition: opacity 0.3s;
-  }
-
-  &:hover .arrow-icon {
+  &:hover .arrow-icon,
+  &.arrow-icon-visible .arrow-icon {
     opacity: 1;
   }
 
@@ -70,8 +67,8 @@ const MenuItem = styled.span`
   font-size: 16px;
   color: #000;
   width: 100%;
-  padding: 0.5rem;
   text-decoration: none;
+  cursor: pointer;
 
   &:hover {
     text-decoration: underline;
@@ -84,8 +81,17 @@ const ListHeader = styled.div`
   height: 30px; // Prevent the subcategory button from pushing the text contents down
   font-size: 18px;
   font-weight: 600;
-  cursor: text !important; // Override the styles from the CategoryList,
+  cursor: text !important;
   width: fit-content !important; // so the headers don't act like a button
+`
+
+const ReturnBtn = styled.div`
+  -webkit-box-align: center;
+  place-items: center;
+  border-radius: 4px;
+  display: flex;
+  margin-right: 8px;
+  cursor: pointer;
 `
 
 const CategoryDropdown = () => {
@@ -115,16 +121,58 @@ const CategoryDropdown = () => {
 
 function NavItem(props) {
   const [open, setOpen] = useState(false)
+  const btnRef = useRef(null)
+  const [dropdownLeft, setDropdownLeft] = useState(0)
+
+  useEffect(() => {
+    // Function to disable scroll
+    const disableScroll = () => {
+      document.body.style.overflowY = "hidden"
+      document.body.style.paddingRight = "15px"
+      document.body.style.touchAction = "none"
+      document.body.style.overscrollBehavior = "none"
+    }
+
+    // Function to enable scroll
+    const enableScroll = () => {
+      document.body.style.overflowY = "auto"
+      document.body.style.paddingRight = "inherit"
+      document.body.style.touchAction = "auto"
+      document.body.style.overscrollBehavior = "auto"
+    }
+
+    // Event listeners to disable/enable scroll based on dropdown state
+    if (open) {
+      disableScroll()
+      if (btnRef.current) {
+        const rect = btnRef.current.getBoundingClientRect()
+        setDropdownLeft(rect.left)
+      }
+    } else {
+      enableScroll()
+    }
+
+    // Cleanup function to enable scroll when component unmounts
+    return () => {
+      enableScroll()
+    }
+  }, [open])
 
   return (
     <>
-      <CatDropBtn onClick={() => setOpen(!open)}>
+      <Backdrop isOpen={open} onClick={() => setOpen(!open)} />
+      <CatDropBtn
+        onClick={() => setOpen(!open)}
+        ref={btnRef}
+        isOpen={open}
+        className={open ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
+      >
         <span>Categories</span>
         <div className={`arrow-icon ${open ? "rotate-arrow" : ""}`}>
           <RiArrowDownSLine />
         </div>
       </CatDropBtn>
-      {open && props.children}
+      {open && React.cloneElement(props.children, { dropdownLeft, setOpen })}
     </>
   )
 }
@@ -135,6 +183,7 @@ function DropdownItem({
   hasSubCategories,
   href,
   setActiveMenu,
+  setOpen,
 }) {
   return hasSubCategories ? (
     <MenuItem onClick={() => goToMenu && setActiveMenu(goToMenu)}>
@@ -142,12 +191,12 @@ function DropdownItem({
     </MenuItem>
   ) : (
     <Link href={href} passHref>
-      <MenuItem>{children}</MenuItem>
+      <MenuItem onClick={() => setOpen(false)}>{children}</MenuItem>
     </Link>
   )
 }
 
-function DropdownMenu({ categories }) {
+function DropdownMenu({ categories, dropdownLeft, setOpen }) {
   const [activeMenu, setActiveMenu] = useState("main")
   const [menuHeight, setMenuHeight] = useState(null)
   const dropdownRef = useRef(null)
@@ -170,7 +219,10 @@ function DropdownMenu({ categories }) {
   }
 
   return (
-    <Dropdown style={{ height: menuHeight }} ref={dropdownRef}>
+    <Dropdown
+      style={{ height: menuHeight, left: dropdownLeft }}
+      ref={dropdownRef}
+    >
       <CSSTransition
         in={activeMenu === "main"}
         timeout={500}
@@ -179,14 +231,15 @@ function DropdownMenu({ categories }) {
         onEnter={calcHeight}
       >
         <Menu>
-          <ListHeader>Categories</ListHeader>
+          <ListHeader>All Categories</ListHeader>
           {mainCategories.map((category) => (
             <DropdownItem
               key={category.id}
               goToMenu={category.subCategories.length > 0 ? category.id : null}
               hasSubCategories={category.subCategories.length > 0}
-              href={`/${category.slug}`}
+              href={`/categories/${category.slug}`}
               setActiveMenu={setActiveMenu} // Pass setActiveMenu to DropdownItem
+              setOpen={setOpen} // Pass setOpen to DropdownItem
             >
               {category.name}
               {category.subCategories.length > 0 && (
@@ -207,12 +260,17 @@ function DropdownMenu({ categories }) {
           onEnter={calcHeight}
         >
           <Menu>
-            <ListHeader onClick={() => setActiveMenu("main")}>
-              <RiArrowLeftSLine />
+            <ListHeader>
+              <ReturnBtn onClick={() => setActiveMenu("main")}>
+                <RiArrowLeftSLine size={28} />
+              </ReturnBtn>
               {category.name}
             </ListHeader>
             {subCategories(category.id).map((subCategory) => (
-              <DropdownItem key={subCategory.id} href={`/${subCategory.slug}`}>
+              <DropdownItem
+                key={subCategory.id}
+                href={`/categories/${subCategory.slug}`}
+              >
                 {subCategory.name}
               </DropdownItem>
             ))}
