@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
+import PropTypes from "prop-types"
 import styled from "styled-components"
 import { CSSTransition } from "react-transition-group"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
@@ -20,7 +21,7 @@ const Dropdown = styled.div`
   left: ${(props) => props.left}px; // Dynamic left position
 `
 
-const CatDropBtn = styled.button`
+const CategoryButton = styled.button`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -35,12 +36,14 @@ const CatDropBtn = styled.button`
   display: flex;
   align-items: center;
   transition: background-color 0.3s;
+  border: 1px dashed transparent;
 
   &:hover {
     background-color: #e0e0e0;
   }
 
   &:focus {
+    border: 1px dashed rgb(51, 51, 51);
     outline: none;
   }
 
@@ -56,6 +59,11 @@ const CatDropBtn = styled.button`
 
 const Menu = styled.div`
   width: 100%;
+
+  & a:focus {
+    text-decoration: underline;
+    outline: none;
+  }
 `
 
 const MenuItem = styled.span`
@@ -73,6 +81,11 @@ const MenuItem = styled.span`
   &:hover {
     text-decoration: underline;
   }
+
+  &:focus {
+    text-decoration: underline;
+    outline: none;
+  }
 `
 
 const ListHeader = styled.div`
@@ -85,15 +98,26 @@ const ListHeader = styled.div`
   color: #000;
   width: 100%;
   text-decoration: none;
+
+  &:focus {
+    text-decoration: underline;
+    outline: none;
+  }
 `
 
-const ReturnBtn = styled.div`
+const ReturnButton = styled.div`
   -webkit-box-align: center;
   place-items: center;
   border-radius: 4px;
   display: flex;
   margin-right: 8px;
   cursor: pointer;
+  border: 1px dashed transparent;
+
+  &:focus {
+    border: 1px dashed rgb(51, 51, 51);
+    outline: none;
+  }
 `
 
 const CategoryDropdown = () => {
@@ -121,62 +145,88 @@ const CategoryDropdown = () => {
   )
 }
 
-function NavItem(props) {
-  const [open, setOpen] = useState(false)
-  const btnRef = useRef(null)
-  const [dropdownLeft, setDropdownLeft] = useState(0)
+const useScrollControl = () => {
+  const [isScrollDisabled, setIsScrollDisabled] = useState(false)
+
+  const disableScroll = useCallback(() => {
+    document.body.style.overflowY = "hidden"
+    document.body.style.paddingRight = "15px"
+    document.body.style.touchAction = "none"
+    document.body.style.overscrollBehavior = "none"
+  }, [])
+
+  const enableScroll = useCallback(() => {
+    document.body.style.overflowY = "auto"
+    document.body.style.paddingRight = "inherit"
+    document.body.style.touchAction = "auto"
+    document.body.style.overscrollBehavior = "auto"
+  }, [])
 
   useEffect(() => {
-    // Function to disable scroll
-    const disableScroll = () => {
-      document.body.style.overflowY = "hidden"
-      document.body.style.paddingRight = "15px"
-      document.body.style.touchAction = "none"
-      document.body.style.overscrollBehavior = "none"
-    }
-
-    // Function to enable scroll
-    const enableScroll = () => {
-      document.body.style.overflowY = "auto"
-      document.body.style.paddingRight = "inherit"
-      document.body.style.touchAction = "auto"
-      document.body.style.overscrollBehavior = "auto"
-    }
-
-    // Event listeners to disable/enable scroll based on dropdown state
-    if (open) {
+    if (isScrollDisabled) {
       disableScroll()
-      if (btnRef.current) {
-        const rect = btnRef.current.getBoundingClientRect()
-        setDropdownLeft(rect.left)
-      }
     } else {
       enableScroll()
     }
 
-    // Cleanup function to enable scroll when component unmounts
     return () => {
       enableScroll()
     }
-  }, [open])
+  }, [isScrollDisabled, disableScroll, enableScroll])
+
+  return [setIsScrollDisabled]
+}
+
+function NavItem(props) {
+  const [open, setOpen] = useState(false)
+  const btnRef = useRef(null)
+  const [dropdownLeft, setDropdownLeft] = useState(0)
+  const [setIsScrollDisabled] = useScrollControl()
+
+  useEffect(() => {
+    if (open) {
+      setIsScrollDisabled(true)
+      if (btnRef.current) {
+        const rect = btnRef.current.getBoundingClientRect()
+        setDropdownLeft(rect.left)
+        btnRef.current.focus()
+      }
+    } else {
+      setIsScrollDisabled(false)
+    }
+  }, [open, setIsScrollDisabled])
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setOpen(false)
+      btnRef.current.focus() // Return focus to the button when closed
+    }
+  }
 
   return (
     <>
       <Backdrop isOpen={open} onClick={() => setOpen(!open)} />
-      <CatDropBtn
+      <CategoryButton
         onClick={() => setOpen(!open)}
+        onKeyDown={handleKeyDown}
         ref={btnRef}
         isOpen={open}
+        aria-haspopup="true"
+        aria-expanded={open}
         className={open ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
       >
         <span>Categories</span>
         <div className={`arrow-icon ${open ? "rotate-arrow" : ""}`}>
           <RiArrowDownSLine />
         </div>
-      </CatDropBtn>
+      </CategoryButton>
       {open && React.cloneElement(props.children, { dropdownLeft, setOpen })}
     </>
   )
+}
+
+NavItem.propTypes = {
+  children: PropTypes.node.isRequired,
 }
 
 function DropdownItem({
@@ -187,15 +237,41 @@ function DropdownItem({
   setActiveMenu,
   setOpen,
 }) {
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (goToMenu) {
+        setActiveMenu(goToMenu)
+      } else {
+        setOpen(false)
+      }
+    }
+  }
+
   return hasSubCategories ? (
-    <MenuItem onClick={() => goToMenu && setActiveMenu(goToMenu)}>
+    <MenuItem
+      onClick={() => goToMenu && setActiveMenu(goToMenu)}
+      role="menuitem"
+      tabIndex={0} // Make the subcategory focusable via the tab key
+      onKeyDown={handleKeyDown}
+    >
       {children}
     </MenuItem>
   ) : (
     <Link href={href} passHref>
-      <MenuItem onClick={() => setOpen(false)}>{children}</MenuItem>
+      <MenuItem onClick={() => setOpen(false)} role="menuitem">
+        {children}
+      </MenuItem>
     </Link>
   )
+}
+
+DropdownItem.propTypes = {
+  children: PropTypes.node.isRequired,
+  goToMenu: PropTypes.string,
+  hasSubCategories: PropTypes.bool,
+  href: PropTypes.string.isRequired,
+  setActiveMenu: PropTypes.func.isRequired,
+  setOpen: PropTypes.func.isRequired,
 }
 
 function DropdownMenu({ categories, dropdownLeft, setOpen }) {
@@ -212,18 +288,26 @@ function DropdownMenu({ categories, dropdownLeft, setOpen }) {
     setMenuHeight(height)
   }
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setOpen(false)
+    }
+  }
+
   const mainCategories = categories
-  const subCategories = (parentId) => {
-    const subs =
+  const getSubCategories = (parentId) => {
+    return (
       categories.find((category) => category.id === parentId)?.subCategories ||
       []
-    return subs
+    )
   }
 
   return (
     <Dropdown
       style={{ height: menuHeight, left: dropdownLeft }}
       ref={dropdownRef}
+      role="menu"
+      onKeyDown={handleKeyDown}
     >
       <CSSTransition
         in={activeMenu === "main"}
@@ -263,15 +347,22 @@ function DropdownMenu({ categories, dropdownLeft, setOpen }) {
         >
           <Menu>
             <ListHeader>
-              <ReturnBtn onClick={() => setActiveMenu("main")}>
+              <ReturnButton
+                onClick={() => setActiveMenu("main")}
+                role="button"
+                tabIndex={0} // Make it focusable
+                onKeyDown={(e) => e.key === "Enter" && setActiveMenu("main")}
+              >
                 <RiArrowLeftSLine size={28} />
-              </ReturnBtn>
+              </ReturnButton>
               {category.name}
             </ListHeader>
-            {subCategories(category.id).map((subCategory) => (
+            {getSubCategories(category.id).map((subCategory) => (
               <DropdownItem
                 key={subCategory.id}
                 href={`/categories/${subCategory.slug}`}
+                setOpen={setOpen}
+                setActiveMenu={setActiveMenu} // Pass setActiveMenu to DropdownItem
               >
                 {subCategory.name}
               </DropdownItem>
