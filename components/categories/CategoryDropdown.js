@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from "react"
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import PropTypes from "prop-types"
 import styled from "styled-components"
 import { CSSTransition } from "react-transition-group"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
 import Link from "next/link"
 import Backdrop from "../common/Backdrop"
+import { debounce } from "lodash"
 
 const Dropdown = styled.div`
   position: absolute;
@@ -123,20 +124,25 @@ const ReturnButton = styled.div`
 const CategoryDropdown = () => {
   const [categories, setCategories] = useState([])
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("/api/categories")
-        const data = await response.json()
-        console.log("Fetched categories:", data) // Log the fetched categories
-        setCategories(data)
-      } catch (error) {
-        console.error("Error fetching categories:", error)
-      }
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/categories")
+      const data = await response.json()
+      console.log("Fetched categories:", data) // Log the fetched categories
+      setCategories(data)
+    } catch (error) {
+      console.error("Error fetching categories:", error)
     }
+  }
 
-    fetchCategories()
-  }, [])
+  const debouncedFetchCategories = useCallback(
+    debounce(fetchCategories, 300),
+    []
+  )
+
+  useEffect(() => {
+    debouncedFetchCategories()
+  }, [debouncedFetchCategories])
 
   return (
     <NavItem>
@@ -274,6 +280,11 @@ DropdownItem.propTypes = {
   setOpen: PropTypes.func.isRequired,
 }
 
+DropdownItem.defaultProps = {
+  goToMenu: null,
+  hasSubCategories: false,
+}
+
 function DropdownMenu({ categories, dropdownLeft, setOpen }) {
   const [activeMenu, setActiveMenu] = useState("main")
   const [menuHeight, setMenuHeight] = useState(null)
@@ -294,13 +305,16 @@ function DropdownMenu({ categories, dropdownLeft, setOpen }) {
     }
   }
 
-  const mainCategories = categories
-  const getSubCategories = (parentId) => {
-    return (
-      categories.find((category) => category.id === parentId)?.subCategories ||
-      []
-    )
-  }
+  const mainCategories = useMemo(() => categories, [categories])
+  const getSubCategories = useMemo(
+    () => (parentId) => {
+      return (
+        categories.find((category) => category.id === parentId)
+          ?.subCategories || []
+      )
+    },
+    [categories]
+  )
 
   return (
     <Dropdown
@@ -372,6 +386,29 @@ function DropdownMenu({ categories, dropdownLeft, setOpen }) {
       ))}
     </Dropdown>
   )
+}
+
+DropdownMenu.propTypes = {
+  categories: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      slug: PropTypes.string.isRequired,
+      subCategories: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.number.isRequired,
+          name: PropTypes.string.isRequired,
+          slug: PropTypes.string.isRequired,
+        })
+      ),
+    })
+  ).isRequired,
+  dropdownLeft: PropTypes.number.isRequired,
+  setOpen: PropTypes.func.isRequired,
+}
+
+DropdownMenu.defaultProps = {
+  dropdownLeft: 0,
 }
 
 export default CategoryDropdown
