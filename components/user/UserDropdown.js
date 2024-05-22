@@ -80,6 +80,12 @@ const AccPillBtn = styled.button`
   justify-content: flex-end;
   background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "white")};
   transition: background-color 0.2s;
+  border: 1px dashed transparent;
+
+  &:focus {
+    border: 1px dashed rgb(51, 51, 51);
+    outline: none;
+  }
 
   &:hover {
     background-color: ${({ isOpen }) => (isOpen ? "#00599c" : "#f7f7f7")};
@@ -178,6 +184,19 @@ const UserDropdown = () => {
 
     return () => {
       document.removeEventListener("mousedown", handler)
+    }
+  }, [])
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      closeMenu()
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
     }
   }, [])
 

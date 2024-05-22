@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import { IoIosSearch } from "react-icons/io"
@@ -9,6 +9,7 @@ import styled from "styled-components"
 const InputForm = styled.form`
   display: flex;
   width: 100%;
+  align-items: center;
 `
 
 const SearchBar = styled.div`
@@ -24,7 +25,6 @@ const SearchBar = styled.div`
 
 const SearchContainer = styled.div`
   position: relative;
-  align-items: center;
   display: flex;
   width: 100%;
 
@@ -34,11 +34,10 @@ const SearchContainer = styled.div`
 `
 
 const SearchInput = styled.input`
-  padding: 8px;
+  padding: 10px;
   border-radius: 10px;
   outline: none;
   font-size: 15px;
-  height: 100%;
   width: 100%;
   background-color: #f7f7f7;
 `
@@ -54,6 +53,12 @@ const SubmitButton = styled.button`
   justify-content: center;
   display: flex;
   border-radius: 0 8px 8px 0;
+  border: 1px dashed transparent;
+
+  &:focus {
+    border: 1px dashed rgb(51, 51, 51);
+    outline: none;
+  }
 
   @media (max-width: 768px) {
     right: 5px;
@@ -93,6 +98,19 @@ const ProductSearchBar = () => {
     setSearchTerm("")
   }
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      clearSearch()
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [])
+
   return (
     <SearchBar>
       <SearchContainer>
@@ -102,13 +120,14 @@ const ProductSearchBar = () => {
             placeholder="What can we help you find?"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label="Search for products"
           />
-          <SubmitButton type="submit" aria-label="submit search">
+          <SubmitButton type="submit" aria-label="Submit search">
             <IoIosSearch />
           </SubmitButton>
         </InputForm>
         {searchTerm && (
-          <ClearButton onClick={clearSearch}>
+          <ClearButton onClick={clearSearch} aria-label="Clear search">
             <FontAwesomeIcon icon={faTimes} />
           </ClearButton>
         )}

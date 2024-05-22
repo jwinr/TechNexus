@@ -67,6 +67,13 @@ const FooterContainer = styled.footer`
 const Logo = styled.a`
   display: flex;
   align-items: center;
+  border: 1px dashed transparent;
+  border-radius: 10px;
+
+  &:focus {
+    border: 1px dashed rgb(51, 51, 51);
+    outline: none;
+  }
 
   @media (max-width: 768px) {
     margin: 3px;
@@ -86,12 +93,12 @@ export default function Layout({ children }) {
       <NavbarWrapper>
         <Navbar>
           <Logo href="/" aria-label="Home">
-            <BannerLogo />
+            <BannerLogo alt="TechNexus Logo" />
           </Logo>
           <CategoryDropdown />
           <ProductSearchBar />
-          <UserDropdown />
-          <CartLink />
+          <UserDropdown aria-label="User Menu" />
+          <CartLink aria-label="Shopping Cart" />
         </Navbar>
       </NavbarWrapper>
     </NavbarContainer>
@@ -131,6 +138,7 @@ export default function Layout({ children }) {
             },
           },
         }}
+        aria-live="polite"
       />
     </div>
   )

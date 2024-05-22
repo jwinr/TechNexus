@@ -4,7 +4,7 @@ import Link from "next/link"
 import styled from "styled-components"
 import { SiteContext } from "../../context/mainContext"
 
-const Container = styled.div`
+const Container = styled(Link)`
   position: relative;
   display: flex;
   align-items: center;
@@ -29,6 +29,12 @@ const Button = styled.button`
   width: fit-content;
   justify-content: flex-end;
   transition: background-color 0.2s;
+  border: 1px dashed transparent;
+
+  &:focus {
+    border: 1px dashed rgb(51, 51, 51);
+    outline: none;
+  }
 
   &:hover {
     background-color: #f7f7f7;
@@ -70,16 +76,14 @@ function CartLink() {
   }`
 
   return (
-    <Link href="/cart">
-      <Container>
-        <Button>
-          <Wrapper>
-            <LiaShoppingCartSolid aria-label={ariaLabel} />
-          </Wrapper>
-        </Button>
-        <CartCircle>{numberOfItemsInCart}</CartCircle>
-      </Container>
-    </Link>
+    <Container href="/cart" tabindex="-1" aria-label={ariaLabel}>
+      <Button aria-label={ariaLabel}>
+        <Wrapper>
+          <LiaShoppingCartSolid />
+        </Wrapper>
+      </Button>
+      <CartCircle>{numberOfItemsInCart}</CartCircle>
+    </Container>
   )
 }
 
