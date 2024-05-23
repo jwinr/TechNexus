@@ -3,6 +3,8 @@ import PropTypes from "prop-types"
 import styled from "styled-components"
 import { CSSTransition } from "react-transition-group"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
+import { useMobileView } from "../../components/common/MobileViewDetector"
+import { FiMenu } from "react-icons/fi"
 import Link from "next/link"
 import Backdrop from "../common/Backdrop"
 import { debounce } from "lodash"
@@ -20,6 +22,10 @@ const Dropdown = styled.div`
   box-sizing: content-box;
   transition: height var(--speed) ease;
   left: ${(props) => props.left}px; // Dynamic left position
+
+  @media (max-width: 768px) {
+    left: 0;
+  }
 `
 
 const CategoryButton = styled.button`
@@ -33,14 +39,14 @@ const CategoryButton = styled.button`
   border-radius: 10px;
   align-items: center;
   width: 100%;
-  background-color: ${({ isOpen }) => (isOpen ? "#e0e0e0" : "#fff")};
+  background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "#fff")};
   display: flex;
   align-items: center;
   transition: background-color 0.3s;
   border: 1px dashed transparent;
 
   &:hover {
-    background-color: #e0e0e0;
+    background-color: #f7f7f7;
   }
 
   &:focus {
@@ -54,7 +60,14 @@ const CategoryButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    font-size: 18px;
+    font-size: 28px;
+    grid-area: nav-cat;
+    width: fit-content;
+    padding: 0px;
+
+    &:hover {
+      background-color: transparent;
+    }
   }
 `
 
@@ -188,6 +201,7 @@ function NavItem(props) {
   const btnRef = useRef(null)
   const [dropdownLeft, setDropdownLeft] = useState(0)
   const [setIsScrollDisabled] = useScrollControl()
+  const isMobileView = useMobileView()
 
   useEffect(() => {
     if (open) {
@@ -212,20 +226,26 @@ function NavItem(props) {
   return (
     <>
       <Backdrop isOpen={open} onClick={() => setOpen(!open)} />
-      <CategoryButton
-        onClick={() => setOpen(!open)}
-        onKeyDown={handleKeyDown}
-        ref={btnRef}
-        isOpen={open}
-        aria-haspopup="true"
-        aria-expanded={open}
-        className={open ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
-      >
-        <span>Categories</span>
-        <div className={`arrow-icon ${open ? "rotate-arrow" : ""}`}>
-          <RiArrowDownSLine />
-        </div>
-      </CategoryButton>
+      {isMobileView ? (
+        <CategoryButton isOpen={!open} onClick={() => setOpen(!open)}>
+          <FiMenu />
+        </CategoryButton>
+      ) : (
+        <CategoryButton
+          onClick={() => setOpen(!open)}
+          onKeyDown={handleKeyDown}
+          ref={btnRef}
+          isOpen={open}
+          aria-haspopup="true"
+          aria-expanded={open}
+          className={open ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
+        >
+          <span>Categories</span>
+          <div className={`arrow-icon ${open ? "rotate-arrow" : ""}`}>
+            <RiArrowDownSLine />
+          </div>
+        </CategoryButton>
+      )}
       {open && React.cloneElement(props.children, { dropdownLeft, setOpen })}
     </>
   )

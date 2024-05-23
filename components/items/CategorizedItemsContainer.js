@@ -10,6 +10,10 @@ const CategorizedItemsContainer = styled.div`
   transition: opacity 0.3s ease-in-out;
   opacity: ${(props) => (props.isVisible ? 1 : 0)};
   z-index: 100;
+
+  @media (max-width: 768px) {
+    max-width: 100vw;
+  }
 `
 
 function CategorizedItems({ children, isVisible }) {
