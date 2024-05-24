@@ -24,7 +24,7 @@ const Dropdown = styled.div`
   left: ${(props) => props.left}px; // Dynamic left position
 
   @media (max-width: 768px) {
-    left: 0;
+    top: 125px;
   }
 `
 
@@ -167,13 +167,20 @@ const CategoryDropdown = () => {
 const useScrollControl = () => {
   const [isScrollDisabled, setIsScrollDisabled] = useState(false)
 
+  // Function to disable scrolling and add padding to compensate for scrollbar removal
   const disableScroll = useCallback(() => {
+    // Calculate the width of the scrollbar
+    const scrollBarWidth =
+      window.innerWidth - document.documentElement.clientWidth
+
     document.body.style.overflowY = "hidden"
-    document.body.style.paddingRight = "15px"
+    // Add padding to the right to compensate for the removed scrollbar
+    document.body.style.paddingRight = `${scrollBarWidth}px`
     document.body.style.touchAction = "none"
     document.body.style.overscrollBehavior = "none"
   }, [])
 
+  // Function to enable scrolling and reset the body styles
   const enableScroll = useCallback(() => {
     document.body.style.overflowY = "auto"
     document.body.style.paddingRight = "inherit"
@@ -181,6 +188,7 @@ const useScrollControl = () => {
     document.body.style.overscrollBehavior = "auto"
   }, [])
 
+  // Effect to enable/disable scroll based on the isScrollDisabled state
   useEffect(() => {
     if (isScrollDisabled) {
       disableScroll()
@@ -188,6 +196,7 @@ const useScrollControl = () => {
       enableScroll()
     }
 
+    // Cleanup function to enable scroll when component is unmounted or effect re-runs
     return () => {
       enableScroll()
     }
@@ -246,7 +255,11 @@ function NavItem(props) {
           </div>
         </CategoryButton>
       )}
-      {open && React.cloneElement(props.children, { dropdownLeft, setOpen })}
+      {open &&
+        React.cloneElement(props.children, {
+          dropdownLeft: isMobileView ? 0 : dropdownLeft,
+          setOpen,
+        })}
     </>
   )
 }
