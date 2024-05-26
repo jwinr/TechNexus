@@ -20,8 +20,19 @@ const Dropdown = styled.div`
   overflow: hidden;
   z-index: -100;
   box-sizing: content-box;
-  transition: height var(--speed) ease;
+  transition: visibility 0s, transform 0.3s cubic-bezier(0.3, 0.85, 0, 1),
+    height var(--speed) ease;
   left: ${(props) => props.left}px; // Dynamic left position
+  transform: translateY(-1000px); // Initially move it up slightly and hide
+
+  &.visible {
+    visibility: visible;
+    transform: translateY(0); // Slide it into place
+  }
+
+  &.invisible {
+    transform: translateY(-1000px);
+  }
 
   @media (max-width: 768px) {
     top: 125px;
@@ -255,11 +266,11 @@ function NavItem(props) {
           </div>
         </CategoryButton>
       )}
-      {open &&
-        React.cloneElement(props.children, {
-          dropdownLeft: isMobileView ? 0 : dropdownLeft,
-          setOpen,
-        })}
+      {React.cloneElement(props.children, {
+        dropdownLeft: isMobileView ? 0 : dropdownLeft,
+        setOpen,
+        className: open ? "visible" : "invisible", // Add the visibility class
+      })}
     </>
   )
 }
@@ -318,7 +329,7 @@ DropdownItem.defaultProps = {
   hasSubCategories: false,
 }
 
-function DropdownMenu({ categories, dropdownLeft, setOpen }) {
+function DropdownMenu({ categories, dropdownLeft, setOpen, className }) {
   const [activeMenu, setActiveMenu] = useState("main")
   const [menuHeight, setMenuHeight] = useState(null)
   const dropdownRef = useRef(null)
@@ -355,6 +366,7 @@ function DropdownMenu({ categories, dropdownLeft, setOpen }) {
       ref={dropdownRef}
       role="menu"
       onKeyDown={handleKeyDown}
+      className={className} // Apply the visibility class
     >
       <CSSTransition
         in={activeMenu === "main"}
@@ -438,10 +450,12 @@ DropdownMenu.propTypes = {
   ).isRequired,
   dropdownLeft: PropTypes.number.isRequired,
   setOpen: PropTypes.func.isRequired,
+  className: PropTypes.string,
 }
 
 DropdownMenu.defaultProps = {
   dropdownLeft: 0,
+  className: "",
 }
 
 export default CategoryDropdown
