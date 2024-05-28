@@ -1,5 +1,13 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
+import PropTypes from "prop-types"
+import styled from "styled-components"
+import { CSSTransition } from "react-transition-group"
+import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
+import Link from "next/link"
+import Backdrop from "../common/Backdrop"
+import { debounce } from "lodash"
 import { Auth } from "aws-amplify"
+import { signOut } from "aws-amplify/auth"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUserPen } from "@fortawesome/free-solid-svg-icons"
 import { LiaHeart } from "react-icons/lia"
@@ -7,97 +15,142 @@ import { LiaUser } from "react-icons/lia"
 import { CiViewList } from "react-icons/ci"
 import { IoIosLogOut } from "react-icons/io"
 import { HiOutlineCog8Tooth } from "react-icons/hi2"
-import styled from "styled-components"
-import Backdrop from "../common/Backdrop"
-import { StyleSheetManager } from "styled-components"
-
-import { RiArrowDownSLine } from "react-icons/ri"
 
 import { LiaUserCircleSolid } from "react-icons/lia"
 
-import SignInPage from "../../pages/login"
-import SignUpPage from "../../pages/signup"
-
 const Dropdown = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-
-  @media (max-width: 768px) {
-    grid-area: nav-user;
-  }
-`
-
-const AccDropdown = styled.div`
   position: absolute;
   top: 65px;
+  width: 275px;
   background-color: #fff;
   border-radius: 0 0 8px 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 10px 20px;
-  width: 275px;
-  right: 14px; /* Position the user dropdown underneath the account button */
-  display: none;
+  padding: 0 20px;
+  overflow: hidden;
   z-index: -100;
-  height: ${({ $menuHeight }) => $menuHeight}px;
-  transition: height 0.3s cubic-bezier(0.3, 0.85, 0, 1);
-  overflow-y: hidden;
+  box-sizing: content-box;
+  transition: visibility 0s, transform 0.3s cubic-bezier(0.3, 0.85, 0, 1),
+    height var(--speed) ease;
+  right: ${(props) => props.right}px; // Dynamic right position
+  transform: translateY(-1000px); // Initially move it up slightly and hide
+
+  &.visible {
+    visibility: visible;
+    transform: translateY(0); // Slide it into place
+  }
+
+  &.invisible {
+    transform: translateY(-1000px);
+  }
 
   @media (max-width: 768px) {
-    width: auto;
-  }
-
-  &.active {
-    display: block;
-    opacity: 1;
-    visibility: visible;
-    transition: 0.3s cubic-bezier(0.3, 0.85, 0, 1);
-    transform-origin: top;
-  }
-
-  &.inactive {
-    display: block;
-    opacity: 0;
-    visibility: hidden;
-    transition: 0.3s cubic-bezier(0.3, 0.85, 0, 1);
-    top: -1000px;
-    transform-origin: top;
+    top: 125px;
   }
 `
 
-const AccPillBtn = styled.button`
+const UserButton = styled.button`
   font-size: 15px;
+  font-weight: 500;
   cursor: pointer;
   color: #333;
   padding-left: 16px;
   padding-right: 8px;
   height: 100%;
   border-radius: 10px;
-  position: relative;
   align-items: center;
   display: flex;
   width: fit-content;
-  justify-content: flex-end;
-  background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "white")};
-  transition: background-color 0.2s;
+  justify-self: flex-end;
+  background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "#fff")};
+  transition: background-color 0.3s;
   border: 1px dashed transparent;
+
+  &:hover {
+    background-color: #f7f7f7;
+  }
 
   &:focus {
     border: 1px dashed rgb(51, 51, 51);
     outline: none;
   }
 
-  &:hover {
-    background-color: ${({ isOpen }) => (isOpen ? "#00599c" : "#f7f7f7")};
-  }
-
-  &:active {
-    background-color: ${({ isOpen }) => (isOpen ? "f7f7f7" : "f7f7f7")};
-  }
-
   &:hover .arrow-icon,
   &.arrow-icon-visible .arrow-icon {
     opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 28px;
+    grid-area: nav-user;
+    width: fit-content;
+    padding: 0px;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+`
+
+const Menu = styled.div`
+  width: 100%;
+
+  & a:focus {
+    text-decoration: underline;
+    outline: none;
+  }
+`
+
+const MenuItem = styled.span`
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background var(--speed);
+  font-size: 16px;
+  color: #000;
+  width: 100%;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus {
+    text-decoration: underline;
+    outline: none;
+  }
+`
+
+const ListHeader = styled.div`
+  height: 50px;
+  display: flex;
+  align-items: center;
+  transition: background var(--speed);
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  width: 100%;
+  text-decoration: none;
+
+  &:focus {
+    text-decoration: underline;
+    outline: none;
+  }
+`
+
+const ReturnButton = styled.div`
+  -webkit-box-align: center;
+  place-items: center;
+  border-radius: 4px;
+  display: flex;
+  margin-right: 8px;
+  cursor: pointer;
+  border: 1px dashed transparent;
+
+  &:focus {
+    border: 1px dashed rgb(51, 51, 51);
+    outline: none;
   }
 `
 
@@ -111,94 +164,8 @@ const IconContainer = styled.div`
   }
 `
 
-const AccTextContainer = styled.div`
-  font-size: 15px;
-  font-weight: 500;
-  color: #333;
-  align-content: center;
-  display: grid;
-  padding-left: 5px;
-
-  @media (max-width: 768px) {
-    display: none; /* Hiding the account text until I figure out where I want it on mobile.. */
-  }
-`
-
-const DropdownWrapper = styled.div`
-  padding-bottom: 15px;
-`
-
 const UserDropdown = () => {
-  const [isUserOpen, setIsUserOpen] = useState(false)
   const [user, setUser] = useState(null)
-  const [showSignIn, setShowSignIn] = useState(false)
-  const [showSignUp, setShowSignUp] = useState(false)
-  const [menuHeight, setMenuHeight] = useState(null)
-  const dropdownRef = useRef()
-
-  useEffect(() => {
-    const updateHeight = () => {
-      if (dropdownRef.current) {
-        const height = dropdownRef.current.scrollHeight + "px"
-        dropdownRef.current.style.setProperty("--menuHeight", height)
-      }
-    }
-
-    if (isUserOpen) {
-      updateHeight()
-      // Could setup a resize observer for dropdownRef.current to handle dynamic content changes..
-    } else {
-      // Reset the height when the dropdown is not open
-      dropdownRef.current.style.removeProperty("--menuHeight")
-    }
-  }, [isUserOpen, user, showSignIn, showSignUp]) // Variables that affect the content height
-
-  const toggleDropdown = () => {
-    setIsUserOpen(!isUserOpen)
-    setShowSignIn(false)
-    setShowSignUp(false)
-  }
-
-  const closeMenu = () => {
-    setIsUserOpen(false)
-  }
-
-  const toggleSignIn = () => {
-    setShowSignIn(!showSignIn) // Toggle the sign-in form display
-  }
-
-  const toggleSignUp = () => {
-    setShowSignUp(!showSignUp) // Toggle the Sign-Up component
-  }
-
-  let userRef = useRef()
-
-  useEffect(() => {
-    let handler = (e) => {
-      if (!userRef.current.contains(e.target)) {
-        setIsUserOpen(false)
-      }
-    }
-
-    document.addEventListener("mousedown", handler)
-
-    return () => {
-      document.removeEventListener("mousedown", handler)
-    }
-  }, [])
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Escape") {
-      closeMenu()
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown)
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [])
 
   const checkUser = async () => {
     try {
@@ -215,150 +182,268 @@ const UserDropdown = () => {
     checkUser()
   }, [])
 
-  const handleSignInSuccess = () => {
-    setIsUserOpen(false) // Close the dropdown after successful sign-in
+  const handleSignOut = async () => {
+    await signOut()
   }
 
   const userName = user
     ? `${user.attributes.given_name} ${user.attributes.family_name}`
     : "Returning customer?"
 
-  const signOut = async () => {
-    try {
-      await Auth.signOut()
-      setUser(null)
-    } catch (error) {
-      console.error("error signing out", error)
-    }
-  }
+  return (
+    <NavItem>
+      <DropdownMenu user={user} handleSignOut={handleSignOut} />
+    </NavItem>
+  )
+}
 
+const useScrollControl = () => {
+  const [isScrollDisabled, setIsScrollDisabled] = useState(false)
+
+  // Function to disable scrolling and add padding to compensate for scrollbar removal
+  const disableScroll = useCallback(() => {
+    // Calculate the width of the scrollbar
+    const scrollBarWidth =
+      window.innerWidth - document.documentElement.clientWidth
+
+    document.body.style.overflowY = "hidden"
+    // Add padding to the right to compensate for the removed scrollbar
+    document.body.style.paddingRight = `${scrollBarWidth}px`
+    document.body.style.touchAction = "none"
+    document.body.style.overscrollBehavior = "none"
+  }, [])
+
+  // Function to enable scrolling and reset the body styles
+  const enableScroll = useCallback(() => {
+    document.body.style.overflowY = "auto"
+    document.body.style.paddingRight = "inherit"
+    document.body.style.touchAction = "auto"
+    document.body.style.overscrollBehavior = "auto"
+  }, [])
+
+  // Effect to enable/disable scroll based on the isScrollDisabled state
   useEffect(() => {
-    // Function to disable scroll
-    const disableScroll = () => {
-      document.body.style.overflowY = "hidden"
-      document.body.style.paddingRight = "15px"
-      document.body.style.touchAction = "none"
-      document.body.style.overscrollBehavior = "none"
-    }
-
-    // Function to enable scroll
-    const enableScroll = () => {
-      document.body.style.overflowY = "auto"
-      document.body.style.paddingRight = "inherit"
-      document.body.style.touchAction = "auto"
-      document.body.style.overscrollBehavior = "auto"
-    }
-
-    // Event listeners to disable/enable scroll based on dropdown state
-    if (isUserOpen) {
+    if (isScrollDisabled) {
       disableScroll()
     } else {
       enableScroll()
     }
 
-    // Cleanup function to enable scroll when component unmounts
+    // Cleanup function to enable scroll when component is unmounted or effect re-runs
     return () => {
       enableScroll()
     }
-  }, [isUserOpen])
+  }, [isScrollDisabled, disableScroll, enableScroll])
+
+  return [setIsScrollDisabled]
+}
+
+function NavItem(props) {
+  const [open, setOpen] = useState(false)
+  const userBtnRef = useRef(null)
+  const [dropdownRight, setDropdownRight] = useState(0)
+  const [setIsScrollDisabled] = useScrollControl()
+
+  useEffect(() => {
+    if (open) {
+      setIsScrollDisabled(true)
+      if (userBtnRef.current) {
+        const rect = userBtnRef.current.getBoundingClientRect()
+        const viewportWidth = window.innerWidth
+        // Calculate the right position while keeping the dropdown within the viewport
+        const rightPosition = viewportWidth - rect.right - 15 // Offset for the additional padding/margin
+        setDropdownRight(rightPosition)
+        userBtnRef.current.focus()
+      }
+    } else {
+      setIsScrollDisabled(false)
+    }
+  }, [open, setIsScrollDisabled])
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setOpen(false)
+      userBtnRef.current.focus() // Return focus to the button when closed
+    }
+  }
+
+  const handleBackdropClick = () => {
+    setOpen(false)
+  }
 
   return (
-    <StyleSheetManager
-      shouldForwardProp={(prop) => prop !== "isOpen" && prop !== "$menuHeight"}
+    <>
+      <Backdrop isOpen={open} onClick={handleBackdropClick} />
+      <UserButton
+        onClick={() => setOpen(!open)}
+        onKeyDown={handleKeyDown}
+        ref={userBtnRef}
+        isOpen={open}
+        aria-haspopup="true"
+        aria-expanded={open}
+        className={open ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
+      >
+        <IconContainer>
+          <LiaUserCircleSolid />
+        </IconContainer>
+        <span>Account</span>
+        <div className={`arrow-icon ${open ? "rotate-arrow" : ""}`}>
+          <RiArrowDownSLine />
+        </div>
+      </UserButton>
+      {React.cloneElement(props.children, {
+        dropdownRight: dropdownRight,
+        setOpen,
+        className: open ? "visible" : "invisible", // Add the visibility class
+      })}
+    </>
+  )
+}
+
+function DropdownItem({
+  children,
+  goToMenu,
+  hasSubCategories,
+  href,
+  setActiveMenu,
+  setOpen,
+  onClick,
+}) {
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (goToMenu) {
+        setActiveMenu(goToMenu)
+      } else {
+        setOpen(false)
+        if (onClick) onClick()
+      }
+    }
+  }
+
+  return hasSubCategories ? (
+    <MenuItem
+      onClick={() => goToMenu && setActiveMenu(goToMenu)}
+      role="menuitem"
+      tabIndex={0} // Make the subcategory focusable via the tab key
+      onKeyDown={handleKeyDown}
     >
-      <Dropdown ref={userRef}>
-        <AccPillBtn
-          isOpen={isUserOpen}
-          onClick={toggleDropdown}
-          className={isUserOpen ? "arrow-icon-visible" : ""}
-        >
-          <IconContainer>
-            <LiaUserCircleSolid />
-          </IconContainer>
-          <AccTextContainer>Account</AccTextContainer>
-          <div className="arrow-icon">
-            {isUserOpen ? (
-              <RiArrowDownSLine className="arrow-icon rotate-arrow" />
-            ) : (
-              <RiArrowDownSLine className="arrow-icon" />
-            )}
-          </div>
-        </AccPillBtn>
-        <Backdrop isOpen={isUserOpen} onClick={closeMenu} />
-        <AccDropdown
-          ref={dropdownRef}
-          className={isUserOpen ? "active" : "inactive"}
-          style={{ height: "var(--menuHeight, auto)" }}
-        >
-          {user && (
-            <DropdownWrapper>
-              <ul className="user-info-list">
-                <div className="category-list-header">{userName}</div>
-                <li className="user-item">
-                  <CiViewList className="user-info-icon" />
-                  <a href="#">Orders</a>
-                </li>
-                <li className="user-item">
-                  <LiaHeart className="user-info-icon" />
-                  <a href="#">Wishlist</a>
-                </li>
-                <li className="user-item">
-                  <LiaUser className="user-info-icon" />
-                  <a href="#">Profile</a>
-                </li>
-                <li className="user-item">
-                  <HiOutlineCog8Tooth className="user-info-icon" />
-                  <a href="#">Account Settings</a>
-                </li>
-                <li className="user-item">
-                  <IoIosLogOut className="user-info-icon" />
-                  <a href="#" onClick={signOut}>
-                    Logout
-                  </a>
-                </li>
-              </ul>
-            </DropdownWrapper>
-          )}
-          {!user && (
-            <>
-              {showSignIn && (
-                // Show sign in form
-                <DropdownWrapper>
-                  <SignInPage
-                    isUserOpen={isUserOpen}
-                    onSignInSuccess={handleSignInSuccess}
-                  />
-                </DropdownWrapper>
-              )}
-              {!showSignUp && !showSignIn && (
-                // Show the sign in / registration buttons only if we aren't showing the other forms
-                <>
-                  <button
-                    className="user-dropdown-signup-btn"
-                    onClick={toggleSignIn}
-                  >
-                    Sign In
-                  </button>
-                  <button className="user-item" onClick={toggleSignUp}>
-                    <FontAwesomeIcon
-                      icon={faUserPen}
-                      className="user-info-icon"
-                    />
-                    Create Account
-                  </button>
-                </>
-              )}
-            </>
-          )}
-          {showSignUp && (
-            // Show sign up form
-            <DropdownWrapper>
-              <SignUpPage isUserOpen={isUserOpen} />
-            </DropdownWrapper>
-          )}
-        </AccDropdown>
-      </Dropdown>
-    </StyleSheetManager>
+      {children}
+    </MenuItem>
+  ) : href ? (
+    <Link href={href} passHref>
+      <MenuItem onClick={() => setOpen(false)} role="menuitem">
+        {children}
+      </MenuItem>
+    </Link>
+  ) : (
+    <MenuItem
+      onClick={() => {
+        setOpen(false)
+        if (onClick) onClick()
+      }}
+      role="menuitem"
+    >
+      {children}
+    </MenuItem>
+  )
+}
+
+function DropdownMenu({ dropdownRight, setOpen, className, handleSignOut }) {
+  const [activeMenu, setActiveMenu] = useState("main")
+  const [menuHeight, setMenuHeight] = useState(null)
+  const userDropdownRef = useRef(null)
+
+  useEffect(() => {
+    setMenuHeight(userDropdownRef.current?.firstChild.offsetHeight)
+  }, [])
+
+  function calcHeight(el) {
+    const height = el.offsetHeight
+    setMenuHeight(height)
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(e.target)
+      ) {
+        setOpen(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [setOpen])
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setOpen(false)
+    }
+  }
+
+  return (
+    <Dropdown
+      style={{ height: menuHeight, right: dropdownRight }}
+      ref={userDropdownRef}
+      role="menu"
+      onKeyDown={handleKeyDown}
+      className={className} // Apply the visibility class
+    >
+      <CSSTransition
+        in={activeMenu === "main"}
+        timeout={500}
+        classNames="menu-primary"
+        unmountOnExit
+        onEnter={calcHeight}
+      >
+        <Menu>
+          <ListHeader>User Menu</ListHeader>
+          <DropdownItem
+            href="/orders"
+            setActiveMenu={setActiveMenu}
+            setOpen={setOpen}
+          >
+            <CiViewList />
+            Orders
+          </DropdownItem>
+          <DropdownItem
+            href="/wishlist"
+            setActiveMenu={setActiveMenu}
+            setOpen={setOpen}
+          >
+            <LiaHeart />
+            Wishlist
+          </DropdownItem>
+          <DropdownItem
+            href="/profile"
+            setActiveMenu={setActiveMenu}
+            setOpen={setOpen}
+          >
+            <LiaUser />
+            Profile
+          </DropdownItem>
+          <DropdownItem
+            href="/account-settings"
+            setActiveMenu={setActiveMenu}
+            setOpen={setOpen}
+          >
+            <HiOutlineCog8Tooth />
+            Account Settings
+          </DropdownItem>
+          <DropdownItem
+            onClick={handleSignOut}
+            setActiveMenu={setActiveMenu}
+            setOpen={setOpen}
+          >
+            <IoIosLogOut />
+            Logout
+          </DropdownItem>
+        </Menu>
+      </CSSTransition>
+    </Dropdown>
   )
 }
 

@@ -1,7 +1,9 @@
 import React from "react"
 import styled from "styled-components"
 
-const Backdrop = styled.div`
+const e = React.createElement
+
+const Backdrop = styled(({ isOpen, ...props }) => e("div", props))`
   position: absolute;
   top: 0;
   left: 0;

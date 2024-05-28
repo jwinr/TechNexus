@@ -76,25 +76,14 @@ export default function CategoryPage() {
   const { slug } = router.query
   const [categoryData, setCategoryData] = useState(null)
   const [loading, setLoading] = useState(true)
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
   const productsPerPage = 16
-
-  // Initial non-filtered state
   const [showFilteredItems, setShowFilteredItems] = useState(false)
-
-  // State to track whether filters or sorting options are active
   const [isFilterActive, setIsFilterActive] = useState(false)
-
-  // State to manage filtered items
   const [filteredItems, setFilteredItems] = useState(categoryData)
-
-  // State to manage sorting criteria
   const [sortBy, setSortBy] = useState("Most Popular")
-
-  // Mobile view tracking
   const isMobileView = useMobileView()
+  const { addToCart } = useContext(SiteContext)
 
   // Reset isFilterActive when the category changes (new page is loaded)
   useEffect(() => {
@@ -220,8 +209,6 @@ export default function CategoryPage() {
 
   // Calculate the total number of pages
   const totalPages = Math.ceil(totalItemCount / productsPerPage)
-
-  const { addToCart, cart, setCart } = useContext(SiteContext)
 
   const addToCartFromList = (product) => {
     product["quantity"] = 1 // Since users cannot select quantities directly from the list, start with one unit

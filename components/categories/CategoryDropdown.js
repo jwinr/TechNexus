@@ -39,7 +39,9 @@ const Dropdown = styled.div`
   }
 `
 
-const CategoryButton = styled.button`
+const e = React.createElement
+
+const CategoryButton = styled(({ isOpen, ...props }) => e("button", props))`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -275,10 +277,6 @@ function NavItem(props) {
   )
 }
 
-NavItem.propTypes = {
-  children: PropTypes.node.isRequired,
-}
-
 function DropdownItem({
   children,
   goToMenu,
@@ -313,20 +311,6 @@ function DropdownItem({
       </MenuItem>
     </Link>
   )
-}
-
-DropdownItem.propTypes = {
-  children: PropTypes.node.isRequired,
-  goToMenu: PropTypes.string,
-  hasSubCategories: PropTypes.bool,
-  href: PropTypes.string.isRequired,
-  setActiveMenu: PropTypes.func.isRequired,
-  setOpen: PropTypes.func.isRequired,
-}
-
-DropdownItem.defaultProps = {
-  goToMenu: null,
-  hasSubCategories: false,
 }
 
 function DropdownMenu({ categories, dropdownLeft, setOpen, className }) {
@@ -431,31 +415,6 @@ function DropdownMenu({ categories, dropdownLeft, setOpen, className }) {
       ))}
     </Dropdown>
   )
-}
-
-DropdownMenu.propTypes = {
-  categories: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      slug: PropTypes.string.isRequired,
-      subCategories: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.number.isRequired,
-          name: PropTypes.string.isRequired,
-          slug: PropTypes.string.isRequired,
-        })
-      ),
-    })
-  ).isRequired,
-  dropdownLeft: PropTypes.number.isRequired,
-  setOpen: PropTypes.func.isRequired,
-  className: PropTypes.string,
-}
-
-DropdownMenu.defaultProps = {
-  dropdownLeft: 0,
-  className: "",
 }
 
 export default CategoryDropdown

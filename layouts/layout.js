@@ -97,7 +97,6 @@ export default function Layout({ children }) {
           </Logo>
           <CategoryDropdown />
           <ProductSearchBar />
-          <UserDropdown aria-label="User Menu" />
           <CartLink aria-label="Shopping Cart" />
         </Navbar>
       </NavbarWrapper>
