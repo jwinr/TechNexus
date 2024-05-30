@@ -2,6 +2,9 @@
 import React, { useEffect } from "react"
 import styled, { css } from "styled-components"
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
+import { filter } from "../../utils/helpers.js"
+
+const buttonFilter = filter("button")
 
 const PaginationWrapper = styled.div`
   display: flex;
@@ -12,9 +15,7 @@ const PaginationWrapper = styled.div`
   width: fit-content;
 `
 
-const e = React.createElement
-
-const PaginationButton = styled(({ isActive, ...props }) => e("button", props))`
+const PaginationButton = styled(buttonFilter(["isActive"]))`
   position: relative;
   border: none;
   display: flex;

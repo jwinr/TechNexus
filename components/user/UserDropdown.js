@@ -17,6 +17,8 @@ import { HiOutlineCog8Tooth } from "react-icons/hi2"
 
 import { LiaUserCircleSolid } from "react-icons/lia"
 
+import { filter } from "../../utils/helpers.js"
+
 const Dropdown = styled.div`
   position: absolute;
   top: 65px;
@@ -47,11 +49,9 @@ const Dropdown = styled.div`
   }
 `
 
-const e = React.createElement
+const buttonFilter = filter("button")
 
-const UserButton = React.forwardRef(({ isOpen, ...props }, ref) =>
-  e("button", { ref, ...props })
-)
+const UserButton = buttonFilter(["isOpen"])
 
 const StyledUserButton = styled(UserButton)`
   font-size: 15px;

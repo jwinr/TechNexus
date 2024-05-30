@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import styled, { keyframes, css } from "styled-components"
 import { IoCart } from "react-icons/io5"
+import { filter } from "../../utils/helpers.js"
 
 const Container = styled.div`
   width: 100%;
@@ -8,9 +9,9 @@ const Container = styled.div`
   max-width: 480px;
 `
 
-const e = React.createElement
+const buttonFilter = filter("button")
 
-const Button = styled(({ isLoading, ...props }) => e("button", props))`
+const Button = styled(buttonFilter(["isLoading"]))`
   width: 100%;
   height: 44px;
   font-size: 1rem;

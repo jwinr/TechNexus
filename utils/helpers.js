@@ -1,35 +1,12 @@
-function slugify(string) {
-  const a =
-    "àáäâãåăæąçćčđďèéěėëêęğǵḧìíïîįłḿǹńňñòóöôœøṕŕřßşśšșťțùúüûǘůűūųẃẍÿýźžż·/_,:;"
-  const b =
-    "aaaaaaaaacccddeeeeeeegghiiiiilmnnnnooooooprrsssssttuuuuuuuuuwxyyzzz------"
-  const p = new RegExp(a.split("").join("|"), "g")
+import React from "react"
 
-  return string
-    .toString()
-    .toLowerCase()
-    .replace(/\s+/g, "-") // Replace spaces with -
-    .replace(p, (c) => b.charAt(a.indexOf(c))) // Replace special characters
-    .replace(/&/g, "-and-") // Replace & with 'and'
-    .replace(/[^\w-]+/g, "") // Remove all non-word characters
-    .replace(/--+/g, "-") // Replace multiple - with single -
-    .replace(/^-+/, "") // Trim - from start of text
-    .replace(/-+$/, "") // Trim - from end of text
-}
+// Helper function to filter out unwanted props and prevent the "unknown prop on DOM element" console warning
+const e = React.createElement
 
-function titleIfy(slug) {
-  // Regular expression to capitalize the first letter of each word and replace dashes with spaces
-  return slug.replace(/-/g, " ").replace(/(?:^|\s)\S/g, function (a) {
-    return a.toUpperCase()
+const filter = (tag) => (whitelist) =>
+  React.forwardRef(({ children, ...props }, ref) => {
+    whitelist.forEach((prop) => delete props[prop])
+    return e(tag, { ref, ...props }, children)
   })
-}
 
-function getTrimmedString(string, length = 8) {
-  if (string.length <= length) {
-    return string
-  } else {
-    return string.substring(0, length) + "..."
-  }
-}
-
-export { slugify, titleIfy, getTrimmedString }
+export { filter }

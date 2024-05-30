@@ -7,6 +7,7 @@ import { FiMenu } from "react-icons/fi"
 import Link from "next/link"
 import Backdrop from "../common/Backdrop"
 import { debounce } from "lodash"
+import { filter } from "../../utils/helpers.js"
 
 const Dropdown = styled.div`
   position: absolute;
@@ -38,11 +39,9 @@ const Dropdown = styled.div`
   }
 `
 
-const e = React.createElement
+const buttonFilter = filter("button")
 
-const CategoryButton = React.forwardRef(({ isOpen, ...props }, ref) =>
-  e("button", { ref, ...props })
-)
+const CategoryButton = buttonFilter(["isOpen"])
 
 const StyledCategoryButton = styled(CategoryButton)`
   font-size: 15px;
