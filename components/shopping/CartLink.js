@@ -76,7 +76,7 @@ function CartLink() {
   }`
 
   return (
-    <Container href="/cart" tabindex="-1" aria-label={ariaLabel}>
+    <Container href="/cart" tabIndex="-1" aria-label={ariaLabel}>
       <Button aria-label={ariaLabel}>
         <Wrapper>
           <LiaShoppingCartSolid />

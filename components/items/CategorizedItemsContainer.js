@@ -1,7 +1,11 @@
 import React from "react"
 import styled from "styled-components"
 
-const CategorizedItemsContainer = styled.div`
+const e = React.createElement
+
+const CategorizedItemsContainer = styled(({ isVisible, ...props }) =>
+  e("div", props)
+)`
   display: grid;
   grid-area: items;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

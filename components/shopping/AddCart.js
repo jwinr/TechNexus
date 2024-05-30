@@ -8,7 +8,9 @@ const Container = styled.div`
   max-width: 480px;
 `
 
-const Button = styled.button`
+const e = React.createElement
+
+const Button = styled(({ isLoading, ...props }) => e("button", props))`
   width: 100%;
   height: 44px;
   font-size: 1rem;

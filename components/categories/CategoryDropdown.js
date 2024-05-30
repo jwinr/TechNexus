@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
-import PropTypes from "prop-types"
 import styled from "styled-components"
 import { CSSTransition } from "react-transition-group"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
@@ -41,7 +40,11 @@ const Dropdown = styled.div`
 
 const e = React.createElement
 
-const CategoryButton = styled(({ isOpen, ...props }) => e("button", props))`
+const CategoryButton = React.forwardRef(({ isOpen, ...props }, ref) =>
+  e("button", { ref, ...props })
+)
+
+const StyledCategoryButton = styled(CategoryButton)`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -249,11 +252,11 @@ function NavItem(props) {
     <>
       <Backdrop isOpen={open} onClick={() => setOpen(!open)} />
       {isMobileView ? (
-        <CategoryButton isOpen={!open} onClick={() => setOpen(!open)}>
+        <StyledCategoryButton isOpen={!open} onClick={() => setOpen(!open)}>
           <FiMenu />
-        </CategoryButton>
+        </StyledCategoryButton>
       ) : (
-        <CategoryButton
+        <StyledCategoryButton
           onClick={() => setOpen(!open)}
           onKeyDown={handleKeyDown}
           ref={btnRef}
@@ -266,7 +269,7 @@ function NavItem(props) {
           <div className={`arrow-icon ${open ? "rotate-arrow" : ""}`}>
             <RiArrowDownSLine />
           </div>
-        </CategoryButton>
+        </StyledCategoryButton>
       )}
       {React.cloneElement(props.children, {
         dropdownLeft: isMobileView ? 0 : dropdownLeft,

@@ -12,7 +12,9 @@ const PaginationWrapper = styled.div`
   width: fit-content;
 `
 
-const PaginationButton = styled.button`
+const e = React.createElement
+
+const PaginationButton = styled(({ isActive, ...props }) => e("button", props))`
   position: relative;
   border: none;
   display: flex;
