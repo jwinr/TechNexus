@@ -1,23 +1,13 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
 import styled from "styled-components"
-import { CSSTransition } from "react-transition-group"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
+import { LiaUserCircleSolid } from "react-icons/lia"
+import { CSSTransition } from "react-transition-group"
 import Link from "next/link"
 import Backdrop from "../common/Backdrop"
-import { debounce } from "lodash"
-import { Auth } from "aws-amplify"
-import { signOut } from "aws-amplify/auth"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faUserPen } from "@fortawesome/free-solid-svg-icons"
-import { LiaHeart } from "react-icons/lia"
-import { LiaUser } from "react-icons/lia"
-import { CiViewList } from "react-icons/ci"
-import { IoIosLogOut } from "react-icons/io"
-import { HiOutlineCog8Tooth } from "react-icons/hi2"
-
-import { LiaUserCircleSolid } from "react-icons/lia"
-
+import { getCurrentUser, fetchAuthSession, signOut } from "aws-amplify/auth"
 import { filter } from "../../utils/helpers.js"
+import { config } from "../../utils/config.js"
 
 const Dropdown = styled.div`
   position: absolute;
@@ -144,21 +134,6 @@ const ListHeader = styled.div`
   }
 `
 
-const ReturnButton = styled.div`
-  -webkit-box-align: center;
-  place-items: center;
-  border-radius: 4px;
-  display: flex;
-  margin-right: 8px;
-  cursor: pointer;
-  border: 1px dashed transparent;
-
-  &:focus {
-    border: 1px dashed rgb(51, 51, 51);
-    outline: none;
-  }
-`
-
 const IconContainer = styled.div`
   font-size: 26px;
   justify-content: center;
@@ -169,15 +144,58 @@ const IconContainer = styled.div`
   }
 `
 
+const BtnText = styled.div`
+  padding: 0 5px;
+`
+
 const UserDropdown = ({ isOpen, onToggle }) => {
   const [user, setUser] = useState(null)
 
+  // Mock getCurrentUser function for development environment
+  const mockGetCurrentUser = async () => {
+    return {
+      username: "mockUser",
+      userId: "mockUserId",
+      signInDetails: { provider: "mockProvider" },
+    }
+  }
+
+  /* Mock function to simulate no valid sign-in
+  const mockGetCurrentUser = async () => {
+    throw new Error("No user signed in")
+  }
+  */
+
+  // Mock fetchAuthSession function
+  const mockFetchAuthSession = async () => {
+    return {
+      tokens: {
+        idToken: "mockIdToken",
+        accessToken: "mockAccessToken",
+      },
+    }
+  }
+
   const checkUser = async () => {
     try {
-      const data = await Auth.currentAuthenticatedUser()
-      setUser(data)
+      const currentUser =
+        config.envType === "development"
+          ? await mockGetCurrentUser()
+          : await getCurrentUser()
+
+      const session =
+        config.envType === "development"
+          ? await mockFetchAuthSession()
+          : await fetchAuthSession()
+
+      //console.log("username", currentUser.username)
+      //console.log("user id", currentUser.userId)
+      //console.log("sign-in details", currentUser.signInDetails)
+      //console.log("id token", session.tokens.idToken)
+      //console.log("access token", session.tokens.accessToken)
+
+      setUser(currentUser)
     } catch (error) {
-      // Handle the case where no user is signed in
       setUser(null)
       console.error("No user signed in:", error)
     }
@@ -191,12 +209,8 @@ const UserDropdown = ({ isOpen, onToggle }) => {
     await signOut()
   }
 
-  const userName = user
-    ? `${user.attributes.given_name} ${user.attributes.family_name}`
-    : "Returning customer?"
-
   return (
-    <NavItem isOpen={isOpen} onToggle={onToggle}>
+    <NavItem isOpen={isOpen} onToggle={onToggle} user={user}>
       <DropdownMenu user={user} handleSignOut={handleSignOut} />
     </NavItem>
   )
@@ -244,8 +258,7 @@ const useScrollControl = () => {
 }
 
 function NavItem(props) {
-  const { isOpen, onToggle } = props
-  const [open, setOpen] = useState(false)
+  const { isOpen, onToggle, user } = props
   const userBtnRef = useRef(null)
   const [dropdownRight, setDropdownRight] = useState(0)
   const [setIsScrollDisabled] = useScrollControl()
@@ -288,7 +301,7 @@ function NavItem(props) {
         <IconContainer>
           <LiaUserCircleSolid />
         </IconContainer>
-        <span>Account</span>
+        <BtnText>{user ? "Hi, " + user.username : "Sign in"}</BtnText>
         <div className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}>
           <RiArrowDownSLine />
         </div>
@@ -297,41 +310,21 @@ function NavItem(props) {
         dropdownRight: dropdownRight,
         setOpen: onToggle,
         className: isOpen ? "visible" : "invisible", // Add the visibility class
+        user: user,
       })}
     </>
   )
 }
 
-function DropdownItem({
-  children,
-  goToMenu,
-  hasSubCategories,
-  href,
-  setActiveMenu,
-  setOpen,
-  onClick,
-}) {
+function DropdownItem({ children, href, setOpen, onClick }) {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      if (goToMenu) {
-        setActiveMenu(goToMenu)
-      } else {
-        setOpen(false)
-        if (onClick) onClick()
-      }
+      setOpen(false)
+      if (onClick) onClick()
     }
   }
 
-  return hasSubCategories ? (
-    <MenuItem
-      onClick={() => goToMenu && setActiveMenu(goToMenu)}
-      role="menuitem"
-      tabIndex={0} // Make the subcategory focusable via the tab key
-      onKeyDown={handleKeyDown}
-    >
-      {children}
-    </MenuItem>
-  ) : href ? (
+  return href ? (
     <Link href={href} passHref>
       <MenuItem onClick={() => setOpen(false)} role="menuitem">
         {children}
@@ -344,20 +337,29 @@ function DropdownItem({
         if (onClick) onClick()
       }}
       role="menuitem"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
     >
       {children}
     </MenuItem>
   )
 }
 
-function DropdownMenu({ dropdownRight, setOpen, className, handleSignOut }) {
-  const [activeMenu, setActiveMenu] = useState("main")
+function DropdownMenu({
+  dropdownRight,
+  setOpen,
+  className,
+  handleSignOut,
+  user,
+}) {
   const [menuHeight, setMenuHeight] = useState(null)
   const userDropdownRef = useRef(null)
 
   useEffect(() => {
-    setMenuHeight(userDropdownRef.current?.firstChild.offsetHeight)
-  }, [])
+    if (userDropdownRef.current && userDropdownRef.current.firstChild) {
+      setMenuHeight(userDropdownRef.current.firstChild.offsetHeight)
+    }
+  }, [user])
 
   function calcHeight(el) {
     const height = el.offsetHeight
@@ -379,54 +381,49 @@ function DropdownMenu({ dropdownRight, setOpen, className, handleSignOut }) {
       className={className} // Apply the visibility class
     >
       <CSSTransition
-        in={activeMenu === "main"}
+        in={true}
         timeout={500}
         classNames="menu-primary"
         unmountOnExit
         onEnter={calcHeight}
       >
         <Menu>
-          <ListHeader>User Menu</ListHeader>
-          <DropdownItem
-            href="/orders"
-            setActiveMenu={setActiveMenu}
-            setOpen={setOpen}
-          >
-            <CiViewList />
-            Orders
-          </DropdownItem>
-          <DropdownItem
-            href="/wishlist"
-            setActiveMenu={setActiveMenu}
-            setOpen={setOpen}
-          >
-            <LiaHeart />
-            Wishlist
-          </DropdownItem>
-          <DropdownItem
-            href="/profile"
-            setActiveMenu={setActiveMenu}
-            setOpen={setOpen}
-          >
-            <LiaUser />
-            Profile
-          </DropdownItem>
-          <DropdownItem
-            href="/account-settings"
-            setActiveMenu={setActiveMenu}
-            setOpen={setOpen}
-          >
-            <HiOutlineCog8Tooth />
-            Account Settings
-          </DropdownItem>
-          <DropdownItem
-            onClick={handleSignOut}
-            setActiveMenu={setActiveMenu}
-            setOpen={setOpen}
-          >
-            <IoIosLogOut />
-            Logout
-          </DropdownItem>
+          {user ? (
+            <>
+              <ListHeader>Account</ListHeader>
+              <DropdownItem href="/profile" setOpen={setOpen}>
+                Profile
+              </DropdownItem>
+              <DropdownItem href="/orders" setOpen={setOpen}>
+                Orders
+              </DropdownItem>
+              <DropdownItem href="/wishlist" setOpen={setOpen}>
+                Wishlist
+              </DropdownItem>
+              <DropdownItem href="/account-settings" setOpen={setOpen}>
+                Account Settings
+              </DropdownItem>
+              <DropdownItem onClick={handleSignOut} setOpen={setOpen}>
+                Logout
+              </DropdownItem>
+            </>
+          ) : (
+            <>
+              <ListHeader>Account</ListHeader>
+              <DropdownItem href="/login" setOpen={setOpen}>
+                Sign in
+              </DropdownItem>
+              <DropdownItem href="/signup" setOpen={setOpen}>
+                Create Account
+              </DropdownItem>
+              <DropdownItem
+                href="/orders" // Need to modify this to lead to the sign-in component then redirect to the orders page
+                setOpen={setOpen}
+              >
+                Orders
+              </DropdownItem>
+            </>
+          )}
         </Menu>
       </CSSTransition>
     </Dropdown>

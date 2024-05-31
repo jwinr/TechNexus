@@ -149,6 +149,10 @@ const ReturnButton = styled.div`
   }
 `
 
+const BtnText = styled.div`
+  padding: 0 5px;
+`
+
 const CategoryDropdown = ({ isOpen, onToggle }) => {
   const [categories, setCategories] = useState([])
 
@@ -222,7 +226,6 @@ const useScrollControl = () => {
 
 function NavItem(props) {
   const { isOpen, onToggle } = props
-  const [open, setOpen] = useState(false)
   const btnRef = useRef(null)
   const [dropdownLeft, setDropdownLeft] = useState(0)
   const [setIsScrollDisabled] = useScrollControl()
@@ -265,7 +268,7 @@ function NavItem(props) {
           aria-expanded={isOpen}
           className={isOpen ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
         >
-          <span>Categories</span>
+          <BtnText>Categories</BtnText>
           <div className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}>
             <RiArrowDownSLine />
           </div>
