@@ -150,14 +150,14 @@ const ReturnButton = styled.div`
   }
 `
 
-const CategoryDropdown = () => {
+const CategoryDropdown = ({ isOpen, onToggle }) => {
   const [categories, setCategories] = useState([])
 
   const fetchCategories = async () => {
     try {
       const response = await fetch("/api/categories")
       const data = await response.json()
-      console.log("Fetched categories:", data) // Log the fetched categories
+      //console.log("Fetched categories:", data) // Log the fetched categories
       setCategories(data)
     } catch (error) {
       console.error("Error fetching categories:", error)
@@ -174,7 +174,7 @@ const CategoryDropdown = () => {
   }, [debouncedFetchCategories])
 
   return (
-    <NavItem>
+    <NavItem isOpen={isOpen} onToggle={onToggle}>
       <DropdownMenu categories={categories} />
     </NavItem>
   )
@@ -222,6 +222,7 @@ const useScrollControl = () => {
 }
 
 function NavItem(props) {
+  const { isOpen, onToggle } = props
   const [open, setOpen] = useState(false)
   const btnRef = useRef(null)
   const [dropdownLeft, setDropdownLeft] = useState(0)
@@ -229,7 +230,7 @@ function NavItem(props) {
   const isMobileView = useMobileView()
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       setIsScrollDisabled(true)
       if (btnRef.current) {
         const rect = btnRef.current.getBoundingClientRect()
@@ -239,42 +240,42 @@ function NavItem(props) {
     } else {
       setIsScrollDisabled(false)
     }
-  }, [open, setIsScrollDisabled])
+  }, [isOpen, setIsScrollDisabled])
 
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {
-      setOpen(false)
+      onToggle()
       btnRef.current.focus() // Return focus to the button when closed
     }
   }
 
   return (
     <>
-      <Backdrop isOpen={open} onClick={() => setOpen(!open)} />
+      <Backdrop isOpen={isOpen} onClick={onToggle} />
       {isMobileView ? (
-        <StyledCategoryButton isOpen={!open} onClick={() => setOpen(!open)}>
+        <StyledCategoryButton isOpen={!isOpen} onClick={onToggle}>
           <FiMenu />
         </StyledCategoryButton>
       ) : (
         <StyledCategoryButton
-          onClick={() => setOpen(!open)}
+          onClick={onToggle}
           onKeyDown={handleKeyDown}
           ref={btnRef}
-          isOpen={open}
+          isOpen={isOpen}
           aria-haspopup="true"
-          aria-expanded={open}
-          className={open ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
+          aria-expanded={isOpen}
+          className={isOpen ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
         >
           <span>Categories</span>
-          <div className={`arrow-icon ${open ? "rotate-arrow" : ""}`}>
+          <div className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}>
             <RiArrowDownSLine />
           </div>
         </StyledCategoryButton>
       )}
       {React.cloneElement(props.children, {
         dropdownLeft: isMobileView ? 0 : dropdownLeft,
-        setOpen,
-        className: open ? "visible" : "invisible", // Add the visibility class
+        setOpen: onToggle,
+        className: isOpen ? "visible" : "invisible", // Add the visibility class
       })}
     </>
   )
@@ -322,8 +323,10 @@ function DropdownMenu({ categories, dropdownLeft, setOpen, className }) {
   const dropdownRef = useRef(null)
 
   useEffect(() => {
-    setMenuHeight(dropdownRef.current?.firstChild.offsetHeight)
-  }, [])
+    if (dropdownRef.current?.firstChild) {
+      setMenuHeight(dropdownRef.current.firstChild.offsetHeight)
+    }
+  }, [categories]) // Recalculate height when categories changes
 
   function calcHeight(el) {
     const height = el.offsetHeight

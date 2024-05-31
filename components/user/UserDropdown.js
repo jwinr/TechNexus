@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
-import PropTypes from "prop-types"
 import styled from "styled-components"
 import { CSSTransition } from "react-transition-group"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
@@ -48,7 +47,13 @@ const Dropdown = styled.div`
   }
 `
 
-const UserButton = styled.button`
+const e = React.createElement
+
+const UserButton = React.forwardRef(({ isOpen, ...props }, ref) =>
+  e("button", { ref, ...props })
+)
+
+const StyledUserButton = styled(UserButton)`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -164,7 +169,7 @@ const IconContainer = styled.div`
   }
 `
 
-const UserDropdown = () => {
+const UserDropdown = ({ isOpen, onToggle }) => {
   const [user, setUser] = useState(null)
 
   const checkUser = async () => {
@@ -191,7 +196,7 @@ const UserDropdown = () => {
     : "Returning customer?"
 
   return (
-    <NavItem>
+    <NavItem isOpen={isOpen} onToggle={onToggle}>
       <DropdownMenu user={user} handleSignOut={handleSignOut} />
     </NavItem>
   )
@@ -239,13 +244,14 @@ const useScrollControl = () => {
 }
 
 function NavItem(props) {
+  const { isOpen, onToggle } = props
   const [open, setOpen] = useState(false)
   const userBtnRef = useRef(null)
   const [dropdownRight, setDropdownRight] = useState(0)
   const [setIsScrollDisabled] = useScrollControl()
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       setIsScrollDisabled(true)
       if (userBtnRef.current) {
         const rect = userBtnRef.current.getBoundingClientRect()
@@ -258,43 +264,39 @@ function NavItem(props) {
     } else {
       setIsScrollDisabled(false)
     }
-  }, [open, setIsScrollDisabled])
+  }, [isOpen, setIsScrollDisabled])
 
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {
-      setOpen(false)
+      onToggle()
       userBtnRef.current.focus() // Return focus to the button when closed
     }
   }
 
-  const handleBackdropClick = () => {
-    setOpen(false)
-  }
-
   return (
     <>
-      <Backdrop isOpen={open} onClick={handleBackdropClick} />
-      <UserButton
-        onClick={() => setOpen(!open)}
+      <Backdrop isOpen={isOpen} onClick={onToggle} />
+      <StyledUserButton
+        onClick={onToggle}
         onKeyDown={handleKeyDown}
         ref={userBtnRef}
-        isOpen={open}
+        isOpen={isOpen}
         aria-haspopup="true"
-        aria-expanded={open}
-        className={open ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
+        aria-expanded={isOpen}
+        className={isOpen ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
       >
         <IconContainer>
           <LiaUserCircleSolid />
         </IconContainer>
         <span>Account</span>
-        <div className={`arrow-icon ${open ? "rotate-arrow" : ""}`}>
+        <div className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}>
           <RiArrowDownSLine />
         </div>
-      </UserButton>
+      </StyledUserButton>
       {React.cloneElement(props.children, {
         dropdownRight: dropdownRight,
-        setOpen,
-        className: open ? "visible" : "invisible", // Add the visibility class
+        setOpen: onToggle,
+        className: isOpen ? "visible" : "invisible", // Add the visibility class
       })}
     </>
   )
@@ -361,22 +363,6 @@ function DropdownMenu({ dropdownRight, setOpen, className, handleSignOut }) {
     const height = el.offsetHeight
     setMenuHeight(height)
   }
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        userDropdownRef.current &&
-        !userDropdownRef.current.contains(e.target)
-      ) {
-        setOpen(false)
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [setOpen])
 
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {

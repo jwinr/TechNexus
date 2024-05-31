@@ -1,3 +1,4 @@
+import { useState } from "react"
 import toast, { Toaster } from "react-hot-toast"
 import Footer from "../components/hero/Footer"
 import ProductSearchBar from "../components/products/ProductSearchBar"
@@ -84,6 +85,8 @@ const Logo = styled.a`
 export default function Layout({ children }) {
   const router = useRouter()
 
+  const [openDropdown, setOpenDropdown] = useState(null)
+
   // Check if the current route is /login
   const isLoginPage = router.pathname === "/login"
 
@@ -95,8 +98,20 @@ export default function Layout({ children }) {
           <Logo href="/" aria-label="Home">
             <BannerLogo alt="TechNexus Logo" />
           </Logo>
-          <CategoryDropdown />
+          <CategoryDropdown
+            isOpen={openDropdown === "category"}
+            onToggle={() =>
+              setOpenDropdown(openDropdown === "category" ? null : "category")
+            }
+          />
           <ProductSearchBar />
+          <UserDropdown
+            isOpen={openDropdown === "user"}
+            onToggle={() =>
+              setOpenDropdown(openDropdown === "user" ? null : "user")
+            }
+            aria-label="User Menu"
+          />
           <CartLink aria-label="Shopping Cart" />
         </Navbar>
       </NavbarWrapper>
