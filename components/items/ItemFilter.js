@@ -223,14 +223,20 @@ function ItemFilter({ inventoryItems, onFilterChange, attributes }) {
       }
     }
 
-    if (filteredItems.length === 0) {
+    // Only reset the filters if they are currently set and inventoryItems is not empty
+    if (
+      filteredItems.length === 0 &&
+      inventoryItems.length > 0 &&
+      (selectedPriceRanges.length > 0 ||
+        Object.keys(selectedAttributes).length > 0)
+    ) {
       // If there are no filtered items, reset the filters
       setSelectedPriceRanges([])
       setSelectedAttributes({})
     }
 
     onFilterChange(filteredItems)
-    //console.log("Filtered Items:", filteredItems)
+    //console.log("Filtered Items:", filteredItems);
   }
 
   const isItemInPriceRange = (item, priceRange) => {

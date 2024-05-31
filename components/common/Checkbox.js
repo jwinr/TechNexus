@@ -89,7 +89,7 @@ const CheckboxWrapper = styled.div`
   }
 `
 
-const Checkbox = ({ id, label, checked, onChange }) => {
+const Checkbox = ({ id, label, checked = false, onChange }) => {
   return (
     <CheckboxWrapper>
       <input

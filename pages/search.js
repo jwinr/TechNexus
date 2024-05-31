@@ -115,8 +115,8 @@ const SearchResultsPage = ({ productQuery }) => {
     setShowFilteredItems(false) // Hide items to trigger the fade-out animation
 
     setTimeout(() => {
-      if (filteredItems.length === 0) {
-        // If there are no filtered items, reset the filters
+      // Only reset the filters if they are currently set and the initial result is not empty
+      if (filteredItems.length === 0 && productQuery.length > 0) {
         setFilteredItems(productQuery.products)
         setIsFilterActive(false)
 
