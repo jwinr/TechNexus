@@ -9,6 +9,7 @@ import Cookies from "js-cookie"
 import { jwtDecode } from "jwt-decode"
 import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
 import SignUpPage from "./signup"
+import ForgotPassword from "./forgot-password.js"
 import LogoSymbol from "../public/logo_n.svg"
 import { config } from "../utils/config.js"
 
@@ -285,6 +286,7 @@ const Login = () => {
   const [password, setPassword] = useState("")
   const [keepSignedIn, setKeepSignedIn] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
+  const [showResetPassword, setShowResetPassword] = useState(false)
   const router = useRouter()
   const [token, setToken] = useState("")
   const [showTooltip, setShowTooltip] = useState(false)
@@ -302,6 +304,10 @@ const Login = () => {
     setShowSignUp(!showSignUp)
   }
 
+  const togglePasswordReset = () => {
+    setShowResetPassword(!showResetPassword)
+  }
+
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken")
     if (storedToken && keepSignedIn) {
@@ -315,6 +321,11 @@ const Login = () => {
     // Simplified regex to catch some invalid formats
     const regex = /.+@\S+\.\S+$/
     return regex.test(email)
+  }
+
+  const handlePasswordReset = () => {
+    setShowResetPassword(true)
+    setEmailValid(validateEmailDomain(username))
   }
 
   const handleEmailBlur = () => {
@@ -372,10 +383,6 @@ const Login = () => {
 
   const handleSignIn = async () => {
     try {
-      // Conditionally use the mock signIn function
-      const signInFunction =
-        config.envType === "development" ? signInMock : signIn
-
       let formValid = true // Flag to track overall form validity
 
       // Loop through the input fields
@@ -410,13 +417,12 @@ const Login = () => {
       }
 
       // Call signIn with username and password
-      const isSignedIn = await signInFunction({ username, password })
-
-      // TODO: implement the nextStep property?
+      const isSignedIn = await signIn({ username, password })
 
       console.log("Sign-in response:", isSignedIn)
 
-      if (keepSignedIn && isSignedIn) {
+      if (isSignedIn.isSignedIn) {
+        // Handle successful sign-in
         const { accessToken } = isSignedIn
         const { jwtToken, expiresIn } = accessToken
         setToken(jwtToken)
@@ -434,27 +440,25 @@ const Login = () => {
         setTimeout(() => {
           signOut()
         }, timeUntilExpiration * 1000) // Convert seconds back to milliseconds
+
+        // Navigate to another page
+        router.push("/")
+      } else if (isSignedIn.nextStep) {
+        // Handle different next steps
+        switch (isSignedIn.nextStep.signInStep) {
+          case "RESET_PASSWORD":
+            setShowResetPassword(true)
+            setErrorMessage("")
+            break
+          default:
+            setErrorMessage(
+              "An unexpected step is required. Please contact support."
+            )
+            break
+        }
       }
-      // Navigate to another page
-      router.push("/index")
     } catch (error) {
       // Extract the error name and compare it against the predefined error message array
-      if (error.name && cognitoErrorMessages[error.name]) {
-        setErrorMessage(cognitoErrorMessages[error.name])
-      } else {
-        setErrorMessage("An unexpected error occurred. Please try again later.")
-      }
-    }
-  }
-
-  // TODO: set up password change and recovery
-  // https://docs.amplify.aws/javascript/build-a-backend/auth/manage-passwords/
-  const forgotPassword = async () => {
-    try {
-      await Auth.forgotPassword(username)
-      // Redirect on error
-    } catch (error) {
-      console.error("Error initiating forgot password:", error)
       if (error.name && cognitoErrorMessages[error.name]) {
         setErrorMessage(cognitoErrorMessages[error.name])
       } else {
@@ -493,6 +497,12 @@ const Login = () => {
     <>
       {showSignUp ? ( // Conditionally render the sign-up form
         <SignUpPage toggleSignUp={toggleSignUp} /> // Pass toggleSignUp function as prop
+      ) : showResetPassword ? ( // Conditionally render the reset password form
+        <ForgotPassword
+          username={username}
+          isEmailValid={validateEmailDomain(username)}
+          togglePasswordReset={togglePasswordReset}
+        />
       ) : (
         <>
           <Head>
@@ -547,7 +557,7 @@ const Login = () => {
                   </ValidationMessage>
                 )}
               </PasswordWrapper>
-              <ResetText href="#" onClick={forgotPassword}>
+              <ResetText onClick={handlePasswordReset}>
                 Forgot Password?
               </ResetText>
               <KeepSignInWrapper>

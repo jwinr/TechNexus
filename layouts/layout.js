@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import toast, { Toaster } from "react-hot-toast"
 import Footer from "../components/hero/Footer"
 import ProductSearchBar from "../components/products/ProductSearchBar"
@@ -90,6 +90,12 @@ export default function Layout({ children }) {
   // Check if the current route is /login
   const isLoginPage = router.pathname === "/login"
 
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   // Render the Navbar only if the route is not /login
   const renderNavbar = !isLoginPage && (
     <NavbarContainer>
@@ -127,33 +133,35 @@ export default function Layout({ children }) {
       <FooterContainer>
         <Footer />
       </FooterContainer>
-      <Toaster
-        toastOptions={{
-          className: "",
-          style: {
-            width: "320px",
-            height: "85px",
-            background: "#fff",
-            padding: "10px 20px",
-            display: "flex",
-            justifyContent: "space-around",
-            alignItems: "center",
-            borderRadius: "3px",
-            boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 15px 0px",
-          },
-          success: {
+      {mounted && (
+        <Toaster
+          toastOptions={{
+            className: "",
             style: {
-              borderLeft: "5px solid #61d345",
+              width: "320px",
+              height: "85px",
+              background: "#fff",
+              padding: "10px 20px",
+              display: "flex",
+              justifyContent: "space-around",
+              alignItems: "center",
+              borderRadius: "3px",
+              boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 15px 0px",
             },
-          },
-          error: {
-            style: {
-              borderLeft: "5px solid #ff4b4b",
+            success: {
+              style: {
+                borderLeft: "5px solid #61d345",
+              },
             },
-          },
-        }}
-        aria-live="polite"
-      />
+            error: {
+              style: {
+                borderLeft: "5px solid #ff4b4b",
+              },
+            },
+          }}
+          aria-live="polite"
+        />
+      )}
     </div>
   )
 }

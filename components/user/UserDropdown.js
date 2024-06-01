@@ -151,50 +151,11 @@ const BtnText = styled.div`
 const UserDropdown = ({ isOpen, onToggle }) => {
   const [user, setUser] = useState(null)
 
-  // Mock getCurrentUser function for development environment
-  const mockGetCurrentUser = async () => {
-    return {
-      username: "mockUser",
-      userId: "mockUserId",
-      signInDetails: { provider: "mockProvider" },
-    }
-  }
-
-  /* Mock function to simulate no valid sign-in
-  const mockGetCurrentUser = async () => {
-    throw new Error("No user signed in")
-  }
-  */
-
-  // Mock fetchAuthSession function
-  const mockFetchAuthSession = async () => {
-    return {
-      tokens: {
-        idToken: "mockIdToken",
-        accessToken: "mockAccessToken",
-      },
-    }
-  }
-
   const checkUser = async () => {
     try {
-      const currentUser =
-        config.envType === "development"
-          ? await mockGetCurrentUser()
-          : await getCurrentUser()
+      const { username, userId, signInDetails } = await getCurrentUser()
 
-      const session =
-        config.envType === "development"
-          ? await mockFetchAuthSession()
-          : await fetchAuthSession()
-
-      //console.log("username", currentUser.username)
-      //console.log("user id", currentUser.userId)
-      //console.log("sign-in details", currentUser.signInDetails)
-      //console.log("id token", session.tokens.idToken)
-      //console.log("access token", session.tokens.accessToken)
-
-      setUser(currentUser)
+      setUser({ username, userId, signInDetails })
     } catch (error) {
       setUser(null)
       console.error("No user signed in:", error)
