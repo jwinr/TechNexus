@@ -44,6 +44,8 @@ const LoginPageWrapper = styled.div`
   padding: 30px 30px 30px 30px;
   flex-direction: column;
   gap: 15px;
+  width: 500px;
+  margin: 24px auto;
 
   @media (max-width: 768px) {
     display: flex;
@@ -60,7 +62,6 @@ const PasswordWrapper = styled.div`
 `
 
 const EntryContainer = styled.input`
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #a1a1a1;
   border-radius: 0.25rem;
   width: 350px;
@@ -71,10 +72,6 @@ const EntryContainer = styled.input`
   line-height: 1.25;
   outline: none;
   padding-right: 40px;
-
-  &.focus {
-    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
-  }
 `
 
 const HeaderText = styled.h1`
@@ -187,7 +184,6 @@ const SignInBtn = styled.button`
   align-items: center;
   justify-content: center;
   transition: all 0.1s ease-in 0s;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 12px 0px;
   border-radius: 6px;
   padding: 8px 20px;
   color: #fff;
@@ -295,6 +291,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [emailValid, setEmailValid] = useState(true)
   const [showSignUp, setShowSignUp] = useState(false)
+  const [resetPasswordStep, setResetPasswordStep] = useState(false)
 
   const handleClick = () => {
     setShowTooltip(!showTooltip)
@@ -363,7 +360,7 @@ const Login = () => {
   const validatePassword = (password) => {
     // Regular expression pattern to validate the password
     const pattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-])[a-zA-Z0-9\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]{8,98}$/
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-])[a-zA-Z0-9\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]{8,20}$/
     return pattern.test(password)
   }
 
@@ -378,6 +375,15 @@ const Login = () => {
         jwtToken: "dummyToken",
         expiresIn: 3600,
       },
+    }
+  }
+
+  // Mock reset function for development environment
+  const resetMock = async ({ username, password }) => {
+    // Simulate a response that always triggers the RESET_PASSWORD step
+    return {
+      isSignedIn: false,
+      nextStep: { signInStep: "RESET_PASSWORD" },
     }
   }
 
@@ -416,8 +422,10 @@ const Login = () => {
         return
       }
 
-      // Call signIn with username and password
-      const isSignedIn = await signIn({ username, password })
+      // Call signIn with username and password (temporarily using the mock function)
+      // const isSignedIn = await signIn({ username, password })
+
+      const isSignedIn = await resetMock({ username, password })
 
       console.log("Sign-in response:", isSignedIn)
 
@@ -448,6 +456,7 @@ const Login = () => {
         switch (isSignedIn.nextStep.signInStep) {
           case "RESET_PASSWORD":
             setShowResetPassword(true)
+            setResetPasswordStep(true)
             setErrorMessage("")
             break
           default:
@@ -501,6 +510,7 @@ const Login = () => {
         <ForgotPassword
           username={username}
           isEmailValid={validateEmailDomain(username)}
+          resetPasswordStep={resetPasswordStep}
           togglePasswordReset={togglePasswordReset}
         />
       ) : (

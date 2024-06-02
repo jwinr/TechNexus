@@ -1,27 +1,59 @@
 import React, { useState, useEffect } from "react"
+import Head from "next/head"
 import styled from "styled-components"
-import { resetPassword } from "aws-amplify/auth"
+import FullPageContainer from "../components/common/FullPageContainer"
+import { resetPassword, confirmResetPassword } from "aws-amplify/auth"
+import LogoSymbol from "../public/logo_n.svg"
 
-const ResetPasswordWrapper = styled.div`
+// Custom error messages based on Cognito error codes
+const cognitoErrorMessages = {
+  UserNotFoundException:
+    "User does not exist. Please check your email address.",
+  NotAuthorizedException: "Incorrect email address or password.",
+  UserNotConfirmedException: "User has not been confirmed yet.",
+  CodeMismatchException: "Invalid verification code. Please try again.",
+  ExpiredCodeException:
+    "The verification code has expired. Please request a new one.",
+  LimitExceededException:
+    "You have exceeded the allowed number of login attempts. Please try again later.",
+}
+
+const AuthContainerWrapper = styled.div`
   display: flex;
+  justify-content: center;
+  padding: 30px 30px 30px 30px;
   flex-direction: column;
-  align-items: center;
   gap: 15px;
-  padding: 30px;
+  width: 500px;
+  margin: 24px auto;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+  }
 `
 
 const EntryContainer = styled.input`
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #a1a1a1;
   border-radius: 0.25rem;
-  width: 350px;
+  width: 100%;
+  height: 44px;
   padding: 10px;
   color: #333;
   outline: none;
+`
 
-  &.focus {
-    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
-  }
+const ValidationMessage = styled.div`
+  display: inline-flex;
+  position: absolute;
+  color: #d32f2f;
+  font-size: 14px;
+`
+
+const NameWrapper = styled.div`
+  margin-bottom: 10px;
+  width: 100%;
 `
 
 const HeaderText = styled.h1`
@@ -31,27 +63,33 @@ const HeaderText = styled.h1`
 `
 
 const ErrorMessage = styled.div`
+  display: flex;
   color: #d32f2f;
   font-size: 14px;
   padding: 10px 0;
 `
 
+const InputIconWrapper = styled.div`
+  position: relative;
+`
+
 const SuccessMessage = styled.div`
-  color: #2e7d32;
-  font-size: 14px;
-  padding: 10px 0;
+  font-size: 16px;
+  text-align: center;
 `
 
 const ResetBtn = styled.button`
-  align-items: center;
-  justify-content: center;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 12px 0px;
-  border-radius: 6px;
+  font-weight: 800;
+  align-self: center;
+  border-radius: 4px;
   padding: 8px 20px;
   color: #fff;
-  width: 350px;
+  width: 100%;
+  height: 56px;
+  font-size: 19px;
   background-color: #00599c;
   transition: background-color 0.2s;
+  margin-top: 24px;
 
   &:hover {
     background-color: #002d62;
@@ -62,14 +100,160 @@ const ResetBtn = styled.button`
   }
 `
 
-const ForgotPassword = ({ username, isEmailValid }) => {
+const SubheaderText = styled.div`
+  font-size: 19px;
+  margin-bottom: 24px;
+  text-align: center;
+`
+
+const Logo = styled.div`
+  display: flex;
+  align-self: center;
+  max-width: 100%;
+  max-height: 100%;
+
+  svg {
+    width: auto;
+    height: 40px;
+  }
+
+  @media (max-width: 768px) {
+    .Tech_Nexus {
+      margin: 3px;
+      grid-area: nav-logo;
+    }
+  }
+`
+
+const VerificationInput = styled.input`
+  border-width: 0px 0px 4px;
+  border-bottom-style: solid;
+  border-bottom-color: rgb(214, 214, 214);
+  border-radius: 0px;
+  text-align: center;
+  width: 90%;
+  outline: none;
+  height: 49px;
+  font-size: ${(props) => (props.hasValue ? "29px" : "19px")};
+  padding-bottom: 12px;
+  background-color: transparent;
+  text-indent: ${(props) => (props.hasValue ? "20px" : "0")};
+  letter-spacing: ${(props) => (props.hasValue ? "20px" : "normal")};
+  font-weight: ${(props) => (props.hasValue ? "700" : "normal")};
+  caret-color: ${(props) => (props.hasValue ? "inherit" : "#666666")};
+
+  // Disabling non-numeric keys using JavaScript
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
+
+  &::placeholder {
+    color: ${(props) => (props.hasValue ? "inherit" : "#666666")};
+  }
+`
+
+const VerifyBtn = styled.button`
+  font-weight: 800;
+  margin-top: 24px;
+  margin-bottom: 20px;
+  width: 100%;
+  height: 56px;
+  font-size: 19px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  background-color: ${(props) =>
+    props.disabled ? "rgb(214, 214, 214)" : "#00599c"};
+  color: ${(props) => (props.disabled ? "#666666" : "#fff")};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+
+  &:disabled {
+    cursor: not-allowed;
+    color: #666666 !important; // Override the hover & active styles when the button is disabled
+    background-color: rgb(214, 214, 214) !important;
+  }
+
+  &:hover {
+    background-color: #002d62;
+  }
+
+  &:active {
+    background-color: #002d62;
+  }
+
+  &:focus {
+    outline: rgb(136, 136, 136) dashed 1px;
+    outline-offset: 2px;
+    text-decoration: underline;
+  }
+`
+
+const RequirementTitle = styled.div`
+  padding-top: 12px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: bold;
+  align-self: flex-start;
+`
+
+const RequirementList = styled.ul`
+  text-align: left;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgb(102, 102, 102);
+  padding-left: 20px;
+  margin: 8px 0px 0px;
+  align-self: flex-start;
+`
+
+const RequirementListItem = styled.li`
+  margin-bottom: 4px;
+  color: rgb(0, 131, 0);
+  list-style: none;
+  margin-left: -12px;
+
+  color: ${(props) => (props.met ? "rgb(0, 131, 0)" : "#d32f2f")};
+
+  &:before {
+    content: ${(props) => (props.met ? "'✓'" : "''")};
+    padding-right: ${(props) => (props.met ? "4px" : "0px")};
+    font-weight: bold;
+  }
+`
+
+const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
   const [code, setCode] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
   const [email, setEmail] = useState(username || "")
-  const [emailValid, setEmailValid] = useState(isEmailValid)
+  const [emailValid, setEmailValid] = useState(true)
   const [isCodeSent, setIsCodeSent] = useState(false)
+  const [codeValid, setCodeValid] = useState(true)
+  const [passwordValid, setPasswordValid] = useState(true)
+  const [showPassword, setShowPassword] = useState(false)
+  const [formSubmitted, setFormSubmitted] = useState(false)
+  const [currentStep, setCurrentStep] = useState("initial")
+
+  const [lengthMet, setLengthMet] = useState(false)
+  const [lowerCaseMet, setLowerCaseMet] = useState(false)
+  const [upperCaseMet, setUpperCaseMet] = useState(false)
+  const [numberMet, setNumberMet] = useState(false)
+  const [specialCharMet, setSpecialCharMet] = useState(false)
+
+  const [formData, setFormData] = useState({
+    /* TODO: Possibly implement this? Not sure if it's necessary
+    it's reused from the signup component and would need to
+    track the username (email), code, and new password -
+    depending on the current state, i.e. whether the intial
+    form is submitted, a valid code is entered.. */
+    username: "",
+    given_name: "",
+    family_name: "",
+    password: "",
+  })
 
   useEffect(() => {
     if (username) {
@@ -83,74 +267,335 @@ const ForgotPassword = ({ username, isEmailValid }) => {
     return regex.test(email)
   }
 
-  const handleSendCode = () => {
-    if (validateEmailDomain(email)) {
-      setIsCodeSent(true)
-      setErrorMessage("")
-    } else {
-      setErrorMessage("Invalid email address. Please enter a valid email.")
-      setIsEmailValid(false)
+  const obfuscateEmail = (email) => {
+    const [localPart] = email.split("@")
+    if (localPart.length <= 3) {
+      return `${localPart}@***`
+    }
+    const obfuscatedLocalPart = localPart.slice(0, 3) + "*".repeat(3)
+    return `${obfuscatedLocalPart}@***`
+  }
+
+  // Mock resetPassword function
+  const resetPasswordMock = async ({ username }) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          nextStep: {
+            resetPasswordStep: "CONFIRM_RESET_PASSWORD_WITH_CODE",
+            codeDeliveryDetails: {
+              deliveryMedium: "email",
+            },
+          },
+        })
+      }, 3000) // simulate async call with 3-second delay
+    })
+  }
+
+  // Mock confirmResetPassword function
+  const confirmResetPasswordMock = async ({
+    username,
+    confirmationCode,
+    newPassword,
+  }) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ success: true })
+      }, 1000) // simulate async call with 1-second delay
+    })
+  }
+
+  const handleSendCode = async (e) => {
+    e.preventDefault()
+
+    // Validate the email before submitting the initial reset form
+    const isEmailValid = validateEmailDomain(email)
+    if (!isEmailValid) {
+      setEmailValid(false)
+      return
+    }
+
+    try {
+      setFormSubmitted(true)
+      const output = await resetPasswordMock({ username: email }) // Use mock function in development
+      const { nextStep } = output
+      if (nextStep.resetPasswordStep === "CONFIRM_RESET_PASSWORD_WITH_CODE") {
+        const codeDeliveryDetails = nextStep.codeDeliveryDetails
+        console.log(
+          `Confirmation code was sent to ${codeDeliveryDetails.deliveryMedium}`
+        )
+        setIsCodeSent(true)
+        setCurrentStep("verifyCode")
+      }
+    } catch (error) {
+      setErrorMessage(
+        cognitoErrorMessages[error.name] ||
+          "An unexpected error occurred. Please try again later."
+      )
     }
   }
 
-  const handleResetPassword = async () => {
+  const handleVerifyCode = async (e) => {
+    e.preventDefault()
+    if (!code) {
+      setErrorMessage("Code cannot be empty.")
+      return
+    }
+
     try {
-      await resetPassword(email, code, newPassword)
-      setSuccessMessage(
-        "Password reset successfully. You can now sign in with your new password."
-      )
+      // Assume code is valid if not mock validate code
+      setCurrentStep("resetPassword")
       setErrorMessage("")
     } catch (error) {
-      setErrorMessage("Failed to reset password. Please try again.")
-      setSuccessMessage("")
+      setErrorMessage(
+        cognitoErrorMessages[error.name] ||
+          "An unexpected error occurred. Please try again later."
+      )
     }
   }
 
+  const handleResetPassword = async (e) => {
+    e.preventDefault()
+
+    if (!code || !newPassword) {
+      setErrorMessage("Code and new password cannot be empty.")
+      return
+    }
+
+    if (!validatePassword(newPassword)) {
+      setErrorMessage("Password does not meet the requirements.")
+      return
+    }
+
+    try {
+      await confirmResetPasswordMock({
+        username: email,
+        confirmationCode: code,
+        newPassword: newPassword,
+      })
+      setSuccessMessage("Password has been successfully reset.")
+      setErrorMessage("")
+      setCurrentStep("success")
+    } catch (error) {
+      setErrorMessage(
+        cognitoErrorMessages[error.name] ||
+          "An unexpected error occurred. Please try again later."
+      )
+    }
+  }
+
+  const handleEmailBlur = () => {
+    if (email.trim().length === 0) {
+      // Reset email validity only if the field is empty when blurred
+      setEmailValid(true)
+    } else {
+      setEmailValid(validateEmailDomain(email))
+    }
+  }
+
+  const onChange = (e) => {
+    const { name, value } = e.target
+    if (name === "username") {
+      setEmail(value)
+      // Reset the email validity state to true when user starts editing
+      setEmailValid(true)
+    } else if (name === "code") {
+      if (value.length <= 6) {
+        setCode(value)
+      }
+    } else if (name === "newPassword") {
+      setNewPassword(value)
+      // Reset the password validity state as soon as the user starts editing the password
+      setPasswordValid(true)
+
+      // Check password criteria
+      setLengthMet(value.length >= 8 && value.length <= 20)
+      setLowerCaseMet(/[a-z]/.test(value))
+      setUpperCaseMet(/[A-Z]/.test(value))
+      setNumberMet(/[0-9]/.test(value))
+      setSpecialCharMet(
+        /[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]/.test(value)
+      )
+    }
+  }
+
+  const handlePasswordBlur = () => {
+    if (password.trim().length === 0) {
+      // Reset password validity only if the field is empty when blurred
+      setPasswordValid(true)
+    } else {
+      // Validate password if field is not empty
+      setPasswordValid(validatePassword(password))
+    }
+  }
+
+  const validatePassword = (password) => {
+    // Regular expression pattern to validate the password
+    const pattern =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-])[a-zA-Z0-9\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]{8,98}$/
+    return pattern.test(password)
+  }
+
+  // Apply red border/text if information is invalid
+  const invalidStyle = { borderColor: "#D32F2F", color: "#D32F2F" }
+
   return (
-    <ResetPasswordWrapper>
-      {isEmailValid && isCodeSent ? (
-        <>
-          <HeaderText>Reset Password</HeaderText>
-          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-          {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
-          <EntryContainer
-            type="text"
-            placeholder="Verification Code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
-          <EntryContainer
-            type="password"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-          <ResetBtn onClick={handleResetPassword}>Reset Password</ResetBtn>
-        </>
-      ) : isEmailValid ? (
-        <>
-          <HeaderText>Reset Password</HeaderText>
-          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-          <SuccessMessage>
-            We will send a code to {email} so that you can get back into your
-            account.
-          </SuccessMessage>
-          <ResetBtn onClick={handleSendCode}>Send Code</ResetBtn>
-        </>
-      ) : (
-        <>
-          <HeaderText>Reset Password</HeaderText>
-          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-          <EntryContainer
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <ResetBtn onClick={handleSendCode}>Continue</ResetBtn>
-        </>
-      )}
-    </ResetPasswordWrapper>
+    <>
+      <Head>
+        <title>Login: TechNexus</title>
+        <meta property="og:title" content="Login: TechNexus" key="title" />
+      </Head>
+      <FullPageContainer>
+        <AuthContainerWrapper>
+          <Logo>
+            <LogoSymbol />
+          </Logo>
+          {currentStep === "initial" && (
+            <>
+              <HeaderText>Forgot Password</HeaderText>
+              <SubheaderText>
+                <span>
+                  In order to change your password, we need to verify your
+                  identity. Enter the email address associated with your
+                  TechNexus account.
+                </span>
+              </SubheaderText>
+              <NameWrapper>
+                <InputIconWrapper>
+                  <EntryContainer
+                    onChange={onChange}
+                    name="username"
+                    id="username"
+                    type="text"
+                    placeholder=""
+                    style={!emailValid ? invalidStyle : {}}
+                    onBlur={handleEmailBlur}
+                    value={email}
+                  />
+                </InputIconWrapper>
+                {!emailValid && (
+                  <ValidationMessage>
+                    Please enter a valid email address.
+                  </ValidationMessage>
+                )}
+              </NameWrapper>
+              <ResetBtn onClick={handleSendCode}>Continue</ResetBtn>
+            </>
+          )}
+          {currentStep === "verifyCode" && (
+            <>
+              <HeaderText>Verification code sent</HeaderText>
+              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+              <SuccessMessage>
+                <span>
+                  We’ve sent your code to{" "}
+                  <strong>{obfuscateEmail(email)}</strong>
+                </span>
+                <br />
+                <span>
+                  Keep this browser tab open to enter your code below.
+                </span>
+              </SuccessMessage>
+              <form
+                autoComplete="off"
+                style={{ width: "100%", textAlign: "center" }}
+              >
+                <VerificationInput
+                  placeholder="Enter your code"
+                  type="tel"
+                  name="code"
+                  value={code}
+                  pattern="\d*"
+                  onChange={onChange}
+                  hasValue={code.length > 0}
+                  onKeyDown={(e) => {
+                    if (e.key !== "Backspace" && !/^[0-9]$/.test(e.key)) {
+                      e.preventDefault()
+                    }
+                  }}
+                />
+                <VerifyBtn
+                  onClick={handleVerifyCode}
+                  disabled={code.length !== 6}
+                >
+                  Verify
+                </VerifyBtn>
+              </form>
+            </>
+          )}
+          {currentStep === "resetPassword" && (
+            <>
+              <HeaderText>Password Reset</HeaderText>
+              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+              <SuccessMessage>
+                <span>Almost done!</span>
+                <br />
+                <span>
+                  For your security, please change your password to something
+                  you haven’t used before.
+                </span>
+              </SuccessMessage>
+              <EntryContainer
+                type="password"
+                placeholder="New Password"
+                value={newPassword}
+                name="newPassword"
+                onChange={onChange}
+              />
+              <RequirementTitle>Must contain:</RequirementTitle>
+              <RequirementList>
+                <RequirementListItem
+                  data-test={lengthMet ? "lengthSuccess" : "lengthNotMet"}
+                  met={lengthMet}
+                >
+                  <span>8-20 characters</span>
+                </RequirementListItem>
+              </RequirementList>
+              <RequirementTitle>And 2 of the following:</RequirementTitle>
+              <RequirementList>
+                <RequirementListItem
+                  data-test={
+                    lowerCaseMet ? "lowerCaseSuccess" : "lowerCaseNotMet"
+                  }
+                  met={lowerCaseMet}
+                >
+                  <span>Lowercase letters</span>
+                </RequirementListItem>
+                <RequirementListItem
+                  data-test={
+                    upperCaseMet ? "upperCaseSuccess" : "upperCaseNotMet"
+                  }
+                  met={upperCaseMet}
+                >
+                  <span>Uppercase letters</span>
+                </RequirementListItem>
+                <RequirementListItem
+                  data-test={numberMet ? "numberSuccess" : "numberNotMet"}
+                  met={numberMet}
+                >
+                  <span>Numbers</span>
+                </RequirementListItem>
+                <RequirementListItem
+                  data-test={
+                    specialCharMet ? "specialCharSuccess" : "specialCharNotMet"
+                  }
+                  met={specialCharMet}
+                >
+                  <span>Special characters, except {"< >"}</span>
+                </RequirementListItem>
+              </RequirementList>
+              <ResetBtn onClick={handleResetPassword}>Create Password</ResetBtn>
+            </>
+          )}
+          {currentStep === "success" && (
+            <>
+              <HeaderText>Password Reset Successful</HeaderText>
+              <SuccessMessage>{successMessage}</SuccessMessage>
+            </>
+          )}
+        </AuthContainerWrapper>
+      </FullPageContainer>
+    </>
   )
 }
 

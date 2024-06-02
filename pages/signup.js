@@ -59,7 +59,6 @@ const AccountText = styled.label`
 `
 
 const EntryContainer = styled.input`
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #a1a1a1;
   border-radius: 0.25rem;
   width: 350px;
@@ -70,10 +69,6 @@ const EntryContainer = styled.input`
   line-height: 1.25;
   outline: none;
   padding-right: 40px;
-
-  &.focus {
-    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
-  }
 `
 
 const ErrorMessage = styled.div`
@@ -118,7 +113,6 @@ const SignInBtn = styled.button`
   align-items: center;
   justify-content: center;
   transition: all 0.1s ease-in 0s;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 12px 0px;
   border-radius: 6px;
   padding: 8px 20px;
   color: #fff;
@@ -173,7 +167,6 @@ const CtaShopBtn = styled.button`
   align-items: center;
   justify-content: center;
   transition: all 0.1s ease-in 0s;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 12px 0px;
   border-radius: 20px;
   padding: 8px 20px;
   color: #fff;
@@ -266,7 +259,7 @@ const SignUpPage = ({ toggleSignUp }) => {
 
   const onChange = (e) => {
     const { name, value } = e.target
-    console.log(`Updating state for ${name} with value:`, value) // Log the value being set
+    // console.log(`Updating state for ${name} with value:`, value) // Log the value being set
     if (name === "username") {
       setUsername(value)
       setEmailValid(true) // Reset email validity when username changes
@@ -299,7 +292,7 @@ const SignUpPage = ({ toggleSignUp }) => {
   const validatePassword = (password) => {
     // Regular expression pattern to validate the password
     const pattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-])[a-zA-Z0-9\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]{8,98}$/
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-])[a-zA-Z0-9\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]{8,20}$/
     return pattern.test(password)
   }
 
