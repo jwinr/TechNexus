@@ -24,7 +24,7 @@ const QuantityButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   background-color: #4fbbff;
-  color: #fff;
+  color: var(--color-main-white);
   border: none;
   border-radius: 4px;
 

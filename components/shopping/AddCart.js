@@ -17,7 +17,7 @@ const Button = styled(buttonFilter(["isLoading"]))`
   font-size: 1rem;
   border-radius: 4px;
   letter-spacing: 0.05em;
-  color: #fff;
+  color: var(--color-main-white);
   background-color: #004066;
   transition: background-color 0.3s;
   display: flex;
@@ -49,7 +49,7 @@ const rotate = keyframes`
 const LoadingSpinner = styled.div`
   width: 25px;
   height: 25px;
-  border-color: #fff;
+  border-color: var(--color-main-white);
   border-width: 3px;
   border-left-color: #266aca;
   border-radius: 40px;

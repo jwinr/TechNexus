@@ -52,7 +52,7 @@ const Navbar = styled.div`
 `
 
 const SiteWrapper = styled.div`
-  background-color: #f3f5f8;
+  background-color: var(--color-bg-light);
   display: flex;
   justify-content: center;
   z-index: 100;

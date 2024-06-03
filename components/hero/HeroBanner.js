@@ -98,7 +98,7 @@ const CtaBtnContainer = styled.div`
 
 const CtaButton = styled.button`
   background-color: #004066;
-  color: #fff;
+  color: var(--color-main-white);
   border: none;
   padding: 8px 13px;
   border-radius: 10px;

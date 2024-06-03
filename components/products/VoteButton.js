@@ -9,7 +9,7 @@ const Button = styled.button`
   border: none;
   border-radius: 4px;
   background-color: #f0f0f0;
-  color: #333;
+  color: var(--color-text-dark);
   font-size: 14px;
   cursor: pointer;
   position: relative;

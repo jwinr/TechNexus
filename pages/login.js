@@ -52,7 +52,7 @@ const EntryContainer = styled.input`
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  color: #333;
+  color: var(--color-text-dark);
   line-height: 1.25;
   outline: none;
   padding-right: 40px;
@@ -83,12 +83,12 @@ const InfoButton = styled.button`
   .info-icon {
     appearance: none;
     background-color: transparent;
-    border: 2px solid #00599c;
+    border: 2px solid var(--color-main-blue);
     border-radius: 50%;
     width: 17px;
     height: 17px;
-    color: #00599c;
-    background-color: #fff;
+    color: var(--color-main-blue);
+    background-color: var(--color-main-white);
     font-weight: 800;
     display: flex;
     align-items: center;
@@ -101,7 +101,7 @@ const InfoTooltip = styled.div`
   transform: translateX(45%);
   left: 50%;
   background-color: white;
-  color: #333;
+  color: var(--color-text-dark);
   padding: 10px;
   border-radius: 5px;
   font-size: 16px;
@@ -119,7 +119,7 @@ const InfoTooltip = styled.div`
     width: 10px;
     height: 10px;
     border: 1px solid transparent;
-    background-color: #fff;
+    background-color: var(--color-main-white);
     z-index: -2;
     left: -6px;
     top: 50%;
@@ -175,20 +175,21 @@ const SignInBtn = styled.button`
   justify-content: center;
   transition: all 0.1s ease-in 0s;
   border-radius: 6px;
-  padding: 8px 20px;
-  color: #fff;
+  color: var(--color-main-white);
   border: medium;
-  width: 350px;
+  min-height: 44px;
+  padding: 0px 16px;
+  width: 100%;
   text-align: center;
-  background-color: #00599c;
+  background-color: var(--color-main-blue);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 
   &:active {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 
   &:focus-visible {
@@ -237,6 +238,7 @@ const EntryBtnWrapper = styled.div`
   flex-direction: column;
   gap: 10px;
   margin-top: 5px;
+  width: 100%;
 `
 
 const ValidationMessage = styled.div`

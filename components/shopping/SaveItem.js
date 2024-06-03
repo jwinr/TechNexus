@@ -45,7 +45,7 @@ const rotate = keyframes`
 const LoadingSpinner = styled.div`
   width: 25px;
   height: 25px;
-  border-color: #fff;
+  border-color: var(--color-main-white);
   border-width: 3px;
   border-left-color: #266aca;
   border-radius: 40px;

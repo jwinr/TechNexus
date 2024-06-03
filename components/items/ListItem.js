@@ -17,7 +17,7 @@ const ListItemWrapper = styled.div`
   padding: 15px;
   margin-top: 10px;
   margin-bottom: 10px;
-  background-color: #ffffff;
+  background-color: var(--color-main-white);
   border-radius: 8px;
   box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
 `
@@ -32,7 +32,7 @@ const Container = styled.div`
   height: 218px;
 
   &:hover {
-    background-color: #ffffff;
+    background-color: var(--color-main-white);
     border-color: #a1a1a1;
   }
 `
@@ -51,7 +51,7 @@ const Bookmark = styled.button`
   height: 44px;
   font-size: 22px;
   border-radius: 50%;
-  color: #333;
+  color: var(--color-text-dark);
   display: flex;
   grid-area: bookmark;
   justify-content: center;

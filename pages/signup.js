@@ -51,7 +51,7 @@ const EntryContainer = styled.input`
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  color: #333;
+  color: var(--color-text-dark);
   line-height: 1.25;
   outline: none;
   padding-right: 40px;
@@ -101,19 +101,19 @@ const SignInBtn = styled.button`
   transition: all 0.1s ease-in 0s;
   border-radius: 6px;
   padding: 8px 20px;
-  color: #fff;
+  color: var(--color-main-white);
   border: medium;
   width: 350px;
   text-align: center;
-  background-color: #00599c;
+  background-color: var(--color-main-blue);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 
   &:active {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 `
 
@@ -155,19 +155,19 @@ const CtaShopBtn = styled.button`
   transition: all 0.1s ease-in 0s;
   border-radius: 20px;
   padding: 8px 20px;
-  color: #fff;
+  color: var(--color-main-white);
   border: medium;
   width: 250px;
   text-align: center;
-  background-color: #00599c;
+  background-color: var(--color-main-blue);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 
   &:active {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 `
 

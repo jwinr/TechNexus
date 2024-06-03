@@ -23,7 +23,7 @@ const PaginationButton = styled(buttonFilter(["isActive"]))`
   justify-content: center;
   align-content: center;
   padding: 0.625rem 0.75rem;
-  color: #00599c;
+  color: var(--color-main-blue);
   font-weight: 600;
 
   cursor: ${(props) => (props.isActive ? "default" : "pointer")};
@@ -45,7 +45,7 @@ const PaginationButton = styled(buttonFilter(["isActive"]))`
     width: 1.5em;
     border-top-width: 2px;
     border-top-style: solid;
-    border-color: #00599c;
+    border-color: var(--color-main-blue);
     transition: transform 0s 0.1s cubic-bezier(0.25, 0.25, 0.75, 0.75),
       opacity 0.1s cubic-bezier(0.25, 0.25, 0.75, 0.75);
     opacity: 0;
@@ -78,7 +78,7 @@ const ArrowIcon = styled.div`
 const PrevButton = styled.button`
   border: 1px solid transparent;
   padding-right: 10px;
-  color: #00599c;
+  color: var(--color-main-blue);
   font-weight: 600;
   cursor: ${(props) =>
     props.disabled
@@ -105,7 +105,7 @@ const PrevButton = styled.button`
 const NextButton = styled.button`
   border: 1px solid transparent;
   padding-left: 10px;
-  color: #00599c;
+  color: var(--color-main-blue);
   font-weight: 600;
   cursor: ${(props) =>
     props.disabled

@@ -24,7 +24,7 @@ const EntryContainer = styled.input`
   width: 100%;
   height: 44px;
   padding: 10px;
-  color: #333;
+  color: var(--color-text-dark);
   outline: none;
 `
 
@@ -67,20 +67,20 @@ const ResetBtn = styled.button`
   align-self: center;
   border-radius: 4px;
   padding: 8px 20px;
-  color: #fff;
+  color: var(--color-main-white);
   width: 100%;
   height: 56px;
   font-size: 19px;
-  background-color: #00599c;
+  background-color: var(--color-main-blue);
   transition: background-color 0.2s;
   margin-top: 24px;
 
   &:hover {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 
   &:active {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 `
 
@@ -161,11 +161,11 @@ const VerifyBtn = styled.button`
   }
 
   &:hover {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 
   &:active {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 
   &:focus {

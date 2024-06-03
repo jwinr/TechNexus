@@ -20,7 +20,7 @@ const Container = styled(Link)`
 const Button = styled.button`
   font-size: 15px;
   cursor: pointer;
-  color: #333;
+  color: var(--color-text-dark);
   padding: 7px 10px;
   border-radius: 10px;
   position: relative;
@@ -36,7 +36,7 @@ const Button = styled.button`
   }
 
   &:hover {
-    background-color: #f7f7f7;
+    background-color: var(--color-main-light-gray);
   }
 `
 
@@ -44,8 +44,8 @@ const CartCircle = styled.div`
   position: absolute;
   top: 0px;
   right: -1px;
-  background-color: #333;
-  color: #fff;
+  background-color: var(--color-text-dark);
+  color: var(--color-main-white);
   border-radius: 50%;
   padding: 3px 6px;
   font-size: 10px;

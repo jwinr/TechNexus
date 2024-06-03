@@ -13,7 +13,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  background-color: #ffffff;
+  background-color: var(--color-main-white);
   border: 1px solid #d1d5db;
   transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 

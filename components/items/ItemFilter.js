@@ -13,7 +13,7 @@ const DropdownButton = styled.button`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
-  color: #fff;
+  color: var(--color-main-white);
   padding-left: 20px;
   padding-right: 20px;
   padding-top: 8px;
@@ -23,15 +23,15 @@ const DropdownButton = styled.button`
   align-items: center;
   display: flex;
   width: 100%;
-  background-color: #00599c;
+  background-color: var(--color-main-blue);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 
   &:active {
-    background-color: #002d62;
+    background-color: var(--color-main-dark-blue);
   }
 `
 
@@ -43,7 +43,7 @@ const ArrowIcon = styled.div`
 
 const DropdownContent = styled.div`
   position: absolute;
-  background-color: #ffffff;
+  background-color: var(--color-main-white);
   border: 1px solid #d1d5db;
   border-radius: 8px;
   max-height: 275px;

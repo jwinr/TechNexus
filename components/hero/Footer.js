@@ -12,7 +12,7 @@ import {
 const FooterContainer = styled.footer`
   display: grid;
   grid-template-columns: 1fr 3fr;
-  background-color: #212121;
+  background-color: var(--color-main-dark-gray);
   color: white;
   text-align: center;
   position: relative;
@@ -125,7 +125,7 @@ const FooterQuestionLink = styled.div`
 `
 
 const BottomFlexContainer = styled.div`
-  background-color: #212121;
+  background-color: var(--color-main-dark-gray);
   color: rgba(243, 245, 248, 0.5);
   display: flex;
   justify-content: space-between;
@@ -152,7 +152,7 @@ const BottomLinksWrapper = styled.div`
 
 const FooterLinkBottom = styled.div`
   text-decoration: none;
-  color: #fff;
+  color: var(--color-main-white);
   margin-right: 16px;
   &:hover {
     text-decoration: underline;
