@@ -29,11 +29,10 @@ const Button = styled.button`
   width: fit-content;
   justify-content: flex-end;
   transition: background-color 0.2s;
-  border: 1px dashed transparent;
 
-  &:focus {
-    border: 1px dashed rgb(51, 51, 51);
-    outline: none;
+  &:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-outline-offset);
   }
 
   &:hover {

@@ -133,6 +133,7 @@ const VerificationInput = styled.input`
     margin: 0;
   }
   -moz-appearance: textfield;
+  appearance: textfield;
 
   &::placeholder {
     color: ${(props) => (props.hasValue ? "inherit" : "#666666")};
@@ -449,8 +450,9 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
                   onChange={onChange}
                   name="username"
                   id="username"
-                  type="text"
+                  type="username"
                   placeholder=""
+                  autoComplete="username"
                   style={!emailValid ? invalidStyle : {}}
                   onBlur={handleEmailBlur}
                   value={email}

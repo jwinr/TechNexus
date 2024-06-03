@@ -71,9 +71,9 @@ const Logo = styled.a`
   border: 1px dashed transparent;
   border-radius: 10px;
 
-  &:focus {
-    border: 1px dashed rgb(51, 51, 51);
-    outline: none;
+  &:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-outline-offset);
   }
 
   @media (max-width: 768px) {

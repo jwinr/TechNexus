@@ -8,8 +8,12 @@ body {
 }
 
 :root {
+  --color-highlight: #0e87eb;
   --swiper-theme-color: #333 !important; /* Override the Swiper button colors */
   --speed: 500ms;
+  --focus-outline-width: 1px;
+  --focus-outline-offset: 2px;
+  --focus-outline: var(--focus-outline-width) solid var(--color-highlight);
 }
 
 .feat-category-divider-line {
@@ -677,6 +681,7 @@ body {
   transition: all var(--speed) ease;
 }
 .menu-secondary-exit {
+  display: inherit;
 }
 .menu-secondary-exit-active {
   transform: translateX(110%);

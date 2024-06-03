@@ -64,9 +64,9 @@ const StyledUserButton = styled(UserButton)`
     background-color: #f7f7f7;
   }
 
-  &:focus {
-    border: 1px dashed rgb(51, 51, 51);
-    outline: none;
+  &:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-outline-offset);
   }
 
   &:hover .arrow-icon,

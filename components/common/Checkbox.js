@@ -21,6 +21,14 @@ const CheckboxWrapper = styled.div`
     overflow: hidden;
     transition: all 0.2s ease;
     display: inline-block;
+    background: none;
+    border: none;
+    text-align: left;
+  }
+  .cbx:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-outline-offset);
+    transition: none;
   }
   .cbx:not(:last-child) {
     margin-right: 6px;
@@ -90,6 +98,13 @@ const CheckboxWrapper = styled.div`
 `
 
 const Checkbox = ({ id, label, checked = false, onChange }) => {
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault()
+      onChange({ target: { checked: !checked } })
+    }
+  }
+
   return (
     <CheckboxWrapper>
       <input
@@ -98,15 +113,26 @@ const Checkbox = ({ id, label, checked = false, onChange }) => {
         type="checkbox"
         checked={checked}
         onChange={onChange}
+        aria-labelledby={`${id}-label`}
       />
-      <label className="cbx" htmlFor={id}>
+      <button
+        className="cbx"
+        role="checkbox"
+        aria-checked={checked}
+        id={`${id}-label`}
+        onClick={(event) => {
+          event.preventDefault()
+          onChange({ target: { checked: !checked } })
+        }}
+        onKeyDown={handleKeyDown}
+      >
         <span>
           <svg width="12px" height="10px" viewBox="0 0 12 10">
             <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
           </svg>
         </span>
         <span>{label}</span>
-      </label>
+      </button>
     </CheckboxWrapper>
   )
 }

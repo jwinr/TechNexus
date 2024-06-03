@@ -516,8 +516,9 @@ const Login = () => {
                   onChange={onChange}
                   name="username"
                   id="username"
-                  type="text"
+                  type="username"
                   placeholder=""
+                  autoComplete="username"
                   style={!emailValid ? invalidStyle : {}}
                   onBlur={handleEmailBlur}
                 />
@@ -537,6 +538,7 @@ const Login = () => {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder=""
+                  autoComplete="current-password"
                   style={!passwordValid ? invalidStyle : {}}
                   onBlur={handlePasswordBlur}
                 />
