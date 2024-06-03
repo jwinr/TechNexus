@@ -56,6 +56,11 @@ const EntryContainer = styled.input`
   line-height: 1.25;
   outline: none;
   padding-right: 40px;
+
+  &:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-outline-offset);
+  }
 `
 
 const HeaderText = styled.h1`
@@ -68,8 +73,8 @@ const InfoButton = styled.button`
   appearance: none;
   border: 0;
   background-color: transparent;
-  padding-left: 10px;
-  margin: 0;
+  margin: 5px;
+  padding: 5px;
   font-size: 13px;
   display: inline-flex;
   align-items: center;
@@ -152,9 +157,10 @@ const AccountText = styled.label`
   margin-bottom: 0.1rem;
 `
 
-const ResetText = styled.a`
+const ResetText = styled.button`
   display: inline-block;
-  margin-top: 10px;
+  margin-top: 5px;
+  padding: 5px;
   align-content: baseline;
   font-weight: 500;
   font-size: 13px;
@@ -183,6 +189,11 @@ const SignInBtn = styled.button`
 
   &:active {
     background-color: #002d62;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-outline-offset);
   }
 `
 
@@ -213,6 +224,7 @@ const InputIconWrapper = styled.div`
 const IconButton = styled.button`
   position: absolute;
   right: 10px;
+  padding: 5px;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -558,6 +570,7 @@ const Login = () => {
             <KeepSignInWrapper>
               <Checkbox
                 id={"id"}
+                tabIndex
                 label={"Keep me signed in"}
                 checked={keepSignedIn}
                 onChange={handleKeepSignedInChange}

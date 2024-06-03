@@ -26,8 +26,6 @@ const CheckboxWrapper = styled.div`
     text-align: left;
   }
   .cbx:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
     transition: none;
   }
   .cbx:not(:last-child) {
