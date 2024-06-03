@@ -5,7 +5,7 @@ import ProductSearchBar from "../components/products/ProductSearchBar"
 import CategoryDropdown from "../components/categories/CategoryDropdown"
 import CartLink from "../components/shopping/CartLink"
 import UserDropdown from "../components/user/UserDropdown"
-import MainWrapper from "../components/common/MainWrapper"
+import Content from "../components/common/ContentWrapper"
 import styled from "styled-components"
 import { useRouter } from "next/router"
 import BannerLogo from "../public/banner-logo.svg"
@@ -51,7 +51,7 @@ const Navbar = styled.div`
   }
 `
 
-const MainContainer = styled.div`
+const SiteWrapper = styled.div`
   background-color: #f3f5f8;
   display: flex;
   justify-content: center;
@@ -125,11 +125,11 @@ export default function Layout({ children }) {
   )
 
   return (
-    <div id="th_react_root">
+    <>
       {renderNavbar}
-      <MainContainer>
-        <MainWrapper>{children}</MainWrapper>
-      </MainContainer>
+      <SiteWrapper>
+        <Content>{children}</Content>
+      </SiteWrapper>
       <FooterContainer>
         <Footer />
       </FooterContainer>
@@ -162,6 +162,6 @@ export default function Layout({ children }) {
           aria-live="polite"
         />
       )}
-    </div>
+    </>
   )
 }

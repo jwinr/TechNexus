@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react"
 import { signUp } from "aws-amplify/auth"
 import * as Styled from "../components/auth/SignStyles"
 import styled from "styled-components"
-import FullPageContainer from "../components/common/FullPageContainer"
 import { useRouter } from "next/router"
 import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
 import LogoSymbol from "../public/logo_n.svg"
 import Head from "next/head"
+import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 
 // Custom error messages based on Cognito error codes
 const cognitoErrorMessages = {
@@ -15,20 +15,6 @@ const cognitoErrorMessages = {
   LimitExceededException:
     "You have exceeded the allowed number of registration attempts. Please try again later.",
 }
-
-const SignupPageWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 30px 30px 30px 30px;
-  flex-direction: column;
-  gap: 15px;
-
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-  }
-`
 
 const HeaderText = styled.h1`
   font-weight: 800;
@@ -378,138 +364,136 @@ const SignUpPage = ({ toggleSignUp }) => {
         <title>Login: TechNexus</title>
         <meta property="og:title" content="Login: TechNexus" key="title" />
       </Head>
-      <FullPageContainer>
-        <SignupPageWrapper>
-          <Logo>
-            <LogoSymbol />
-          </Logo>
-          {/* Conditional rendering based on signUpResponse */}
-          {/* Conditional rendering based on signUpStep */}
-          {true ? ( // Change this to signUpResponse && signUpResponse.nextStep && signUpResponse.nextStep.signUpStep === "CONFIRM_SIGN_UP" for actual use
-            // Display confirmation message when signUpStep is CONFIRM_SIGN_UP
-            <>
-              <HeaderText>Your TechNexus acccount has been created.</HeaderText>
-              <SubheaderText>You're ready to start shopping!</SubheaderText>
-              <CtaShopBtn onClick={handleRedirect} type="button">
-                Shop now
-              </CtaShopBtn>
-              {/* Additional message or instructions for email confirmation */}
-            </>
-          ) : (
-            // Display sign-up form when signUpResponse does not exist or signUpStep is not CONFIRM_SIGN_UP
-            <>
-              <HeaderText>Create your TechNexus account</HeaderText>
-              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-              <NameWrapper>
-                <AccountText htmlFor="username">Email address</AccountText>
-                <InputIconWrapper>
-                  <EntryContainer
-                    onChange={onChange}
-                    name="username"
-                    id="username"
-                    type="text"
-                    placeholder=""
-                    style={!emailValid ? invalidStyle : {}}
-                    onBlur={handleEmailBlur}
-                  />
-                </InputIconWrapper>
-                {!emailValid && (
-                  <ValidationMessage>
-                    Please enter a valid email address.
-                  </ValidationMessage>
-                )}
-              </NameWrapper>
-              <NameWrapper>
-                <AccountText htmlFor="given_name">First Name</AccountText>
-                <InputIconWrapper>
-                  <EntryContainer
-                    onChange={onChange}
-                    name="given_name"
-                    id="given_name"
-                    type="text"
-                    placeholder=""
-                    style={!firstNameValid ? invalidStyle : {}}
-                    onBlur={handleFirstNameBlur}
-                  />
-                </InputIconWrapper>
-                {!firstNameValid && (
-                  <ValidationMessage>
-                    Please enter a valid first name.
-                  </ValidationMessage>
-                )}
-              </NameWrapper>
-              <NameWrapper>
-                <AccountText htmlFor="family_name">Last Name</AccountText>
-                <InputIconWrapper>
-                  <EntryContainer
-                    onChange={onChange}
-                    name="family_name"
-                    id="family_name"
-                    type="text"
-                    placeholder=""
-                    style={!lastNameValid ? invalidStyle : {}}
-                    onBlur={handleLastNameBlur}
-                  />
-                </InputIconWrapper>
-                {!lastNameValid && (
-                  <ValidationMessage>
-                    Please enter a valid last name.
-                  </ValidationMessage>
-                )}
-              </NameWrapper>
-              <PasswordWrapper>
-                <AccountText htmlFor="password">Password</AccountText>
-                <InputIconWrapper>
-                  <EntryContainer
-                    onChange={onChange}
-                    name="password"
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder=""
-                    style={!passwordValid ? invalidStyle : {}}
-                    onBlur={handlePasswordBlur}
-                  />
-                  <IconButton onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
-                  </IconButton>
-                </InputIconWrapper>
-                {!passwordValid && (
-                  <ValidationMessage>
-                    Please enter a valid password.
-                  </ValidationMessage>
-                )}
-              </PasswordWrapper>
-              <PasswordWrapper>
-                <AccountText htmlFor="password">Confirm Password</AccountText>
-                <InputIconWrapper>
-                  <EntryContainer
-                    onChange={onChange}
-                    name="confirmPassword"
-                    id="confirmPassword"
-                    type={showPassword ? "text" : "password"}
-                    placeholder=""
-                    style={!confirmPasswordValid ? invalidStyle : {}}
-                    onBlur={handleConfirmPasswordBlur}
-                  />
-                  <IconButton onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
-                  </IconButton>
-                </InputIconWrapper>
-                {!confirmPasswordValid && (
-                  <ValidationMessage>Passwords do not match.</ValidationMessage>
-                )}
-              </PasswordWrapper>
-              <EntryBtnWrapper>
-                <SignInBtn onClick={handleSignUp} type="button">
-                  Sign Up
-                </SignInBtn>
-                {/* Next.js Link component for navigation or router.push() */}
-                <ResetText onClick={toggleSignUp}>Existing user?</ResetText>
-              </EntryBtnWrapper>
-            </>
-          )}
-        </SignupPageWrapper>
-      </FullPageContainer>
+      <AuthContainerWrapper>
+        <Logo>
+          <LogoSymbol />
+        </Logo>
+        {/* Conditional rendering based on signUpResponse */}
+        {/* Conditional rendering based on signUpStep */}
+        {true ? ( // Change this to signUpResponse && signUpResponse.nextStep && signUpResponse.nextStep.signUpStep === "CONFIRM_SIGN_UP" for actual use
+          // Display confirmation message when signUpStep is CONFIRM_SIGN_UP
+          <>
+            <HeaderText>Your TechNexus acccount has been created.</HeaderText>
+            <SubheaderText>You're ready to start shopping!</SubheaderText>
+            <CtaShopBtn onClick={handleRedirect} type="button">
+              Shop now
+            </CtaShopBtn>
+            {/* Additional message or instructions for email confirmation */}
+          </>
+        ) : (
+          // Display sign-up form when signUpResponse does not exist or signUpStep is not CONFIRM_SIGN_UP
+          <>
+            <HeaderText>Create your TechNexus account</HeaderText>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            <NameWrapper>
+              <AccountText htmlFor="username">Email address</AccountText>
+              <InputIconWrapper>
+                <EntryContainer
+                  onChange={onChange}
+                  name="username"
+                  id="username"
+                  type="text"
+                  placeholder=""
+                  style={!emailValid ? invalidStyle : {}}
+                  onBlur={handleEmailBlur}
+                />
+              </InputIconWrapper>
+              {!emailValid && (
+                <ValidationMessage>
+                  Please enter a valid email address.
+                </ValidationMessage>
+              )}
+            </NameWrapper>
+            <NameWrapper>
+              <AccountText htmlFor="given_name">First Name</AccountText>
+              <InputIconWrapper>
+                <EntryContainer
+                  onChange={onChange}
+                  name="given_name"
+                  id="given_name"
+                  type="text"
+                  placeholder=""
+                  style={!firstNameValid ? invalidStyle : {}}
+                  onBlur={handleFirstNameBlur}
+                />
+              </InputIconWrapper>
+              {!firstNameValid && (
+                <ValidationMessage>
+                  Please enter a valid first name.
+                </ValidationMessage>
+              )}
+            </NameWrapper>
+            <NameWrapper>
+              <AccountText htmlFor="family_name">Last Name</AccountText>
+              <InputIconWrapper>
+                <EntryContainer
+                  onChange={onChange}
+                  name="family_name"
+                  id="family_name"
+                  type="text"
+                  placeholder=""
+                  style={!lastNameValid ? invalidStyle : {}}
+                  onBlur={handleLastNameBlur}
+                />
+              </InputIconWrapper>
+              {!lastNameValid && (
+                <ValidationMessage>
+                  Please enter a valid last name.
+                </ValidationMessage>
+              )}
+            </NameWrapper>
+            <PasswordWrapper>
+              <AccountText htmlFor="password">Password</AccountText>
+              <InputIconWrapper>
+                <EntryContainer
+                  onChange={onChange}
+                  name="password"
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder=""
+                  style={!passwordValid ? invalidStyle : {}}
+                  onBlur={handlePasswordBlur}
+                />
+                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
+                </IconButton>
+              </InputIconWrapper>
+              {!passwordValid && (
+                <ValidationMessage>
+                  Please enter a valid password.
+                </ValidationMessage>
+              )}
+            </PasswordWrapper>
+            <PasswordWrapper>
+              <AccountText htmlFor="password">Confirm Password</AccountText>
+              <InputIconWrapper>
+                <EntryContainer
+                  onChange={onChange}
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder=""
+                  style={!confirmPasswordValid ? invalidStyle : {}}
+                  onBlur={handleConfirmPasswordBlur}
+                />
+                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
+                </IconButton>
+              </InputIconWrapper>
+              {!confirmPasswordValid && (
+                <ValidationMessage>Passwords do not match.</ValidationMessage>
+              )}
+            </PasswordWrapper>
+            <EntryBtnWrapper>
+              <SignInBtn onClick={handleSignUp} type="button">
+                Sign Up
+              </SignInBtn>
+              {/* Next.js Link component for navigation or router.push() */}
+              <ResetText onClick={toggleSignUp}>Existing user?</ResetText>
+            </EntryBtnWrapper>
+          </>
+        )}
+      </AuthContainerWrapper>
     </>
   )
 }

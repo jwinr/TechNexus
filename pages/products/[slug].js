@@ -11,7 +11,6 @@ import ProductSpecifications from "../../components/products/ProductSpecificatio
 import ProductReviews from "../../components/products/ProductReviews"
 import ProductHighlights from "../../components/products/ProductHighlights"
 import styled from "styled-components"
-import FullPageContainer from "../../components/common/FullPageContainer"
 import { Accordion, AccordionItem as Item } from "@szhsin/react-accordion"
 import ChevronDown from "../../public/chevron-down.svg"
 import LoadingSpinner from "../../components/common/LoadingSpinner"
@@ -441,122 +440,120 @@ function ProductDetails() {
           key="title"
         />
       </Head>
-      <FullPageContainer>
-        <Breadcrumb categoryName={categoryName} categorySlug={categorySlug} />
-        <PageWrapper>
-          <MainImageContainer>
-            <ProductImage src={hoveredImage} alt="Inventory item" />
-          </MainImageContainer>
-          <AdditionalImageContainer>
-            {product.images.map((image, index) => (
-              <AdditionalImageThumbnail
-                key={index}
-                className={
-                  hoveredImage === image.image_url
-                    ? "additional-image-hovered"
-                    : ""
-                }
-                onMouseOver={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation() // Stop the event from propagating up the DOM tree
-                  setHoveredImage(image.image_url)
-                }}
-              >
-                <Image
-                  src={image.image_url}
-                  alt={`Product Thumbnail ${index}` + " - " + product.name}
-                  // Dynamically generate alt text based on product name
-                />
-              </AdditionalImageThumbnail>
-            ))}
-          </AdditionalImageContainer>
-          <Product>
-            <h1>{product.name}</h1>
-            <ProductRatings>
-              <div>
-                <StarRating reviews={product.reviews} />
-              </div>
+      <Breadcrumb categoryName={categoryName} categorySlug={categorySlug} />
+      <PageWrapper>
+        <MainImageContainer>
+          <ProductImage src={hoveredImage} alt="Inventory item" />
+        </MainImageContainer>
+        <AdditionalImageContainer>
+          {product.images.map((image, index) => (
+            <AdditionalImageThumbnail
+              key={index}
+              className={
+                hoveredImage === image.image_url
+                  ? "additional-image-hovered"
+                  : ""
+              }
+              onMouseOver={(e) => {
+                e.preventDefault()
+                e.stopPropagation() // Stop the event from propagating up the DOM tree
+                setHoveredImage(image.image_url)
+              }}
+            >
+              <Image
+                src={image.image_url}
+                alt={`Product Thumbnail ${index}` + " - " + product.name}
+                // Dynamically generate alt text based on product name
+              />
+            </AdditionalImageThumbnail>
+          ))}
+        </AdditionalImageContainer>
+        <Product>
+          <h1>{product.name}</h1>
+          <ProductRatings>
+            <div>
+              <StarRating reviews={product.reviews} />
+            </div>
+            <p>
+              {product.reviews.length === 0
+                ? "Be the first to write a review"
+                : `(${product.reviews.length} review${
+                    product.reviews.length !== 1 ? "s" : ""
+                  })`}
+            </p>
+          </ProductRatings>
+          <h2>${product.price}</h2>
+          <ExchangeWrapper>
+            <ExchangeBox>
+              <PiKeyReturn />
+            </ExchangeBox>
+            <ExchangeContent>
+              <ExchangeHeader>15-DAY FREE & EASY RETURNS</ExchangeHeader>
               <p>
-                {product.reviews.length === 0
-                  ? "Be the first to write a review"
-                  : `(${product.reviews.length} review${
-                      product.reviews.length !== 1 ? "s" : ""
-                    })`}
+                If received {dayOfWeek}, the last day to return this item would
+                be {returnDate}.
               </p>
-            </ProductRatings>
-            <h2>${product.price}</h2>
-            <ExchangeWrapper>
-              <ExchangeBox>
-                <PiKeyReturn />
-              </ExchangeBox>
-              <ExchangeContent>
-                <ExchangeHeader>15-DAY FREE & EASY RETURNS</ExchangeHeader>
-                <p>
-                  If received {dayOfWeek}, the last day to return this item
-                  would be {returnDate}.
-                </p>
-              </ExchangeContent>
-            </ExchangeWrapper>
-            <CartBtnWrapper>
-              <AddCart
-                title="Add to Cart"
-                onClick={() => addItemToCart(product)}
-              />
-              <SaveItem
-                title="Save for Later"
-                onClick={() => addItemToCart(product)}
-              />
-            </CartBtnWrapper>
-            <ZipWrapper>
-              <IoLocationOutline style={{ marginRight: "5px" }} size={24} />
-              Delivery to{" "}
-              <ZipButton onClick={toggleZipPopup}>
-                <ZipUnderline>{zipCode}</ZipUnderline>
-                {isZipPopupVisible && (
-                  <PopupContainer onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="text"
-                      placeholder="Enter ZIP code"
-                      value={enteredZipCode}
-                      onChange={handleZipCodeChange}
-                    />
-                    <button onClick={handleZipCodeSubmit}>Submit</button>
-                  </PopupContainer>
-                )}
-                <IoChevronDownOutline />
-              </ZipButton>
-            </ZipWrapper>
-            <DateWrapper>Get it by {deliveryDate}</DateWrapper>
-            <ShipWrapper>
-              <LiaTruckSolid style={{ marginRight: "5px" }} size={24} />
-              <ShippingOffer>Free Shipping</ShippingOffer>
-            </ShipWrapper>
-          </Product>
-          <Wrapper>
-            <Accordion transition transitionTimeout={250}>
-              <AccordionItem header="Overview" initialEntered>
-                <ProductDescription>
-                  <h1>Description</h1>
-                  <p>{product.description}</p>
-                </ProductDescription>
-                <ProductHighlights highlights={product.highlights} />
-                <ProductInclusions inclusions={product.inclusions} />
-              </AccordionItem>
-              <AccordionItem header="Specifications">
-                <ProductSpecifications attributes={product.attributes} />
-              </AccordionItem>
-              <AccordionItem header="Reviews">
-                <ProductReviews reviews={product.reviews} />
-              </AccordionItem>
-              <AccordionItem header="Q&A">
-                <ProductQna>
-                  <p>Todo: Implement Q&A logic</p>
-                </ProductQna>
-              </AccordionItem>
-            </Accordion>
-          </Wrapper>
-        </PageWrapper>
-      </FullPageContainer>
+            </ExchangeContent>
+          </ExchangeWrapper>
+          <CartBtnWrapper>
+            <AddCart
+              title="Add to Cart"
+              onClick={() => addItemToCart(product)}
+            />
+            <SaveItem
+              title="Save for Later"
+              onClick={() => addItemToCart(product)}
+            />
+          </CartBtnWrapper>
+          <ZipWrapper>
+            <IoLocationOutline style={{ marginRight: "5px" }} size={24} />
+            Delivery to{" "}
+            <ZipButton onClick={toggleZipPopup}>
+              <ZipUnderline>{zipCode}</ZipUnderline>
+              {isZipPopupVisible && (
+                <PopupContainer onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="text"
+                    placeholder="Enter ZIP code"
+                    value={enteredZipCode}
+                    onChange={handleZipCodeChange}
+                  />
+                  <button onClick={handleZipCodeSubmit}>Submit</button>
+                </PopupContainer>
+              )}
+              <IoChevronDownOutline />
+            </ZipButton>
+          </ZipWrapper>
+          <DateWrapper>Get it by {deliveryDate}</DateWrapper>
+          <ShipWrapper>
+            <LiaTruckSolid style={{ marginRight: "5px" }} size={24} />
+            <ShippingOffer>Free Shipping</ShippingOffer>
+          </ShipWrapper>
+        </Product>
+        <Wrapper>
+          <Accordion transition transitionTimeout={250}>
+            <AccordionItem header="Overview" initialEntered>
+              <ProductDescription>
+                <h1>Description</h1>
+                <p>{product.description}</p>
+              </ProductDescription>
+              <ProductHighlights highlights={product.highlights} />
+              <ProductInclusions inclusions={product.inclusions} />
+            </AccordionItem>
+            <AccordionItem header="Specifications">
+              <ProductSpecifications attributes={product.attributes} />
+            </AccordionItem>
+            <AccordionItem header="Reviews">
+              <ProductReviews reviews={product.reviews} />
+            </AccordionItem>
+            <AccordionItem header="Q&A">
+              <ProductQna>
+                <p>Todo: Implement Q&A logic</p>
+              </ProductQna>
+            </AccordionItem>
+          </Accordion>
+        </Wrapper>
+      </PageWrapper>
     </div>
   )
 }

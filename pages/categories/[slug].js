@@ -3,7 +3,6 @@ import React, { useEffect, useState, lazy, Suspense, useContext } from "react"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 import Head from "next/head"
-import FullPageContainer from "../../components/common/FullPageContainer"
 import Breadcrumb from "../../components/common/Breadcrumb"
 import CategoryTitle from "../../components/categories/CategoryTitle"
 import ListItem from "../../components/items/ListItem"
@@ -225,90 +224,88 @@ export default function CategoryPage() {
         />
         <meta name="keywords" content={`${categoryData.keywords}`}></meta>
       </Head>
-      <FullPageContainer>
-        <Breadcrumb title={categoryData.name} />
-        <CategoryGridContainer>
-          <TitleWrapper>
-            <CategoryTitle title={categoryData.name} />
-          </TitleWrapper>
-          <CategorySortPanel>
-            <TotalItems>
-              {totalItemCount === 0
-                ? "No results found"
-                : `Showing ${indexOfFirstProduct + 1} - ${Math.min(
-                    indexOfLastProduct,
-                    totalItemCount
-                  )} of ${totalItemCount} ${
-                    totalItemCount === 1 ? "result" : "results"
-                  }`}
-            </TotalItems>
-            <SortText>
-              <label htmlFor="sortBy">Sort By: </label>
-              <SortDropdown
-                id="sortBy"
-                onChange={(e) => handleSortChange(e.target.value)}
-                value={sortBy}
-              >
-                <option value="Most Popular">Most Popular</option>
-                <option value="Highest Rating">Highest Rating</option>
-                <option value="Highest Price">Highest Price</option>
-                <option value="Lowest Price">Lowest Price</option>
-              </SortDropdown>
-            </SortText>
-          </CategorySortPanel>
-          <Suspense fallback={<LoadingSpinner />}>
-            <ErrorBoundary>
-              <ItemFilter
-                inventoryItems={categoryData.products}
-                onFilterChange={handleFilterChange}
-                attributes={categoryData.attributes}
-              />
-            </ErrorBoundary>
-          </Suspense>
-          <Suspense fallback={<LoadingSpinner />}>
-            <ErrorBoundary>
-              <CategorizedItems isVisible={showFilteredItems}>
-                {isFilterActive
-                  ? currentProducts.map((item) => (
-                      <ListItem
-                        key={item.product_id}
-                        link={`/products/${item.slug}`}
-                        title={item.name}
-                        price={item.price}
-                        brand={item.brand}
-                        rating={item.rating}
-                        image={item.images}
-                        id={item.product_id}
-                        addToCartFromList={addToCartFromList}
-                      />
-                    ))
-                  : categoryData.products.map((item) => (
-                      <ListItem
-                        key={item.product_id}
-                        link={`/products/${item.slug}`}
-                        title={item.name}
-                        price={item.price}
-                        brand={item.brand}
-                        rating={item.rating}
-                        image={item.images}
-                        id={item.product_id}
-                        addToCartFromList={addToCartFromList}
-                      />
-                    ))}
-              </CategorizedItems>
-            </ErrorBoundary>
-          </Suspense>
-          <Suspense fallback={<LoadingSpinner />}>
-            <ErrorBoundary>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                handlePageChange={handlePageChange}
-              />
-            </ErrorBoundary>
-          </Suspense>
-        </CategoryGridContainer>
-      </FullPageContainer>
+      <Breadcrumb title={categoryData.name} />
+      <CategoryGridContainer>
+        <TitleWrapper>
+          <CategoryTitle title={categoryData.name} />
+        </TitleWrapper>
+        <CategorySortPanel>
+          <TotalItems>
+            {totalItemCount === 0
+              ? "No results found"
+              : `Showing ${indexOfFirstProduct + 1} - ${Math.min(
+                  indexOfLastProduct,
+                  totalItemCount
+                )} of ${totalItemCount} ${
+                  totalItemCount === 1 ? "result" : "results"
+                }`}
+          </TotalItems>
+          <SortText>
+            <label htmlFor="sortBy">Sort By: </label>
+            <SortDropdown
+              id="sortBy"
+              onChange={(e) => handleSortChange(e.target.value)}
+              value={sortBy}
+            >
+              <option value="Most Popular">Most Popular</option>
+              <option value="Highest Rating">Highest Rating</option>
+              <option value="Highest Price">Highest Price</option>
+              <option value="Lowest Price">Lowest Price</option>
+            </SortDropdown>
+          </SortText>
+        </CategorySortPanel>
+        <Suspense fallback={<LoadingSpinner />}>
+          <ErrorBoundary>
+            <ItemFilter
+              inventoryItems={categoryData.products}
+              onFilterChange={handleFilterChange}
+              attributes={categoryData.attributes}
+            />
+          </ErrorBoundary>
+        </Suspense>
+        <Suspense fallback={<LoadingSpinner />}>
+          <ErrorBoundary>
+            <CategorizedItems isVisible={showFilteredItems}>
+              {isFilterActive
+                ? currentProducts.map((item) => (
+                    <ListItem
+                      key={item.product_id}
+                      link={`/products/${item.slug}`}
+                      title={item.name}
+                      price={item.price}
+                      brand={item.brand}
+                      rating={item.rating}
+                      image={item.images}
+                      id={item.product_id}
+                      addToCartFromList={addToCartFromList}
+                    />
+                  ))
+                : categoryData.products.map((item) => (
+                    <ListItem
+                      key={item.product_id}
+                      link={`/products/${item.slug}`}
+                      title={item.name}
+                      price={item.price}
+                      brand={item.brand}
+                      rating={item.rating}
+                      image={item.images}
+                      id={item.product_id}
+                      addToCartFromList={addToCartFromList}
+                    />
+                  ))}
+            </CategorizedItems>
+          </ErrorBoundary>
+        </Suspense>
+        <Suspense fallback={<LoadingSpinner />}>
+          <ErrorBoundary>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              handlePageChange={handlePageChange}
+            />
+          </ErrorBoundary>
+        </Suspense>
+      </CategoryGridContainer>
     </>
   )
 }

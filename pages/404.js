@@ -1,6 +1,5 @@
 import styled from "styled-components"
 import Head from "next/head"
-import FullPageContainer from "../components/common/FullPageContainer"
 import LogoSymbol from "../public/logo_n.svg"
 
 const NotFoundWrapper = styled.div`
@@ -40,14 +39,12 @@ const Custom404 = () => {
           content="Page not found. The page you are looking for does not exist."
         />
       </Head>
-      <FullPageContainer>
-        <NotFoundWrapper>
-          <LogoBox>
-            <LogoSymbol />
-          </LogoBox>
-          <Message>We're sorry! This page is currently unavailable.</Message>
-        </NotFoundWrapper>
-      </FullPageContainer>
+      <NotFoundWrapper>
+        <LogoBox>
+          <LogoSymbol />
+        </LogoBox>
+        <Message>We're sorry! This page is currently unavailable.</Message>
+      </NotFoundWrapper>
     </>
   )
 }

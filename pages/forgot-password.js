@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react"
 import Head from "next/head"
 import styled from "styled-components"
-import FullPageContainer from "../components/common/FullPageContainer"
 import { resetPassword, confirmResetPassword } from "aws-amplify/auth"
 import LogoSymbol from "../public/logo_n.svg"
+import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 
 // Custom error messages based on Cognito error codes
 const cognitoErrorMessages = {
@@ -17,22 +17,6 @@ const cognitoErrorMessages = {
   LimitExceededException:
     "You have exceeded the allowed number of login attempts. Please try again later.",
 }
-
-const AuthContainerWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  padding: 30px 30px 30px 30px;
-  flex-direction: column;
-  gap: 15px;
-  width: 500px;
-  margin: 24px auto;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-  }
-`
 
 const EntryContainer = styled.input`
   border: 1px solid #a1a1a1;
@@ -445,156 +429,151 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
         <title>Login: TechNexus</title>
         <meta property="og:title" content="Login: TechNexus" key="title" />
       </Head>
-      <FullPageContainer>
-        <AuthContainerWrapper>
-          <Logo>
-            <LogoSymbol />
-          </Logo>
-          {currentStep === "initial" && (
-            <>
-              <HeaderText>Forgot Password</HeaderText>
-              <SubheaderText>
-                <span>
-                  In order to change your password, we need to verify your
-                  identity. Enter the email address associated with your
-                  TechNexus account.
-                </span>
-              </SubheaderText>
-              <NameWrapper>
-                <InputIconWrapper>
-                  <EntryContainer
-                    onChange={onChange}
-                    name="username"
-                    id="username"
-                    type="text"
-                    placeholder=""
-                    style={!emailValid ? invalidStyle : {}}
-                    onBlur={handleEmailBlur}
-                    value={email}
-                  />
-                </InputIconWrapper>
-                {!emailValid && (
-                  <ValidationMessage>
-                    Please enter a valid email address.
-                  </ValidationMessage>
-                )}
-              </NameWrapper>
-              <ResetBtn onClick={handleSendCode}>Continue</ResetBtn>
-            </>
-          )}
-          {currentStep === "verifyCode" && (
-            <>
-              <HeaderText>Verification code sent</HeaderText>
-              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-              <SuccessMessage>
-                <span>
-                  We’ve sent your code to{" "}
-                  <strong>{obfuscateEmail(email)}</strong>
-                </span>
-                <br />
-                <span>
-                  Keep this browser tab open to enter your code below.
-                </span>
-              </SuccessMessage>
-              <form
-                autoComplete="off"
-                style={{ width: "100%", textAlign: "center" }}
-              >
-                <VerificationInput
-                  placeholder="Enter your code"
-                  type="tel"
-                  name="code"
-                  value={code}
-                  pattern="\d*"
+      <AuthContainerWrapper>
+        <Logo>
+          <LogoSymbol />
+        </Logo>
+        {currentStep === "initial" && (
+          <>
+            <HeaderText>Forgot Password</HeaderText>
+            <SubheaderText>
+              <span>
+                In order to change your password, we need to verify your
+                identity. Enter the email address associated with your TechNexus
+                account.
+              </span>
+            </SubheaderText>
+            <NameWrapper>
+              <InputIconWrapper>
+                <EntryContainer
                   onChange={onChange}
-                  hasValue={code.length > 0}
-                  onKeyDown={(e) => {
-                    if (e.key !== "Backspace" && !/^[0-9]$/.test(e.key)) {
-                      e.preventDefault()
-                    }
-                  }}
+                  name="username"
+                  id="username"
+                  type="text"
+                  placeholder=""
+                  style={!emailValid ? invalidStyle : {}}
+                  onBlur={handleEmailBlur}
+                  value={email}
                 />
-                <VerifyBtn
-                  onClick={handleVerifyCode}
-                  disabled={code.length !== 6}
-                >
-                  Verify
-                </VerifyBtn>
-              </form>
-            </>
-          )}
-          {currentStep === "resetPassword" && (
-            <>
-              <HeaderText>Password Reset</HeaderText>
-              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-              <SuccessMessage>
-                <span>Almost done!</span>
-                <br />
-                <span>
-                  For your security, please change your password to something
-                  you haven’t used before.
-                </span>
-              </SuccessMessage>
-              <EntryContainer
-                type="password"
-                placeholder="New Password"
-                value={newPassword}
-                name="newPassword"
+              </InputIconWrapper>
+              {!emailValid && (
+                <ValidationMessage>
+                  Please enter a valid email address.
+                </ValidationMessage>
+              )}
+            </NameWrapper>
+            <ResetBtn onClick={handleSendCode}>Continue</ResetBtn>
+          </>
+        )}
+        {currentStep === "verifyCode" && (
+          <>
+            <HeaderText>Verification code sent</HeaderText>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            <SuccessMessage>
+              <span>
+                We’ve sent your code to <strong>{obfuscateEmail(email)}</strong>
+              </span>
+              <br />
+              <span>Keep this browser tab open to enter your code below.</span>
+            </SuccessMessage>
+            <form
+              autoComplete="off"
+              style={{ width: "100%", textAlign: "center" }}
+            >
+              <VerificationInput
+                placeholder="Enter your code"
+                type="tel"
+                name="code"
+                value={code}
+                pattern="\d*"
                 onChange={onChange}
+                hasValue={code.length > 0}
+                onKeyDown={(e) => {
+                  if (e.key !== "Backspace" && !/^[0-9]$/.test(e.key)) {
+                    e.preventDefault()
+                  }
+                }}
               />
-              <RequirementTitle>Must contain:</RequirementTitle>
-              <RequirementList>
-                <RequirementListItem
-                  data-test={lengthMet ? "lengthSuccess" : "lengthNotMet"}
-                  met={lengthMet}
-                >
-                  <span>8-20 characters</span>
-                </RequirementListItem>
-              </RequirementList>
-              <RequirementTitle>And 2 of the following:</RequirementTitle>
-              <RequirementList>
-                <RequirementListItem
-                  data-test={
-                    lowerCaseMet ? "lowerCaseSuccess" : "lowerCaseNotMet"
-                  }
-                  met={lowerCaseMet}
-                >
-                  <span>Lowercase letters</span>
-                </RequirementListItem>
-                <RequirementListItem
-                  data-test={
-                    upperCaseMet ? "upperCaseSuccess" : "upperCaseNotMet"
-                  }
-                  met={upperCaseMet}
-                >
-                  <span>Uppercase letters</span>
-                </RequirementListItem>
-                <RequirementListItem
-                  data-test={numberMet ? "numberSuccess" : "numberNotMet"}
-                  met={numberMet}
-                >
-                  <span>Numbers</span>
-                </RequirementListItem>
-                <RequirementListItem
-                  data-test={
-                    specialCharMet ? "specialCharSuccess" : "specialCharNotMet"
-                  }
-                  met={specialCharMet}
-                >
-                  <span>Special characters, except {"< >"}</span>
-                </RequirementListItem>
-              </RequirementList>
-              <ResetBtn onClick={handleResetPassword}>Create Password</ResetBtn>
-            </>
-          )}
-          {currentStep === "success" && (
-            <>
-              <HeaderText>Password Reset Successful</HeaderText>
-              <SuccessMessage>{successMessage}</SuccessMessage>
-            </>
-          )}
-        </AuthContainerWrapper>
-      </FullPageContainer>
+              <VerifyBtn
+                onClick={handleVerifyCode}
+                disabled={code.length !== 6}
+              >
+                Verify
+              </VerifyBtn>
+            </form>
+          </>
+        )}
+        {currentStep === "resetPassword" && (
+          <>
+            <HeaderText>Password Reset</HeaderText>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            <SuccessMessage>
+              <span>Almost done!</span>
+              <br />
+              <span>
+                For your security, please change your password to something you
+                haven’t used before.
+              </span>
+            </SuccessMessage>
+            <EntryContainer
+              type="password"
+              placeholder="New Password"
+              value={newPassword}
+              name="newPassword"
+              onChange={onChange}
+            />
+            <RequirementTitle>Must contain:</RequirementTitle>
+            <RequirementList>
+              <RequirementListItem
+                data-test={lengthMet ? "lengthSuccess" : "lengthNotMet"}
+                met={lengthMet}
+              >
+                <span>8-20 characters</span>
+              </RequirementListItem>
+            </RequirementList>
+            <RequirementTitle>And 2 of the following:</RequirementTitle>
+            <RequirementList>
+              <RequirementListItem
+                data-test={
+                  lowerCaseMet ? "lowerCaseSuccess" : "lowerCaseNotMet"
+                }
+                met={lowerCaseMet}
+              >
+                <span>Lowercase letters</span>
+              </RequirementListItem>
+              <RequirementListItem
+                data-test={
+                  upperCaseMet ? "upperCaseSuccess" : "upperCaseNotMet"
+                }
+                met={upperCaseMet}
+              >
+                <span>Uppercase letters</span>
+              </RequirementListItem>
+              <RequirementListItem
+                data-test={numberMet ? "numberSuccess" : "numberNotMet"}
+                met={numberMet}
+              >
+                <span>Numbers</span>
+              </RequirementListItem>
+              <RequirementListItem
+                data-test={
+                  specialCharMet ? "specialCharSuccess" : "specialCharNotMet"
+                }
+                met={specialCharMet}
+              >
+                <span>Special characters, except {"< >"}</span>
+              </RequirementListItem>
+            </RequirementList>
+            <ResetBtn onClick={handleResetPassword}>Create Password</ResetBtn>
+          </>
+        )}
+        {currentStep === "success" && (
+          <>
+            <HeaderText>Password Reset Successful</HeaderText>
+            <SuccessMessage>{successMessage}</SuccessMessage>
+          </>
+        )}
+      </AuthContainerWrapper>
     </>
   )
 }

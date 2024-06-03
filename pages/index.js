@@ -1,14 +1,11 @@
 import Head from "next/head"
 import About from "../components/hero/About"
 import Brands from "../components/hero/Brands"
-import { slugify } from "../utils/helpers"
 import BrandSwiper from "../components/common/BrandSwiper"
 import HeroBanner from "../components/hero/HeroBanner"
 import CategoryNavigation from "../components/categories/CategoryNavigation"
 import TopDeals from "../components/shopping/TopDeals"
 import styled, { keyframes } from "styled-components"
-import FullPageContainer from "../components/common/FullPageContainer"
-import MainWrapper from "../components/common/MainWrapper"
 
 const HomeContainer = styled.div`
   display: grid;
@@ -77,26 +74,24 @@ const Home = () => {
         />
         <meta property="og:title" content="TechNexus" key="title" />
       </Head>
-      <FullPageContainer>
-        <HomeContainer>
-          <HeroBanner />
-          <CatTitle>
-            <h2>Shop by Category</h2>
-          </CatTitle>
-          <CategoryNavigation />
-          <About />
-          <BrandTitle>
-            <h2>Featured Brands</h2>
-          </BrandTitle>
-          <BrandSwiperContainer>
-            <BrandSwiper />
-          </BrandSwiperContainer>
-          <TopDealsTitle>
-            <h2>Deals you'll love</h2>
-          </TopDealsTitle>
-          <TopDeals />
-        </HomeContainer>
-      </FullPageContainer>
+      <HomeContainer>
+        <HeroBanner />
+        <CatTitle>
+          <h2>Shop by Category</h2>
+        </CatTitle>
+        <CategoryNavigation />
+        <About />
+        <BrandTitle>
+          <h2>Featured Brands</h2>
+        </BrandTitle>
+        <BrandSwiperContainer>
+          <BrandSwiper />
+        </BrandSwiperContainer>
+        <TopDealsTitle>
+          <h2>Deals you'll love</h2>
+        </TopDealsTitle>
+        <TopDeals />
+      </HomeContainer>
     </>
   )
 }

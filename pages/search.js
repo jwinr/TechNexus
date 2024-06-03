@@ -2,7 +2,6 @@ import { useRouter } from "next/router"
 import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import Head from "next/head"
-import FullPageContainer from "../components/common/FullPageContainer"
 import Breadcrumb from "../components/common/Breadcrumb"
 import CategoryTitle from "../components/categories/CategoryTitle"
 import ListItem from "../components/items/ListItem"
@@ -218,74 +217,72 @@ const SearchResultsPage = ({ productQuery }) => {
           content={`Discover ${capitalizedQuery} on TechNexus`}
         />
       </Head>
-      <FullPageContainer>
-        <Breadcrumb title={capitalizedQuery} />
-        <SearchGridContainer>
-          <TitleWrapper>
-            <CategoryTitle title="Search Results" />
-          </TitleWrapper>
-          <SearchSortPanel>
-            <TotalItems>
-              {totalItemCount} {totalItemCount === 1 ? " result" : " results"}
-              {" for "} {quotedQuery}
-            </TotalItems>
-            <SortText>
-              <label htmlFor="sortBy">Sort By: </label>
-              <SortDropdown
-                id="sortBy"
-                onChange={(e) => handleSortChange(e.target.value)}
-                value={sortBy}
-              >
-                <option value="Most Popular">Most Popular</option>
-                <option value="Highest Rating">Highest Rating</option>
-                <option value="Highest Price">Highest Price</option>
-                <option value="Lowest Price">Lowest Price</option>
-              </SortDropdown>
-            </SortText>
-          </SearchSortPanel>
-          <ItemFilter
-            inventoryItems={productQuery.products}
-            onFilterChange={handleFilterChange}
-            attributes={productQuery.attributes || []} // Provide a default empty array
-          />
-          <CategorizedItems isVisible={showFilteredItems}>
-            {isFilterActive
-              ? currentProducts.map((item) => (
-                  <ListItem
-                    key={item.product_id}
-                    link={`/products/${item.slug}`}
-                    title={item.name}
-                    price={item.price}
-                    brand={item.brand}
-                    rating={item.rating}
-                    image={item.images}
-                    id={item.product_id}
-                  />
-                ))
-              : productQuery.products.map((item) => (
-                  <ListItem
-                    key={item.product_id}
-                    link={`/products/${item.slug}`}
-                    title={item.name}
-                    price={item.price}
-                    brand={item.brand}
-                    rating={item.rating}
-                    image={item.images}
-                    id={item.product_id}
-                  />
-                ))}
-          </CategorizedItems>
-          <React.Suspense fallback={<LoadingSpinner />}>
-            <ErrorBoundary>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                handlePageChange={handlePageChange}
-              />
-            </ErrorBoundary>
-          </React.Suspense>
-        </SearchGridContainer>
-      </FullPageContainer>
+      <Breadcrumb title={capitalizedQuery} />
+      <SearchGridContainer>
+        <TitleWrapper>
+          <CategoryTitle title="Search Results" />
+        </TitleWrapper>
+        <SearchSortPanel>
+          <TotalItems>
+            {totalItemCount} {totalItemCount === 1 ? " result" : " results"}
+            {" for "} {quotedQuery}
+          </TotalItems>
+          <SortText>
+            <label htmlFor="sortBy">Sort By: </label>
+            <SortDropdown
+              id="sortBy"
+              onChange={(e) => handleSortChange(e.target.value)}
+              value={sortBy}
+            >
+              <option value="Most Popular">Most Popular</option>
+              <option value="Highest Rating">Highest Rating</option>
+              <option value="Highest Price">Highest Price</option>
+              <option value="Lowest Price">Lowest Price</option>
+            </SortDropdown>
+          </SortText>
+        </SearchSortPanel>
+        <ItemFilter
+          inventoryItems={productQuery.products}
+          onFilterChange={handleFilterChange}
+          attributes={productQuery.attributes || []} // Provide a default empty array
+        />
+        <CategorizedItems isVisible={showFilteredItems}>
+          {isFilterActive
+            ? currentProducts.map((item) => (
+                <ListItem
+                  key={item.product_id}
+                  link={`/products/${item.slug}`}
+                  title={item.name}
+                  price={item.price}
+                  brand={item.brand}
+                  rating={item.rating}
+                  image={item.images}
+                  id={item.product_id}
+                />
+              ))
+            : productQuery.products.map((item) => (
+                <ListItem
+                  key={item.product_id}
+                  link={`/products/${item.slug}`}
+                  title={item.name}
+                  price={item.price}
+                  brand={item.brand}
+                  rating={item.rating}
+                  image={item.images}
+                  id={item.product_id}
+                />
+              ))}
+        </CategorizedItems>
+        <React.Suspense fallback={<LoadingSpinner />}>
+          <ErrorBoundary>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              handlePageChange={handlePageChange}
+            />
+          </ErrorBoundary>
+        </React.Suspense>
+      </SearchGridContainer>
     </>
   )
 }

@@ -3,7 +3,6 @@ import Head from "next/head"
 import { signIn, signOut, resetPassword } from "aws-amplify/auth"
 import { useRouter } from "next/router"
 import styled, { keyframes } from "styled-components"
-import FullPageContainer from "../components/common/FullPageContainer"
 import Checkbox from "../components/common/Checkbox"
 import Cookies from "js-cookie"
 import { jwtDecode } from "jwt-decode"
@@ -12,6 +11,7 @@ import SignUpPage from "./signup"
 import ForgotPassword from "./forgot-password.js"
 import LogoSymbol from "../public/logo_n.svg"
 import { config } from "../utils/config.js"
+import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 
 // Custom error messages based on Cognito error codes
 const cognitoErrorMessages = {
@@ -34,22 +34,6 @@ const fadeIn = keyframes`
   to {
     opacity: 1;
     transform: translateX(45%);
-  }
-`
-
-const LoginPageWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 30px 30px 30px 30px;
-  flex-direction: column;
-  gap: 15px;
-  width: 500px;
-  margin: 24px auto;
-
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
   }
 `
 
@@ -519,94 +503,92 @@ const Login = () => {
             <title>Login: TechNexus</title>
             <meta property="og:title" content="Login: TechNexus" key="title" />
           </Head>
-          <FullPageContainer>
-            <LoginPageWrapper>
-              <Logo>
-                <LogoSymbol />
-              </Logo>
-              <HeaderText>Sign in to TechNexus</HeaderText>
-              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-              <NameWrapper>
-                <AccountText htmlFor="username">Email address</AccountText>
-                <InputIconWrapper>
-                  <EntryContainer
-                    onChange={onChange}
-                    name="username"
-                    id="username"
-                    type="text"
-                    placeholder=""
-                    style={!emailValid ? invalidStyle : {}}
-                    onBlur={handleEmailBlur}
-                  />
-                </InputIconWrapper>
-                {!emailValid && (
-                  <ValidationMessage>
-                    Please enter a valid email address.
-                  </ValidationMessage>
-                )}
-              </NameWrapper>
-              <PasswordWrapper>
-                <AccountText htmlFor="password">Password</AccountText>
-                <InputIconWrapper>
-                  <EntryContainer
-                    onChange={onChange}
-                    name="password"
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder=""
-                    style={!passwordValid ? invalidStyle : {}}
-                    onBlur={handlePasswordBlur}
-                  />
-                  <IconButton onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
-                  </IconButton>
-                </InputIconWrapper>
-                {!passwordValid && (
-                  <ValidationMessage>
-                    Please enter a valid password.
-                  </ValidationMessage>
-                )}
-              </PasswordWrapper>
-              <ResetText onClick={handlePasswordReset}>
-                Forgot Password?
-              </ResetText>
-              <KeepSignInWrapper>
-                <Checkbox
-                  id={"id"}
-                  label={"Keep me signed in"}
-                  checked={keepSignedIn}
-                  onChange={handleKeepSignedInChange}
+          <AuthContainerWrapper>
+            <Logo>
+              <LogoSymbol />
+            </Logo>
+            <HeaderText>Sign in to TechNexus</HeaderText>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            <NameWrapper>
+              <AccountText htmlFor="username">Email address</AccountText>
+              <InputIconWrapper>
+                <EntryContainer
+                  onChange={onChange}
+                  name="username"
+                  id="username"
+                  type="text"
+                  placeholder=""
+                  style={!emailValid ? invalidStyle : {}}
+                  onBlur={handleEmailBlur}
                 />
-                <TooltipContainer ref={infoButtonRef}>
-                  <InfoButton onClick={handleClick}>
-                    <span className="info-icon">i</span>
-                  </InfoButton>
-                  {showTooltip && (
-                    <InfoTooltip>
-                      By checking this box, you will stay signed in even after
-                      closing the browser. Only use this feature on your
-                      personal device.
-                    </InfoTooltip>
-                  )}
-                </TooltipContainer>
-              </KeepSignInWrapper>
-              <EntryBtnWrapper>
-                <SignInBtn onClick={handleSignIn} type="button">
-                  Sign In
-                </SignInBtn>
-              </EntryBtnWrapper>
-              <EntryBtnWrapper>
-                <SignInBtn onClick={toggleSignUp} type="button">
-                  Create account
-                </SignInBtn>
-              </EntryBtnWrapper>
-              <PolicyContainer>
-                By signing in, you agree to the following:
-                <a href="/terms">TechNexus terms and conditions</a>
-                <a href="/privacy">TechNexus privacy policy</a>
-              </PolicyContainer>
-            </LoginPageWrapper>
-          </FullPageContainer>
+              </InputIconWrapper>
+              {!emailValid && (
+                <ValidationMessage>
+                  Please enter a valid email address.
+                </ValidationMessage>
+              )}
+            </NameWrapper>
+            <PasswordWrapper>
+              <AccountText htmlFor="password">Password</AccountText>
+              <InputIconWrapper>
+                <EntryContainer
+                  onChange={onChange}
+                  name="password"
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder=""
+                  style={!passwordValid ? invalidStyle : {}}
+                  onBlur={handlePasswordBlur}
+                />
+                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
+                </IconButton>
+              </InputIconWrapper>
+              {!passwordValid && (
+                <ValidationMessage>
+                  Please enter a valid password.
+                </ValidationMessage>
+              )}
+            </PasswordWrapper>
+            <ResetText onClick={handlePasswordReset}>
+              Forgot Password?
+            </ResetText>
+            <KeepSignInWrapper>
+              <Checkbox
+                id={"id"}
+                label={"Keep me signed in"}
+                checked={keepSignedIn}
+                onChange={handleKeepSignedInChange}
+              />
+              <TooltipContainer ref={infoButtonRef}>
+                <InfoButton onClick={handleClick}>
+                  <span className="info-icon">i</span>
+                </InfoButton>
+                {showTooltip && (
+                  <InfoTooltip>
+                    By checking this box, you will stay signed in even after
+                    closing the browser. Only use this feature on your personal
+                    device.
+                  </InfoTooltip>
+                )}
+              </TooltipContainer>
+            </KeepSignInWrapper>
+            <EntryBtnWrapper>
+              <SignInBtn onClick={handleSignIn} type="button">
+                Sign In
+              </SignInBtn>
+            </EntryBtnWrapper>
+            <EntryBtnWrapper>
+              <SignInBtn onClick={toggleSignUp} type="button">
+                Create account
+              </SignInBtn>
+            </EntryBtnWrapper>
+            <PolicyContainer>
+              By signing in, you agree to the following:
+              <a href="/terms">TechNexus terms and conditions</a>
+              <a href="/privacy">TechNexus privacy policy</a>
+            </PolicyContainer>
+          </AuthContainerWrapper>
         </>
       )}
     </>

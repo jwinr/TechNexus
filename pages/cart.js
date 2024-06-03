@@ -9,7 +9,6 @@ import Cookies from "js-cookie"
 import SavedItems from "../components/shopping/SavedItems"
 import LocationEstimator from "../components/shopping/LocationEstimator"
 import styled from "styled-components"
-import FullPageContainer from "../components/common/FullPageContainer"
 import QuantityPicker from "../components/shopping/QuantityPicker"
 
 const CartPageWrapper = styled.div`
@@ -125,115 +124,111 @@ const Cart = ({ context }) => {
         />
         <meta property="og:title" content="Cart - TechNexus" key="title" />
       </Head>
-      <FullPageContainer>
-        <CartPageWrapper>
-          <CartPageTitle>Cart</CartPageTitle>
-          {cartEmpty ? (
-            <h3>No items in cart.</h3>
-          ) : (
-            <div>
-              {cart.map((item) => {
-                return (
-                  <div className="cart-item-container" key={item.id}>
-                    <div className="cart-item-wrapper">
+      <CartPageWrapper>
+        <CartPageTitle>Cart</CartPageTitle>
+        {cartEmpty ? (
+          <h3>No items in cart.</h3>
+        ) : (
+          <div>
+            {cart.map((item) => {
+              return (
+                <div className="cart-item-container" key={item.id}>
+                  <div className="cart-item-wrapper">
+                    <Link href={`${item.slug}`}>
+                      <Image
+                        className="cart-image-container"
+                        src={item.image.image_url}
+                        alt={item.name}
+                      />
+                    </Link>
+                    <div className="cart-item-name-wrapper">
                       <Link href={`${item.slug}`}>
-                        <Image
-                          className="cart-image-container"
-                          src={item.image.image_url}
-                          alt={item.name}
-                        />
+                        <p className="cart-item-name">{item.name}</p>
                       </Link>
-                      <div className="cart-item-name-wrapper">
-                        <Link href={`${item.slug}`}>
-                          <p className="cart-item-name">{item.name}</p>
-                        </Link>
-                      </div>
-                      <div className="cart-button-wrapper">
-                        <QuantityPicker
-                          value={item.quantity}
-                          onQuantityChange={(newQuantity) =>
-                            setItemQuantity({
-                              ...item,
-                              quantity: newQuantity,
-                            })
-                          }
-                        />
-                        <button
-                          className="save-later-btn"
-                          onClick={() => saveForLater(item)}
-                        >
-                          Save for later
-                        </button>
-                      </div>
-                      <div className="cart-item-pricing-container">
-                        <p className="cart-item-price">
-                          {item.quantity > 1
-                            ? `Total: $${(item.quantity * item.price).toFixed(
-                                2
-                              )}`
-                            : `$${item.price}`}
+                    </div>
+                    <div className="cart-button-wrapper">
+                      <QuantityPicker
+                        value={item.quantity}
+                        onQuantityChange={(newQuantity) =>
+                          setItemQuantity({
+                            ...item,
+                            quantity: newQuantity,
+                          })
+                        }
+                      />
+                      <button
+                        className="save-later-btn"
+                        onClick={() => saveForLater(item)}
+                      >
+                        Save for later
+                      </button>
+                    </div>
+                    <div className="cart-item-pricing-container">
+                      <p className="cart-item-price">
+                        {item.quantity > 1
+                          ? `Total: $${(item.quantity * item.price).toFixed(2)}`
+                          : `$${item.price}`}
+                      </p>
+                      {item.quantity > 1 && (
+                        <p className="cart-item-price-each">
+                          {"each " + "$" + item.price}
                         </p>
-                        {item.quantity > 1 && (
-                          <p className="cart-item-price-each">
-                            {"each " + "$" + item.price}
-                          </p>
-                        )}
-                      </div>
-                      <div className="cart-remove-container">
-                        <div
-                          role="button"
-                          onClick={() => removeFromCart(item)}
-                          className="cart-remove-btn"
-                        >
-                          <FaTimes />
-                        </div>
+                      )}
+                    </div>
+                    <div className="cart-remove-container">
+                      <div
+                        role="button"
+                        onClick={() => removeFromCart(item)}
+                        className="cart-remove-btn"
+                      >
+                        <FaTimes />
                       </div>
                     </div>
                   </div>
-                )
-              })}
-            </div>
-          )}
-          {!cartEmpty && (
-            <div className="cart-page-total-container">
-              <p className="cart-page-order-header">Order summary</p>
-              <div className="cart-page-subtotal-container">
-                <div className="cart-page-order-subtotal">
-                  {`Subtotal (${totalQuantity} item${
-                    totalQuantity !== 1 ? "s" : ""
-                  })`}
                 </div>
-                <div className="cart-price-text-header">{`$${total}`}</div>
-              </div>
-              <div className="cart-page-subtotal-container">
-                <div className="cart-page-order-subtotal">Shipping</div>
-                <div className="cart-page-order-subtotal">Free</div>
-              </div>
-              <div className="cart-page-subtotal-container">
-                <div className="cart-page-order-subtotal">
-                  Estimated taxes{" "}
-                  <LocationEstimator onZipCodeChange={handleZipCodeChange} />
-                </div>
-                <div className="cart-page-order-subtotal">
-                  {`$${salesTaxAmount}`}
-                </div>
-              </div>
-              <div className="cart-page-subtotal-container">
-                <div className="cart-price-text-header">Total</div>
-                <div className="cart-price-text-header">
-                  {`$${totalWithSalesTax}`}
-                </div>
-              </div>
-              <Link href="/checkout">
-                <div className="cart-checkout-btn">Checkout</div>
-              </Link>
-            </div>
-          )}
-          <div className="saved-items-container">
-            <SavedItems moveBackToCart={moveBackToCart} />
+              )
+            })}
           </div>
-        </CartPageWrapper>
-      </FullPageContainer>
+        )}
+        {!cartEmpty && (
+          <div className="cart-page-total-container">
+            <p className="cart-page-order-header">Order summary</p>
+            <div className="cart-page-subtotal-container">
+              <div className="cart-page-order-subtotal">
+                {`Subtotal (${totalQuantity} item${
+                  totalQuantity !== 1 ? "s" : ""
+                })`}
+              </div>
+              <div className="cart-price-text-header">{`$${total}`}</div>
+            </div>
+            <div className="cart-page-subtotal-container">
+              <div className="cart-page-order-subtotal">Shipping</div>
+              <div className="cart-page-order-subtotal">Free</div>
+            </div>
+            <div className="cart-page-subtotal-container">
+              <div className="cart-page-order-subtotal">
+                Estimated taxes{" "}
+                <LocationEstimator onZipCodeChange={handleZipCodeChange} />
+              </div>
+              <div className="cart-page-order-subtotal">
+                {`$${salesTaxAmount}`}
+              </div>
+            </div>
+            <div className="cart-page-subtotal-container">
+              <div className="cart-price-text-header">Total</div>
+              <div className="cart-price-text-header">
+                {`$${totalWithSalesTax}`}
+              </div>
+            </div>
+            <Link href="/checkout">
+              <div className="cart-checkout-btn">Checkout</div>
+            </Link>
+          </div>
+        )}
+        <div className="saved-items-container">
+          <SavedItems moveBackToCart={moveBackToCart} />
+        </div>
+      </CartPageWrapper>
     </>
   )
 }

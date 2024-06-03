@@ -1,6 +1,5 @@
 import Head from "next/head"
 import styled from "styled-components"
-import FullPageContainer from "../components/common/FullPageContainer"
 import { IoMail } from "react-icons/io5"
 
 const ContactPageWrapper = styled.div`
@@ -74,24 +73,22 @@ const ContactUs = () => {
         />
         <meta property="og:title" content="Contact Us" key="title" />
       </Head>
-      <FullPageContainer>
-        <ContactPageWrapper>
-          <HeaderText>Contact Us</HeaderText>
-          <ContactCard>
-            <CardDetails>
-              <SubheaderText>Need help or support?</SubheaderText>
-              <p>
-                If you have an order related question, a technical issue or just
-                want to say hi? Feel free to reach out to us through email and
-                we will get back to you shortly.
-              </p>
-              <EmailWrapper>
-                <IoMail size="36" /> <EmailText>help@jwtechnexus.com</EmailText>
-              </EmailWrapper>
-            </CardDetails>
-          </ContactCard>
-        </ContactPageWrapper>
-      </FullPageContainer>
+      <ContactPageWrapper>
+        <HeaderText>Contact Us</HeaderText>
+        <ContactCard>
+          <CardDetails>
+            <SubheaderText>Need help or support?</SubheaderText>
+            <p>
+              If you have an order related question, a technical issue or just
+              want to say hi? Feel free to reach out to us through email and we
+              will get back to you shortly.
+            </p>
+            <EmailWrapper>
+              <IoMail size="36" /> <EmailText>help@jwtechnexus.com</EmailText>
+            </EmailWrapper>
+          </CardDetails>
+        </ContactCard>
+      </ContactPageWrapper>
     </>
   )
 }
