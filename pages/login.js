@@ -11,6 +11,7 @@ import SignUpPage from "./signup"
 import ForgotPassword from "./forgot-password.js"
 import LogoSymbol from "../public/logo_n.svg"
 import { config } from "../utils/config.js"
+import Link from "next/link.js"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 
 // Custom error messages based on Cognito error codes
@@ -37,30 +38,45 @@ const fadeIn = keyframes`
   }
 `
 
-const NameWrapper = styled.div`
-  margin-bottom: 10px;
-`
-
-const PasswordWrapper = styled.div`
-  margin-bottom: 10px;
+const EntryWrapper = styled.div`
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin: 10px 0;
 `
 
 const EntryContainer = styled.input`
-  border: 1px solid #a1a1a1;
+  border: 1px solid var(--color-border-gray);
   border-radius: 0.25rem;
-  width: 350px;
+  width: 100%;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
   color: var(--color-text-dark);
   line-height: 1.25;
-  outline: none;
   padding-right: 40px;
+  transition: border-color 0.3s;
 
-  &:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
+  &:focus + label,
+  &:not(:placeholder-shown) + label {
+    top: 0px;
+    left: 10px;
+    font-size: 12px;
+    color: var(--color-text-dark);
   }
+`
+
+const Label = styled.label`
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: var(--color-text-dark);
+  background-color: var(--color-main-white);
+  font-size: 16px;
+  pointer-events: none;
+  transition: all 0.3s ease;
 `
 
 const HeaderText = styled.h1`
@@ -142,19 +158,10 @@ const InfoTooltip = styled.div`
     border-top: 6px solid transparent;
     border-bottom: 6px solid transparent;
   }
-`
 
-const Divider = styled.div`
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 10px 0;
-`
-
-const AccountText = styled.label`
-  display: block;
-  font-size: 13px;
-  color: #000;
-  font-weight: 400;
-  margin-bottom: 0.1rem;
+  @media (max-width: 768px) {
+    left: 0;
+  }
 `
 
 const ResetText = styled.button`
@@ -168,6 +175,10 @@ const ResetText = styled.button`
   &:hover {
     text-decoration: underline;
   }
+
+  &:focus-visible {
+    text-decoration: underline;
+  }
 `
 
 const SignInBtn = styled.button`
@@ -177,6 +188,7 @@ const SignInBtn = styled.button`
   border-radius: 6px;
   color: var(--color-main-white);
   border: medium;
+  font-weight: bold;
   min-height: 44px;
   padding: 0px 16px;
   width: 100%;
@@ -216,12 +228,6 @@ const ErrorMessage = styled.div`
   padding: 10px 0;
 `
 
-const InputIconWrapper = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-`
-
 const IconButton = styled.button`
   position: absolute;
   right: 10px;
@@ -229,6 +235,31 @@ const IconButton = styled.button`
   border: none;
   background: transparent;
   cursor: pointer;
+`
+
+const IconContainer = styled.div`
+  position: relative;
+  width: 24px;
+  height: 24px;
+
+  & > svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hide {
+    opacity: 0;
+    transform: translateY(-7px);
+  }
 `
 
 const EntryBtnWrapper = styled.div`
@@ -242,18 +273,33 @@ const EntryBtnWrapper = styled.div`
 `
 
 const ValidationMessage = styled.div`
-  display: inline-flex;
   position: absolute;
   color: #d32f2f;
   font-size: 14px;
+  bottom: -20px;
 `
 
 const PolicyContainer = styled.div`
-  display: grid;
+  display: flex;
+  flex-direction: column;
   text-align: center;
   font-size: 12px;
-  color: #595959;
+  color: var(--color-text-light-gray);
   margin: 10px 0px 0px;
+  align-items: center;
+
+  a {
+    color: var(--color-link-blue);
+    width: fit-content;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  a:focus-visible {
+    text-decoration: underline;
+  }
 `
 
 const Logo = styled.div`
@@ -523,49 +569,57 @@ const Login = () => {
             </Logo>
             <HeaderText>Sign in to TechNexus</HeaderText>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-            <NameWrapper>
-              <AccountText htmlFor="username">Email address</AccountText>
-              <InputIconWrapper>
-                <EntryContainer
-                  onChange={onChange}
-                  name="username"
-                  id="username"
-                  type="username"
-                  placeholder=""
-                  autoComplete="username"
-                  style={!emailValid ? invalidStyle : {}}
-                  onBlur={handleEmailBlur}
-                />
-              </InputIconWrapper>
+            <EntryWrapper>
+              <EntryContainer
+                onChange={onChange}
+                name="username"
+                id="username"
+                type="username"
+                placeholder=""
+                autoComplete="username"
+                style={!emailValid ? invalidStyle : {}}
+                onBlur={handleEmailBlur}
+              />
+              <Label htmlFor="username" style={!emailValid ? invalidStyle : {}}>
+                Email address
+              </Label>
               {!emailValid && (
                 <ValidationMessage>
                   Please enter a valid email address.
                 </ValidationMessage>
               )}
-            </NameWrapper>
-            <PasswordWrapper>
-              <AccountText htmlFor="password">Password</AccountText>
-              <InputIconWrapper>
-                <EntryContainer
-                  onChange={onChange}
-                  name="password"
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder=""
-                  autoComplete="current-password"
-                  style={!passwordValid ? invalidStyle : {}}
-                  onBlur={handlePasswordBlur}
-                />
-                <IconButton onClick={() => setShowPassword(!showPassword)}>
-                  {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
-                </IconButton>
-              </InputIconWrapper>
+            </EntryWrapper>
+            <EntryWrapper>
+              <EntryContainer
+                onChange={onChange}
+                name="password"
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder=""
+                autoComplete="current-password"
+                style={!passwordValid ? invalidStyle : {}}
+                onBlur={handlePasswordBlur}
+              />
+              <Label
+                htmlFor="password"
+                style={!passwordValid ? invalidStyle : {}}
+              >
+                Password
+              </Label>
+              <IconButton onClick={() => setShowPassword(!showPassword)}>
+                <IconContainer>
+                  <LiaEyeSolid className={showPassword ? "hide" : "show"} />
+                  <LiaEyeSlashSolid
+                    className={showPassword ? "show" : "hide"}
+                  />
+                </IconContainer>
+              </IconButton>
               {!passwordValid && (
                 <ValidationMessage>
                   Please enter a valid password.
                 </ValidationMessage>
               )}
-            </PasswordWrapper>
+            </EntryWrapper>
             <ResetText onClick={handlePasswordReset}>
               Forgot Password?
             </ResetText>
@@ -602,8 +656,8 @@ const Login = () => {
             </EntryBtnWrapper>
             <PolicyContainer>
               By signing in, you agree to the following:
-              <a href="/terms">TechNexus terms and conditions</a>
-              <a href="/privacy">TechNexus privacy policy</a>
+              <Link href="/terms">TechNexus terms and conditions</Link>
+              <Link href="/privacy">TechNexus privacy policy</Link>
             </PolicyContainer>
           </AuthContainerWrapper>
         </>

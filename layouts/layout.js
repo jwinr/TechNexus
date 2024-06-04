@@ -57,6 +57,7 @@ const SiteWrapper = styled.div`
   justify-content: center;
   z-index: 100;
   position: relative;
+  min-height: calc(-63px + 100vh);
 `
 
 const FooterContainer = styled.footer`

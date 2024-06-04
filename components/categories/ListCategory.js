@@ -19,7 +19,7 @@ const Container = styled.div`
 
   &:hover {
     background-color: #f1f1f1;
-    border-color: #a1a1a1;
+    border-color: var(--color-border-gray);
   }
 `
 

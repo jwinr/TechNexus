@@ -19,7 +19,7 @@ const cognitoErrorMessages = {
 }
 
 const EntryContainer = styled.input`
-  border: 1px solid #a1a1a1;
+  border: 1px solid var(--color-border-gray);
   border-radius: 0.25rem;
   width: 100%;
   height: 44px;
@@ -63,14 +63,13 @@ const SuccessMessage = styled.div`
 `
 
 const ResetBtn = styled.button`
-  font-weight: 800;
+  font-weight: bold;
   align-self: center;
-  border-radius: 4px;
-  padding: 8px 20px;
+  border-radius: 6px;
   color: var(--color-main-white);
+  min-height: 44px;
+  padding: 0px 16px;
   width: 100%;
-  height: 56px;
-  font-size: 19px;
   background-color: var(--color-main-blue);
   transition: background-color 0.2s;
   margin-top: 24px;

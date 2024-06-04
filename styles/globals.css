@@ -10,7 +10,10 @@
   --color-main-dark-gray: #212121;
   --color-main-white: #fff;
   --color-text-dark: #333;
+  --color-text-light-gray: #595959;
+  --color-border-gray: #a1a1a1;
   --color-highlight: #0e87eb;
+  --color-link-blue: #366cd9;
   --swiper-theme-color: var(
     --color-text-dark
   ) !important; /* Override the Swiper button colors */
@@ -411,7 +414,7 @@ body {
 
 .input-stepper:hover {
   background-color: #f1f1f1;
-  border-color: #a1a1a1;
+  border-color: var(--color-border-gray);
 }
 
 .saved-items-container {
@@ -488,7 +491,7 @@ body {
 
 .save-later-btn:hover {
   background-color: #f1f1f1;
-  border-color: #a1a1a1;
+  border-color: var(--color-border-gray);
 }
 
 .cart-item-pricing-container {
@@ -594,7 +597,7 @@ body {
   width: 350px;
   padding: 20px;
   border-radius: 10px;
-  border-color: #a1a1a1;
+  border-color: var(--color-border-gray);
   display: flex;
   flex-direction: column;
   background: rgb(238, 238, 238);

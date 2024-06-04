@@ -5,7 +5,7 @@ const ContentWrapper = styled.div`
   width: calc(100% - 0px);
   margin: 0px auto;
   max-width: 1400px;
-  min-height: 100vh;
+  align-content: center;
   background-color: var(--color-bg-light);
 `
 

@@ -20,6 +20,7 @@ const HeaderText = styled.h1`
   font-weight: 800;
   font-size: 23px;
   padding: 5px;
+  text-align: center;
 `
 
 const SubheaderText = styled.h1`
@@ -45,7 +46,7 @@ const AccountText = styled.label`
 `
 
 const EntryContainer = styled.input`
-  border: 1px solid #a1a1a1;
+  border: 1px solid var(--color-border-gray);
   border-radius: 0.25rem;
   width: 350px;
   padding-top: 10px;
