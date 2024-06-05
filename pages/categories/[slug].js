@@ -67,7 +67,7 @@ const SpinnerContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* Center vertically on the entire viewport height */
+  min-height: calc(-63px + 100vh);
 `
 
 export default function CategoryPage() {

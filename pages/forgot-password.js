@@ -2,8 +2,12 @@ import React, { useState, useEffect, useRef } from "react"
 import Head from "next/head"
 import styled from "styled-components"
 import { resetPassword, confirmResetPassword } from "aws-amplify/auth"
+import { useRouter } from "next/router"
 import LogoSymbol from "../public/logo_n.svg"
+import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
+import { IoCheckmarkCircleSharp } from "react-icons/io5"
+import LoadingSpinner from "../components/common/LoadingSpinner"
 
 // Custom error messages based on Cognito error codes
 const cognitoErrorMessages = {
@@ -66,11 +70,6 @@ const ValidationMessage = styled.div`
   bottom: -20px;
 `
 
-const NameWrapper = styled.div`
-  margin-bottom: 10px;
-  width: 100%;
-`
-
 const HeaderText = styled.h1`
   font-weight: 800;
   font-size: 23px;
@@ -84,26 +83,64 @@ const ErrorMessage = styled.div`
   padding: 10px 0;
 `
 
-const InputIconWrapper = styled.div`
-  position: relative;
-`
-
 const SuccessMessage = styled.div`
   font-size: 16px;
   text-align: center;
+`
+
+const IconButton = styled.button`
+  position: absolute;
+  right: 10px;
+  padding: 5px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+`
+
+const IconContainer = styled.div`
+  position: relative;
+  width: 24px;
+  height: 24px;
+
+  & > svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hide {
+    opacity: 0;
+    transform: translateY(-7px);
+  }
 `
 
 const ResetBtn = styled.button`
   font-weight: bold;
   align-self: center;
   border-radius: 6px;
-  color: var(--color-main-white);
+  color: ${(props) => (props.disabled ? "#666666" : "#fff")};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   min-height: 44px;
   padding: 0px 16px;
   width: 100%;
-  background-color: var(--color-main-blue);
+  background-color: ${(props) =>
+    props.disabled ? "rgb(214, 214, 214)" : "#00599c"};
   transition: background-color 0.2s;
   margin-top: 24px;
+
+  &:disabled {
+    cursor: not-allowed;
+    color: #666666 !important; // Override the hover & active styles when the button is disabled
+    background-color: rgb(214, 214, 214) !important;
+  }
 
   &:hover {
     background-color: var(--color-main-dark-blue);
@@ -240,11 +277,23 @@ const RequirementListItem = styled.li`
   }
 `
 
-const RequirementListItemDone = styled.li`
+const RequirementListItemDone = styled.div`
   position: absolute;
-  color: #d32f2f;
+  color: var(--color-success-green);
   font-size: 14px;
   bottom: -20px;
+
+  svg {
+    display: inline-block;
+    margin-right: 6px;
+  }
+`
+
+const SpinnerContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(-63px + 100vh);
 `
 
 const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
@@ -255,11 +304,11 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
   const [email, setEmail] = useState(username || "")
   const [emailValid, setEmailValid] = useState(true)
   const [isCodeSent, setIsCodeSent] = useState(false)
-  const [codeValid, setCodeValid] = useState(true)
   const [passwordValid, setPasswordValid] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const [formSubmitted, setFormSubmitted] = useState(false)
   const [currentStep, setCurrentStep] = useState("initial")
+  const [loading, setLoading] = useState(false)
 
   const [lengthMet, setLengthMet] = useState(false)
   const [lowerCaseMet, setLowerCaseMet] = useState(false)
@@ -270,6 +319,12 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
 
   const codeInputRef = useRef(null)
 
+  const router = useRouter()
+
+  const handleRedirect = () => {
+    router.push("/")
+  }
+
   useEffect(() => {
     if (currentStep === "verifyCode" && codeInputRef.current) {
       codeInputRef.current.focus()
@@ -277,17 +332,12 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
     }
   }, [currentStep])
 
-  const [formData, setFormData] = useState({
-    /* TODO: Possibly implement this? Not sure if it's necessary
-    it's reused from the signup component and would need to
-    track the username (email), code, and new password -
-    depending on the current state, i.e. whether the intial
-    form is submitted, a valid code is entered.. */
-    username: "",
-    given_name: "",
-    family_name: "",
-    password: "",
-  })
+  useEffect(() => {
+    if (currentStep === "success") {
+      setLoading(true)
+      handleRedirect()
+    }
+  }, [currentStep])
 
   useEffect(() => {
     if (username) {
@@ -322,7 +372,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
             },
           },
         })
-      }, 3000) // simulate async call with 3-second delay
+      }, 1000) // simulate async call with 1-second delay
     })
   }
 
@@ -465,14 +515,12 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
 
       // Set reqsMet to true if all of the criteria are met
       setReqsMet(
-        lengthMet &&
-          (lowerCaseMet || upperCaseMet || numberMet || specialCharMet)
+        lengthMet && lowerCaseMet && upperCaseMet && numberMet && specialCharMet
       )
 
       // Set passwordValid based on reqsMet
       setPasswordValid(
-        lengthMet &&
-          (lowerCaseMet || upperCaseMet || numberMet || specialCharMet)
+        lengthMet && lowerCaseMet && upperCaseMet && numberMet && specialCharMet
       )
     }
   }
@@ -490,12 +538,20 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
   const validatePassword = (password) => {
     // Regular expression pattern to validate the password
     const pattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-])[a-zA-Z0-9\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]{8,98}$/
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-])[a-zA-Z\d\^$*.$begin:math:display$$end:math:display${}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]{8,20}$/
     return pattern.test(password)
   }
 
   // Apply red border/text if information is invalid
   const invalidStyle = { borderColor: "#D32F2F", color: "#D32F2F" }
+
+  if (loading) {
+    return (
+      <SpinnerContainer>
+        <LoadingSpinner />
+      </SpinnerContainer>
+    )
+  }
 
   return (
     <>
@@ -598,7 +654,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
             </SuccessMessage>
             <EntryWrapper>
               <EntryContainer
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder=""
                 value={newPassword}
                 name="newPassword"
@@ -612,6 +668,14 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
               >
                 Create password
               </Label>
+              <IconButton onClick={() => setShowPassword(!showPassword)}>
+                <IconContainer>
+                  <LiaEyeSolid className={showPassword ? "hide" : "show"} />
+                  <LiaEyeSlashSolid
+                    className={showPassword ? "show" : "hide"}
+                  />
+                </IconContainer>
+              </IconButton>
               {!passwordValid && (
                 <ValidationMessage>
                   Please enter a valid password.
@@ -619,6 +683,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
               )}
               {reqsMet && (
                 <RequirementListItemDone>
+                  <IoCheckmarkCircleSharp size={16} />
                   Your password is ready to go!
                 </RequirementListItemDone>
               )}
@@ -671,7 +736,12 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
                 </RequirementList>
               </>
             )}
-            <ResetBtn onClick={handleResetPassword}>Create Password</ResetBtn>
+            <ResetBtn
+              onClick={handleResetPassword}
+              disabled={!passwordValid || !reqsMet} // Just to be safe
+            >
+              Create Password
+            </ResetBtn>
           </>
         )}
         {currentStep === "success" && (
