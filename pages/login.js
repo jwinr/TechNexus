@@ -96,6 +96,13 @@ const InfoButton = styled.button`
   align-items: center;
   justify-content: center;
 
+  &:focus .info-icon,
+  &:hover .info-icon {
+    color: var(--color-main-white);
+    background-color: var(--color-main-blue);
+    transition: all 0.3s;
+  }
+
   .info-icon {
     appearance: none;
     background-color: transparent;
@@ -109,6 +116,7 @@ const InfoButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s;
   }
 `
 
@@ -205,8 +213,7 @@ const SignInBtn = styled.button`
   }
 
   &:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
+    background-color: var(--color-main-dark-blue);
   }
 `
 

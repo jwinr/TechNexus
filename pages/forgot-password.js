@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Head from "next/head"
 import styled from "styled-components"
 import { resetPassword, confirmResetPassword } from "aws-amplify/auth"
@@ -18,21 +18,52 @@ const cognitoErrorMessages = {
     "You have exceeded the allowed number of login attempts. Please try again later.",
 }
 
+const EntryWrapper = styled.div`
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin: 10px 0;
+`
+
 const EntryContainer = styled.input`
   border: 1px solid var(--color-border-gray);
   border-radius: 0.25rem;
   width: 100%;
-  height: 44px;
-  padding: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
   color: var(--color-text-dark);
-  outline: none;
+  line-height: 1.25;
+  padding-right: 40px;
+  transition: border-color 0.3s;
+
+  &:focus + label,
+  &:not(:placeholder-shown) + label {
+    top: 0px;
+    left: 10px;
+    font-size: 12px;
+    color: var(--color-text-dark);
+  }
+`
+
+const Label = styled.label`
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: var(--color-text-dark);
+  background-color: var(--color-main-white);
+  font-size: 16px;
+  pointer-events: none;
+  transition: all 0.3s ease;
 `
 
 const ValidationMessage = styled.div`
-  display: inline-flex;
   position: absolute;
   color: #d32f2f;
   font-size: 14px;
+  bottom: -20px;
 `
 
 const NameWrapper = styled.div`
@@ -79,6 +110,10 @@ const ResetBtn = styled.button`
   }
 
   &:active {
+    background-color: var(--color-main-dark-blue);
+  }
+
+  &:focus-visible {
     background-color: var(--color-main-dark-blue);
   }
 `
@@ -140,18 +175,17 @@ const VerificationInput = styled.input`
 `
 
 const VerifyBtn = styled.button`
-  font-weight: 800;
-  margin-top: 24px;
-  margin-bottom: 20px;
-  width: 100%;
-  height: 56px;
-  font-size: 19px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-  background-color: ${(props) =>
-    props.disabled ? "rgb(214, 214, 214)" : "#00599c"};
+  font-weight: bold;
+  border-radius: 6px;
   color: ${(props) => (props.disabled ? "#666666" : "#fff")};
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  min-height: 44px;
+  padding: 0px 16px;
+  width: 100%;
+  background-color: ${(props) =>
+    props.disabled ? "rgb(214, 214, 214)" : "#00599c"};
+  transition: background-color 0.2s;
+  margin-top: 24px;
 
   &:disabled {
     cursor: not-allowed;
@@ -167,10 +201,8 @@ const VerifyBtn = styled.button`
     background-color: var(--color-main-dark-blue);
   }
 
-  &:focus {
-    outline: rgb(136, 136, 136) dashed 1px;
-    outline-offset: 2px;
-    text-decoration: underline;
+  &:focus-visible {
+    background-color: var(--color-main-dark-blue);
   }
 `
 
@@ -204,7 +236,15 @@ const RequirementListItem = styled.li`
     content: ${(props) => (props.met ? "'✓'" : "''")};
     padding-right: ${(props) => (props.met ? "4px" : "0px")};
     font-weight: bold;
+    margin-left: ${(props) => (props.met ? "-12px" : "0px")};
   }
+`
+
+const RequirementListItemDone = styled.li`
+  position: absolute;
+  color: #d32f2f;
+  font-size: 14px;
+  bottom: -20px;
 `
 
 const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
@@ -226,6 +266,16 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
   const [upperCaseMet, setUpperCaseMet] = useState(false)
   const [numberMet, setNumberMet] = useState(false)
   const [specialCharMet, setSpecialCharMet] = useState(false)
+  const [reqsMet, setReqsMet] = useState(false)
+
+  const codeInputRef = useRef(null)
+
+  useEffect(() => {
+    if (currentStep === "verifyCode" && codeInputRef.current) {
+      codeInputRef.current.focus()
+      setCaretToEnd(codeInputRef.current)
+    }
+  }, [currentStep])
 
   const [formData, setFormData] = useState({
     /* TODO: Possibly implement this? Not sure if it's necessary
@@ -319,6 +369,13 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
     }
   }
 
+  // Send the caret cursor to the end if the user tabs into the input field
+  const setCaretToEnd = (input) => {
+    if (input && input.value.length) {
+      input.setSelectionRange(input.value.length, input.value.length)
+    }
+  }
+
   const handleVerifyCode = async (e) => {
     e.preventDefault()
     if (!code) {
@@ -393,23 +450,40 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
       setPasswordValid(true)
 
       // Check password criteria
-      setLengthMet(value.length >= 8 && value.length <= 20)
-      setLowerCaseMet(/[a-z]/.test(value))
-      setUpperCaseMet(/[A-Z]/.test(value))
-      setNumberMet(/[0-9]/.test(value))
-      setSpecialCharMet(
+      const lengthMet = value.length >= 8 && value.length <= 20
+      const lowerCaseMet = /[a-z]/.test(value)
+      const upperCaseMet = /[A-Z]/.test(value)
+      const numberMet = /[0-9]/.test(value)
+      const specialCharMet =
         /[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]/.test(value)
+
+      setLengthMet(lengthMet)
+      setLowerCaseMet(lowerCaseMet)
+      setUpperCaseMet(upperCaseMet)
+      setNumberMet(numberMet)
+      setSpecialCharMet(specialCharMet)
+
+      // Set reqsMet to true if all of the criteria are met
+      setReqsMet(
+        lengthMet &&
+          (lowerCaseMet || upperCaseMet || numberMet || specialCharMet)
+      )
+
+      // Set passwordValid based on reqsMet
+      setPasswordValid(
+        lengthMet &&
+          (lowerCaseMet || upperCaseMet || numberMet || specialCharMet)
       )
     }
   }
 
   const handlePasswordBlur = () => {
-    if (password.trim().length === 0) {
+    if (newPassword.trim().length === 0) {
       // Reset password validity only if the field is empty when blurred
       setPasswordValid(true)
     } else {
       // Validate password if field is not empty
-      setPasswordValid(validatePassword(password))
+      setPasswordValid(validatePassword(newPassword))
     }
   }
 
@@ -443,26 +517,27 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
                 account.
               </span>
             </SubheaderText>
-            <NameWrapper>
-              <InputIconWrapper>
-                <EntryContainer
-                  onChange={onChange}
-                  name="username"
-                  id="username"
-                  type="username"
-                  placeholder=""
-                  autoComplete="username"
-                  style={!emailValid ? invalidStyle : {}}
-                  onBlur={handleEmailBlur}
-                  value={email}
-                />
-              </InputIconWrapper>
+            <EntryWrapper>
+              <EntryContainer
+                onChange={onChange}
+                name="username"
+                id="username"
+                type="username"
+                placeholder=""
+                autoComplete="username"
+                style={!emailValid ? invalidStyle : {}}
+                onBlur={handleEmailBlur}
+                value={email}
+              />
+              <Label htmlFor="username" style={!emailValid ? invalidStyle : {}}>
+                Email address
+              </Label>
               {!emailValid && (
                 <ValidationMessage>
                   Please enter a valid email address.
                 </ValidationMessage>
               )}
-            </NameWrapper>
+            </EntryWrapper>
             <ResetBtn onClick={handleSendCode}>Continue</ResetBtn>
           </>
         )}
@@ -489,8 +564,13 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
                 pattern="\d*"
                 onChange={onChange}
                 hasValue={code.length > 0}
+                onFocus={(e) => setCaretToEnd(e.target)}
                 onKeyDown={(e) => {
-                  if (e.key !== "Backspace" && !/^[0-9]$/.test(e.key)) {
+                  if (
+                    e.key !== "Backspace" &&
+                    e.key !== "Tab" &&
+                    !/^[0-9]$/.test(e.key)
+                  ) {
                     e.preventDefault()
                   }
                 }}
@@ -516,55 +596,81 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
                 haven’t used before.
               </span>
             </SuccessMessage>
-            <EntryContainer
-              type="password"
-              placeholder="New Password"
-              value={newPassword}
-              name="newPassword"
-              onChange={onChange}
-            />
-            <RequirementTitle>Must contain:</RequirementTitle>
-            <RequirementList>
-              <RequirementListItem
-                data-test={lengthMet ? "lengthSuccess" : "lengthNotMet"}
-                met={lengthMet}
+            <EntryWrapper>
+              <EntryContainer
+                type="password"
+                placeholder=""
+                value={newPassword}
+                name="newPassword"
+                onChange={onChange}
+                style={!passwordValid ? invalidStyle : {}}
+                onBlur={handlePasswordBlur}
+              />
+              <Label
+                htmlFor="password"
+                style={!passwordValid ? invalidStyle : {}}
               >
-                <span>8-20 characters</span>
-              </RequirementListItem>
-            </RequirementList>
-            <RequirementTitle>And 2 of the following:</RequirementTitle>
-            <RequirementList>
-              <RequirementListItem
-                data-test={
-                  lowerCaseMet ? "lowerCaseSuccess" : "lowerCaseNotMet"
-                }
-                met={lowerCaseMet}
-              >
-                <span>Lowercase letters</span>
-              </RequirementListItem>
-              <RequirementListItem
-                data-test={
-                  upperCaseMet ? "upperCaseSuccess" : "upperCaseNotMet"
-                }
-                met={upperCaseMet}
-              >
-                <span>Uppercase letters</span>
-              </RequirementListItem>
-              <RequirementListItem
-                data-test={numberMet ? "numberSuccess" : "numberNotMet"}
-                met={numberMet}
-              >
-                <span>Numbers</span>
-              </RequirementListItem>
-              <RequirementListItem
-                data-test={
-                  specialCharMet ? "specialCharSuccess" : "specialCharNotMet"
-                }
-                met={specialCharMet}
-              >
-                <span>Special characters, except {"< >"}</span>
-              </RequirementListItem>
-            </RequirementList>
+                Create password
+              </Label>
+              {!passwordValid && (
+                <ValidationMessage>
+                  Please enter a valid password.
+                </ValidationMessage>
+              )}
+              {reqsMet && (
+                <RequirementListItemDone>
+                  Your password is ready to go!
+                </RequirementListItemDone>
+              )}
+            </EntryWrapper>
+            {!reqsMet && (
+              <>
+                <RequirementTitle>Must contain:</RequirementTitle>
+                <RequirementList>
+                  <RequirementListItem
+                    data-test={lengthMet ? "lengthSuccess" : "lengthNotMet"}
+                    met={lengthMet}
+                  >
+                    <span>8-20 characters</span>
+                  </RequirementListItem>
+                </RequirementList>
+                <RequirementTitle>And 1 of the following:</RequirementTitle>
+                <RequirementList>
+                  <RequirementListItem
+                    data-test={
+                      lowerCaseMet ? "lowerCaseSuccess" : "lowerCaseNotMet"
+                    }
+                    met={lowerCaseMet}
+                  >
+                    <span>Lowercase letters</span>
+                  </RequirementListItem>
+                  <RequirementListItem
+                    data-test={
+                      upperCaseMet ? "upperCaseSuccess" : "upperCaseNotMet"
+                    }
+                    met={upperCaseMet}
+                  >
+                    <span>Uppercase letters</span>
+                  </RequirementListItem>
+                  <RequirementListItem
+                    data-test={numberMet ? "numberSuccess" : "numberNotMet"}
+                    met={numberMet}
+                  >
+                    <span>Numbers</span>
+                  </RequirementListItem>
+                  <RequirementListItem
+                    data-test={
+                      specialCharMet
+                        ? "specialCharSuccess"
+                        : "specialCharNotMet"
+                    }
+                    met={specialCharMet}
+                  >
+                    <span>Special characters, except {"< >"}</span>
+                  </RequirementListItem>
+                </RequirementList>
+              </>
+            )}
             <ResetBtn onClick={handleResetPassword}>Create Password</ResetBtn>
           </>
         )}
