@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import Link from "next/link"
 import Image from "next/image"
+import categoriesConfig from "../../utils/categoriesConfig"
 
 const NavContainer = styled.div`
   display: grid;
@@ -46,38 +47,10 @@ const NavTitle = styled.div`
 `
 
 const CategoryNavigation = () => {
-  const [categories, setCategories] = useState([])
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("/api/categories")
-        if (response.ok) {
-          const data = await response.json()
-          // Filter out some unnecessary categories, then sort the remaining ones by ID
-          const filteredCategories = data
-            .filter(
-              (category) =>
-                category.name !== "Accessories" &&
-                category.name !== "Mice & Keyboards"
-            )
-            .sort((a, b) => a.id - b.id)
-          setCategories(filteredCategories)
-        } else {
-          console.error("Failed to fetch categories:", response.statusText)
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error)
-      }
-    }
-
-    fetchCategories()
-  }, [])
-
   return (
     <NavContainer>
       <NavWrapper>
-        {categories.map((category) => (
+        {categoriesConfig.map((category) => (
           <Link key={category.id} href={`/categories/${category.slug}`}>
             <NavItem>
               <NavIcon>

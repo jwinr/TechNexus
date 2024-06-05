@@ -6,8 +6,8 @@ import { useMobileView } from "../../components/common/MobileViewDetector"
 import { FiMenu } from "react-icons/fi"
 import Link from "next/link"
 import Backdrop from "../common/Backdrop"
-import { debounce } from "lodash"
 import { filter } from "../../utils/helpers.js"
+import categoriesConfig from "../../utils/categoriesConfig"
 
 const Dropdown = styled.div`
   position: absolute;
@@ -152,31 +152,9 @@ const BtnText = styled.div`
 `
 
 const CategoryDropdown = ({ isOpen, onToggle }) => {
-  const [categories, setCategories] = useState([])
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("/api/categories")
-      const data = await response.json()
-      //console.log("Fetched categories:", data) // Log the fetched categories
-      setCategories(data)
-    } catch (error) {
-      console.error("Error fetching categories:", error)
-    }
-  }
-
-  const debouncedFetchCategories = useCallback(
-    debounce(fetchCategories, 300),
-    []
-  )
-
-  useEffect(() => {
-    debouncedFetchCategories()
-  }, [debouncedFetchCategories])
-
   return (
     <NavItem isOpen={isOpen} onToggle={onToggle}>
-      <DropdownMenu categories={categories} />
+      <DropdownMenu categories={categoriesConfig} />
     </NavItem>
   )
 }
@@ -339,16 +317,12 @@ function DropdownMenu({ categories, dropdownLeft, setOpen, className }) {
     }
   }
 
-  const mainCategories = useMemo(() => categories, [categories])
-  const getSubCategories = useMemo(
-    () => (parentId) => {
-      return (
-        categories.find((category) => category.id === parentId)
-          ?.subCategories || []
-      )
-    },
-    [categories]
-  )
+  const getSubCategories = (parentId) => {
+    const category = categoriesConfig.find(
+      (category) => category.id === parentId
+    )
+    return category ? category.subCategories || [] : []
+  }
 
   return (
     <Dropdown
@@ -367,17 +341,23 @@ function DropdownMenu({ categories, dropdownLeft, setOpen, className }) {
       >
         <Menu>
           <ListHeader>All Categories</ListHeader>
-          {mainCategories.map((category) => (
+          {categoriesConfig.map((category) => (
             <DropdownItem
               key={category.id}
-              goToMenu={category.subCategories.length > 0 ? category.id : null}
-              hasSubCategories={category.subCategories.length > 0}
+              goToMenu={
+                category.subCategories && category.subCategories.length > 0
+                  ? category.id
+                  : null
+              }
+              hasSubCategories={
+                category.subCategories && category.subCategories.length > 0
+              }
               href={`/categories/${category.slug}`}
               setActiveMenu={setActiveMenu} // Pass setActiveMenu to DropdownItem
               setOpen={setOpen} // Pass setOpen to DropdownItem
             >
               {category.name}
-              {category.subCategories.length > 0 && (
+              {category.subCategories && category.subCategories.length > 0 && (
                 <RiArrowDownSLine className="arrow-icon" />
               )}
             </DropdownItem>
@@ -385,7 +365,7 @@ function DropdownMenu({ categories, dropdownLeft, setOpen, className }) {
         </Menu>
       </CSSTransition>
 
-      {mainCategories.map((category) => (
+      {categoriesConfig.map((category) => (
         <CSSTransition
           key={category.id}
           in={activeMenu === category.id}

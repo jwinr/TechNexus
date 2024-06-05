@@ -8,7 +8,7 @@ const HeroBannerContainer = styled.div`
   display: grid;
   background: linear-gradient(230.05deg, #f2faff 19.87%, #c4e8ff 84.85%);
   grid-area: hero-banner;
-  border-radius: 12px;
+  border-radius: 30px;
   overflow: hidden; // Prevent the wave warp from extending past the container
 
   @media (max-width: 768px) {

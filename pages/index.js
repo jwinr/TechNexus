@@ -1,11 +1,23 @@
+import React, { useEffect, useRef, useState } from "react"
 import Head from "next/head"
 import About from "../components/hero/About"
 import Brands from "../components/hero/Brands"
-import BrandSwiper from "../components/common/BrandSwiper"
+import BrandGrid from "../components/common/BrandGrid"
 import HeroBanner from "../components/hero/HeroBanner"
 import CategoryNavigation from "../components/categories/CategoryNavigation"
 import TopDeals from "../components/shopping/TopDeals"
 import styled, { keyframes } from "styled-components"
+
+const slideFadeIn = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
 
 const HomeContainer = styled.div`
   display: grid;
@@ -23,10 +35,18 @@ const HomeContainer = styled.div`
   padding: 30px;
 `
 
-const CatTitle = styled.div`
+const AnimatedCatTitle = styled.div`
   display: grid;
   text-align: center;
   grid-area: cat-title;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+
+  &.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   h2 {
     font-size: 34px;
@@ -64,6 +84,31 @@ const TopDealsTitle = styled.div`
 `
 
 const Home = () => {
+  const catTitleRef = useRef(null)
+  const [inView, setInView] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true)
+          observer.unobserve(entry.target) // Unobserve to prevent further triggers
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (catTitleRef.current) {
+      observer.observe(catTitleRef.current)
+    }
+
+    return () => {
+      if (catTitleRef.current) {
+        observer.unobserve(catTitleRef.current)
+      }
+    }
+  }, [])
+
   return (
     <>
       <Head>
@@ -76,16 +121,16 @@ const Home = () => {
       </Head>
       <HomeContainer>
         <HeroBanner />
-        <CatTitle>
+        <AnimatedCatTitle ref={catTitleRef} className={inView ? "in-view" : ""}>
           <h2>Shop by Category</h2>
-        </CatTitle>
-        <CategoryNavigation />
+        </AnimatedCatTitle>
+        <CategoryNavigation
+          ref={catTitleRef}
+          className={inView ? "in-view" : ""}
+        />
         <About />
-        <BrandTitle>
-          <h2>Featured Brands</h2>
-        </BrandTitle>
         <BrandSwiperContainer>
-          <BrandSwiper />
+          <BrandGrid />
         </BrandSwiperContainer>
         <TopDealsTitle>
           <h2>Deals you'll love</h2>
