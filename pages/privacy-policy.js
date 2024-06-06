@@ -23,12 +23,14 @@ const SubheaderText = styled.h2`
   font-size: 16px;
 `
 
-const ListWrapper = styled.div`
+const ListWrapper = styled.ol`
   padding-left: 40px;
+  list-style: disc;
 `
 
-const UnbulletedItem = styled.ul`
+const UnbulletedItem = styled.li`
   margin: 5px 0;
+  list-style: none;
 `
 
 const PrivacyPolicy = () => {
@@ -73,7 +75,7 @@ const PrivacyPolicy = () => {
           automatically-collected information as <b>“Device Information”</b>.
         </p>
         <p> We collect Device Information using the following technologies:</p>
-        <ListWrapper>
+        <ListWrapper role="list">
           <li>
             “Cookies” are data files that are placed on your device or computer
             and often include an anonymous unique identifier. For more
@@ -131,7 +133,7 @@ const PrivacyPolicy = () => {
           your Personal Information, as described above. The following third
           parties are involved:
         </p>
-        <ListWrapper>
+        <ListWrapper role="list">
           <li>
             <b>We use Stripe for our payment processing</b>
           </li>
@@ -181,20 +183,24 @@ const PrivacyPolicy = () => {
           practices when we see a Do Not Track signal from your browser.
         </p>
         <SubheaderText>YOUR RIGHTS AND CHOICES</SubheaderText>
-        <li>How you can see or change your account Personal Information</li>
+        <menu>
+          <li>How you can see or change your account Personal Information</li>
+        </menu>
         <p>
           If you would like to review, correct, or update Personal Information
           that you have previously disclosed to us, you may do so by signing in
           to your TechNexus account or by contacting us through the contact
           information under contact us.
         </p>
-        <li>Your data protection rights</li>
+        <menu>
+          <li>Your data protection rights</li>
+        </menu>
         <p>
           Depending on your location and subject to applicable law, you may have
           the following rights with regard to the Personal Information we
           control about you:
         </p>
-        <ListWrapper>
+        <ListWrapper role="list">
           <li>
             The right to request confirmation of whether TechNexus processes
             Personal Information relating to you, and if so, to request a copy
@@ -226,7 +232,9 @@ const PrivacyPolicy = () => {
             processing of your Personal Information.
           </li>
         </ListWrapper>
-        <li>Subject access requests</li>
+        <menu>
+          <li>Subject access requests</li>
+        </menu>
         <p>
           You can access your personal information through your TechNexus
           account. When a manual request is made through contacting us, we will

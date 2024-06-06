@@ -225,7 +225,11 @@ const UserDropdown = ({ isOpen: parentIsOpen, onToggle }) => {
 
   return (
     <NavItem isOpen={isMounted && parentIsOpen} onToggle={onToggle} user={user}>
-      <DropdownMenu user={user} handleSignOut={handleSignOut} />
+      <DropdownMenu
+        isOpen={isMounted && parentIsOpen}
+        user={user}
+        handleSignOut={handleSignOut}
+      />
     </NavItem>
   )
 }
@@ -349,7 +353,7 @@ function NavItem(props) {
   )
 }
 
-function DropdownItem({ children, href, setOpen, onClick }) {
+function DropdownItem({ children, href, setOpen, onClick, isOpen }) {
   const router = useRouter()
 
   const handleKeyDown = (e) => {
@@ -370,7 +374,7 @@ function DropdownItem({ children, href, setOpen, onClick }) {
     <MenuItem
       onClick={handleClick}
       role="menuitem"
-      tabIndex={0}
+      tabIndex={isOpen ? 0 : -1} // Make it focusable only if isOpen is true
       onKeyDown={handleKeyDown}
     >
       {children}
@@ -384,6 +388,7 @@ function DropdownMenu({
   className,
   handleSignOut,
   user,
+  isOpen,
 }) {
   const [menuHeight, setMenuHeight] = useState(null)
   const userDropdownRef = useRef(null)
@@ -412,6 +417,7 @@ function DropdownMenu({
       role="menu"
       onKeyDown={handleKeyDown}
       className={className} // Apply the visibility class
+      isOpen={isOpen}
     >
       <CSSTransition
         in={true}
@@ -424,34 +430,43 @@ function DropdownMenu({
           {user ? (
             <>
               <ListHeader>Account</ListHeader>
-              <DropdownItem href="/profile" setOpen={setOpen}>
+              <DropdownItem href="/profile" setOpen={setOpen} isOpen={isOpen}>
                 Profile
               </DropdownItem>
-              <DropdownItem href="/orders" setOpen={setOpen}>
+              <DropdownItem href="/orders" setOpen={setOpen} isOpen={isOpen}>
                 Orders
               </DropdownItem>
-              <DropdownItem href="/wishlist" setOpen={setOpen}>
+              <DropdownItem href="/wishlist" setOpen={setOpen} isOpen={isOpen}>
                 Wishlist
               </DropdownItem>
-              <DropdownItem href="/account-settings" setOpen={setOpen}>
+              <DropdownItem
+                href="/account-settings"
+                setOpen={setOpen}
+                isOpen={isOpen}
+              >
                 Account Settings
               </DropdownItem>
-              <DropdownItem onClick={handleSignOut} setOpen={setOpen}>
+              <DropdownItem
+                onClick={handleSignOut}
+                setOpen={setOpen}
+                isOpen={isOpen}
+              >
                 Logout
               </DropdownItem>
             </>
           ) : (
             <>
               <ListHeader>Account</ListHeader>
-              <DropdownItem href="/login" setOpen={setOpen}>
+              <DropdownItem href="/login" setOpen={setOpen} isOpen={isOpen}>
                 Sign in
               </DropdownItem>
-              <DropdownItem href="/signup" setOpen={setOpen}>
+              <DropdownItem href="/signup" setOpen={setOpen} isOpen={isOpen}>
                 Create Account
               </DropdownItem>
               <DropdownItem
                 href="/orders" // Need to modify this to lead to the sign-in component then redirect to the orders page
                 setOpen={setOpen}
+                isOpen={isOpen}
               >
                 Orders
               </DropdownItem>

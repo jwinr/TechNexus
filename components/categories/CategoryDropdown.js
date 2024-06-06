@@ -173,7 +173,10 @@ const CategoryDropdown = ({ isOpen: parentIsOpen, onToggle }) => {
 
   return (
     <NavItem isOpen={isMounted && parentIsOpen} onToggle={onToggle}>
-      <DropdownMenu categories={categoriesConfig} />
+      <DropdownMenu
+        isOpen={isMounted && parentIsOpen}
+        categories={categoriesConfig}
+      />
     </NavItem>
   )
 }
@@ -304,6 +307,7 @@ function DropdownItem({
   href,
   setActiveMenu,
   setOpen,
+  isOpen,
 }) {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -328,7 +332,7 @@ function DropdownItem({
     <MenuItem
       onClick={handleClick}
       role="menuitem"
-      tabIndex={0} // Make the subcategory focusable via the tab key
+      tabIndex={isOpen ? 0 : -1} // Make it focusable only if isOpen is true
       onKeyDown={handleKeyDown}
     >
       {children}
@@ -337,7 +341,7 @@ function DropdownItem({
     <MenuItem
       onClick={handleClick}
       role="menuitem"
-      tabIndex={0} // Make it focusable via the tab key
+      tabIndex={isOpen ? 0 : -1} // Make it focusable only if isOpen is true
       onKeyDown={handleKeyDown}
     >
       {children}
@@ -345,7 +349,13 @@ function DropdownItem({
   )
 }
 
-function DropdownMenu({ categories, dropdownLeft, setOpen, className }) {
+function DropdownMenu({
+  categories,
+  dropdownLeft,
+  setOpen,
+  className,
+  isOpen,
+}) {
   const [activeMenu, setActiveMenu] = useState("main")
   const [menuHeight, setMenuHeight] = useState(null)
   const dropdownRef = useRef(null)
@@ -405,6 +415,7 @@ function DropdownMenu({ categories, dropdownLeft, setOpen, className }) {
               href={`/categories/${category.slug}`}
               setActiveMenu={setActiveMenu} // Pass setActiveMenu to DropdownItem
               setOpen={setOpen} // Pass setOpen to DropdownItem
+              isOpen={isOpen}
             >
               {category.name}
               {category.subCategories && category.subCategories.length > 0 && (
@@ -441,6 +452,7 @@ function DropdownMenu({ categories, dropdownLeft, setOpen, className }) {
                 key={subCategory.id}
                 href={`/categories/${subCategory.slug}`}
                 setOpen={setOpen}
+                isOpen={isOpen}
                 setActiveMenu={setActiveMenu} // Pass setActiveMenu to DropdownItem
               >
                 {subCategory.name}
