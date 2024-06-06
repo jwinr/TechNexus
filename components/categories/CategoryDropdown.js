@@ -105,7 +105,7 @@ const Menu = styled.div`
   }
 `
 
-const MenuItem = styled.span`
+const MenuItem = styled.li`
   height: 50px;
   display: flex;
   align-items: center;
@@ -315,9 +315,18 @@ function DropdownItem({
     }
   }
 
+  const handleClick = () => {
+    if (goToMenu) {
+      setActiveMenu(goToMenu)
+    } else {
+      setOpen(false)
+      router.push(href)
+    }
+  }
+
   return hasSubCategories ? (
     <MenuItem
-      onClick={() => goToMenu && setActiveMenu(goToMenu)}
+      onClick={handleClick}
       role="menuitem"
       tabIndex={0} // Make the subcategory focusable via the tab key
       onKeyDown={handleKeyDown}
@@ -325,11 +334,14 @@ function DropdownItem({
       {children}
     </MenuItem>
   ) : (
-    <Link href={href} passHref>
-      <MenuItem onClick={() => setOpen(false)} role="menuitem">
-        {children}
-      </MenuItem>
-    </Link>
+    <MenuItem
+      onClick={handleClick}
+      role="menuitem"
+      tabIndex={0} // Make it focusable via the tab key
+      onKeyDown={handleKeyDown}
+    >
+      {children}
+    </MenuItem>
   )
 }
 

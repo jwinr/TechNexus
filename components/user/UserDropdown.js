@@ -8,6 +8,7 @@ import Backdrop from "../common/Backdrop"
 import { getCurrentUser, fetchAuthSession, signOut } from "aws-amplify/auth"
 import { filter } from "../../utils/helpers.js"
 import { config } from "../../utils/config.js"
+import { useRouter } from "next/router"
 
 const Dropdown = styled.div`
   position: absolute;
@@ -108,7 +109,7 @@ const Menu = styled.div`
   }
 `
 
-const MenuItem = styled.span`
+const MenuItem = styled.li`
   height: 50px;
   display: flex;
   align-items: center;
@@ -349,25 +350,25 @@ function NavItem(props) {
 }
 
 function DropdownItem({ children, href, setOpen, onClick }) {
+  const router = useRouter()
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       setOpen(false)
       if (onClick) onClick()
+      if (href) router.push(href)
     }
   }
 
-  return href ? (
-    <Link href={href} passHref>
-      <MenuItem onClick={() => setOpen(false)} role="menuitem">
-        {children}
-      </MenuItem>
-    </Link>
-  ) : (
+  const handleClick = () => {
+    setOpen(false)
+    if (onClick) onClick()
+    if (href) router.push(href)
+  }
+
+  return (
     <MenuItem
-      onClick={() => {
-        setOpen(false)
-        if (onClick) onClick()
-      }}
+      onClick={handleClick}
       role="menuitem"
       tabIndex={0}
       onKeyDown={handleKeyDown}

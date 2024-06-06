@@ -235,6 +235,7 @@ const Footer = () => {
                 href="https://www.facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Facebook"
               >
                 <RiFacebookFill />
               </a>
@@ -242,6 +243,7 @@ const Footer = () => {
                 href="https://www.x.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Twitter"
               >
                 <RiTwitterXFill />
               </a>
@@ -249,6 +251,7 @@ const Footer = () => {
                 href="https://www.instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Instagram"
               >
                 <RiInstagramLine />
               </a>
@@ -256,6 +259,7 @@ const Footer = () => {
                 href="https://www.youtube.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="YouTube"
               >
                 <RiYoutubeFill />
               </a>
