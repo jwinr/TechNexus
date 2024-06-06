@@ -65,7 +65,7 @@ const CtaButton = styled.button`
   transition: background-color 0.3s ease, transform 0.3s ease;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 12px;
   &:hover {
-    background-color: #002134;
+    background-color: var(--color-main-dark-blue);
     transform: scale(1.05);
   }
   &:focus {

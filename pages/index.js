@@ -111,7 +111,6 @@ const Home = () => {
           <HeroBanner />
         </Section>
         <Section>
-          <Title>Our Brands</Title>
           <BrandGrid />
         </Section>
         <Section>

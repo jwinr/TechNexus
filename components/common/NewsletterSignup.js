@@ -1,55 +1,127 @@
-// components/common/NewsletterSignup.js
-
-import React from "react"
-import styled from "styled-components"
+import React, { useState } from "react"
+import styled, { keyframes } from "styled-components"
 
 const NewsletterContainer = styled.div`
   text-align: center;
   padding: 20px;
-  background-color: #f5f0e1;
-  border-radius: 12px;
 `
 
 const NewsletterTitle = styled.h2`
-  font-size: 24px;
-  margin-bottom: 10px;
+  text-align: center;
+  font-size: 34px;
+  font-weight: 600;
+  margin-bottom: 25px;
+`
+
+const NewsletterSubtitle = styled.p`
+  margin-bottom: 25px;
 `
 
 const NewsletterForm = styled.form`
   display: flex;
   justify-content: center;
   gap: 10px;
+  opacity: ${(props) => (props.isVisible ? 1 : 0)};
+  transition: opacity 0.5s ease;
 `
 
 const NewsletterInput = styled.input`
   padding: 10px;
   font-size: 16px;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-border-gray);
+  min-width: 375px;
+
+  @media (max-width: 768px) {
+    min-width: auto;
+  }
 `
 
 const NewsletterButton = styled.button`
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #0070f3;
-  color: white;
+  background-color: var(--color-main-blue);
+  color: var(--color-main-white);
   border: none;
   border-radius: 5px;
   cursor: pointer;
 
-  &:hover {
-    background-color: #005bb5;
+  &:hover,
+  &:focus {
+    background-color: var(--color-main-dark-blue);
   }
 `
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`
+
+const SuccessMessage = styled.div`
+  animation: ${fadeIn} 0.5s ease;
+`
+
 const NewsletterSignup = () => {
+  const [email, setEmail] = useState("")
+  const [emailValid, setEmailValid] = useState(true)
+  const [submitted, setSubmitted] = useState(false)
+
+  const validateEmailDomain = (email) => {
+    // Simplified regex to catch some invalid formats
+    const regex = /.+@\S+\.\S+$/
+    return regex.test(email)
+  }
+
+  const handleEmailChange = (e) => {
+    const email = e.target.value
+    setEmail(email)
+    setEmailValid(true) // Reset the email validation state when the user types
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    // Validate the email before making the API call
+    const isEmailValid = validateEmailDomain(email)
+    if (!isEmailValid) {
+      setEmailValid(false)
+      return
+    }
+
+    // Make the mock API call with the validated email
+    // console.log("Email is valid, making mock API call with email:", email)
+    setSubmitted(true)
+  }
+
   return (
     <NewsletterContainer>
       <NewsletterTitle>Stay Updated</NewsletterTitle>
-      <NewsletterForm>
-        <NewsletterInput type="email" placeholder="Enter your email" />
-        <NewsletterButton>Subscribe</NewsletterButton>
-      </NewsletterForm>
+      <NewsletterSubtitle>
+        Be the first to know the latest news, developments and scoops. We won't
+        spam.
+      </NewsletterSubtitle>
+      {submitted ? (
+        <SuccessMessage>
+          Thanks for subscribing to our newsletter!
+        </SuccessMessage>
+      ) : (
+        <NewsletterForm isVisible={!submitted} onSubmit={handleSubmit}>
+          <NewsletterInput
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={handleEmailChange}
+            style={{
+              borderColor: emailValid ? "var(--color-border-gray)" : "red",
+            }}
+          />
+          <NewsletterButton>Subscribe</NewsletterButton>
+        </NewsletterForm>
+      )}
     </NewsletterContainer>
   )
 }

@@ -1,7 +1,6 @@
 import React from "react"
 import styled from "styled-components"
 import Link from "next/link"
-import Image from "next/image"
 import categoriesConfig from "../../utils/categoriesConfig"
 
 const NavContainer = styled.div`
@@ -42,11 +41,40 @@ const NavIcon = styled.div`
   background-color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  div {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  svg {
+    max-width: 125px;
+    width: auto;
+    height: 100px;
+  }
 `
 
 const NavTitle = styled.div`
   font-size: 16px;
   margin-top: 5px;
+`
+
+const FallbackIcon = styled.div`
+  background-color: #f0f0f0;
+  color: #888;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const CategoryNavigation = React.forwardRef((props, ref) => {
@@ -56,12 +84,11 @@ const CategoryNavigation = React.forwardRef((props, ref) => {
         <Link key={category.id} href={`/categories/${category.slug}`} passHref>
           <NavItem>
             <NavIcon>
-              <Image
-                src={category.icon}
-                width={150}
-                height={150}
-                alt={category.name}
-              />
+              {category.icon ? (
+                React.createElement(category.icon)
+              ) : (
+                <FallbackIcon>?</FallbackIcon>
+              )}
             </NavIcon>
             <NavTitle>{category.name}</NavTitle>
           </NavItem>

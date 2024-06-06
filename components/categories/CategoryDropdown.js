@@ -251,11 +251,18 @@ function NavItem(props) {
     }
   }
 
+  // Prevent the dropdown from being opened by clicking on the backdrop component as it closes
+  const handleToggle = useCallback(() => {
+    if (isOpen) {
+      onToggle()
+    }
+  }, [isOpen, onToggle])
+
   return (
     <>
       <Backdrop
         className={initialLoad ? "initial-hidden" : isOpen ? "visible" : ""}
-        onClick={onToggle}
+        onClick={handleToggle}
       />
       {isMobileView ? (
         <StyledCategoryButton isOpen={!isOpen} onClick={onToggle}>

@@ -172,9 +172,40 @@ const UserDropdown = ({ isOpen: parentIsOpen, onToggle }) => {
 
   useEffect(() => {}, [parentIsOpen])
 
-  const checkUser = async () => {
+  /* const checkUser = async () => {
     try {
       const { username, userId, signInDetails } = await getCurrentUser()
+
+      setUser({ username, userId, signInDetails })
+    } catch (error) {
+      setUser(null)
+      console.error("No user signed in:", error)
+    }
+  }
+
+  useEffect(() => {
+    checkUser()
+  }, [])
+  */
+
+  const mockGetCurrentUser = async () => {
+    // Simulate a delay to mimic the actual API call
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Return mock user data
+    return {
+      username: "mockUser",
+      userId: "mockUserId",
+      signInDetails: {
+        lastSignIn: "2024-06-06T12:34:56Z",
+      },
+    }
+  }
+
+  const checkUser = async () => {
+    try {
+      // Replace getCurrentUser with mockGetCurrentUser for development
+      const { username, userId, signInDetails } = await mockGetCurrentUser()
 
       setUser({ username, userId, signInDetails })
     } catch (error) {
@@ -273,11 +304,18 @@ function NavItem(props) {
     }
   }
 
+  // Prevent the dropdown from being opened by clicking on the backdrop component as it closes
+  const handleToggle = useCallback(() => {
+    if (isOpen) {
+      onToggle()
+    }
+  }, [isOpen, onToggle])
+
   return (
     <>
       <Backdrop
         className={initialLoad ? "initial-hidden" : isOpen ? "visible" : ""}
-        onClick={onToggle}
+        onClick={handleToggle}
       />
       <StyledUserButton
         onClick={onToggle}
