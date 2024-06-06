@@ -7,9 +7,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f0f0f0;
-  padding: 8px;
-  border-radius: 12px;
   grid-area: about;
 
   h1 {
@@ -62,14 +59,11 @@ const Logo = styled.div`
 const HeaderText = styled.div`
   font-size: 23px;
   font-weight: 600;
-  margin-top: 4px;
-  margin-bottom: 8px;
 `
 
 const About = () => {
   return (
     <Container>
-      <h1>Get More at TechNexus</h1>
       <Wrapper>
         <Column>
           <Outline>

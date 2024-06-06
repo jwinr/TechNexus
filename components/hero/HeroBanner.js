@@ -1,164 +1,153 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Link from "next/link"
-import styled, { keyframes } from "styled-components"
+import styled from "styled-components"
 import Image from "next/image"
 
 const HeroBannerContainer = styled.div`
   position: relative;
-  display: grid;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: linear-gradient(230.05deg, #f2faff 19.87%, #c4e8ff 84.85%);
-  grid-area: hero-banner;
   border-radius: 30px;
-  overflow: hidden; // Prevent the wave warp from extending past the container
-
+  overflow: hidden;
+  padding: 50px 20px;
+  margin: 20px 0;
   @media (max-width: 768px) {
-    grid-template-areas: "left" "right";
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    padding: 30px 10px;
   }
 `
 
 const HeroContent = styled.div`
-  display: grid;
-  grid-template-areas:
-    "top top"
-    "middle-l middle-r";
-  gap: 25px;
-  padding: 20px;
-  z-index: 200;
+  z-index: 2;
+  max-width: 600px;
+  @media (max-width: 768px) {
+    text-align: center;
+    max-width: 100%;
+  }
 `
 
-const HeroTitle = styled.div`
-  font-size: 68px;
-  font-weight: 500;
-  line-height: 65px;
-  text-align: left;
-  grid-area: top;
-  top: 50px;
-
+const HeroTitle = styled.h1`
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  color: #003366;
   @media (max-width: 768px) {
-    font-size: 40px;
-    line-height: 1.2;
-    word-break: break-word;
+    font-size: 32px;
   }
 `
 
 const HeroSubtitle = styled.div`
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 500;
-  line-height: 30px !important;
-  text-align: left;
-  word-wrap: anywhere;
-  max-width: 55%;
-  grid-area: middle-l;
-
-  h2 {
-    background: linear-gradient(180deg, #0067b8 0, #3999ed 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-fill-color: transparent;
-    padding-bottom: 10px;
-  }
-
-  p {
-    font-size: 15px;
-    line-height: 20px;
-  }
-
+  line-height: 1.5;
+  color: #0067b8;
+  margin-bottom: 20px;
   @media (max-width: 768px) {
     font-size: 16px;
-    line-height: 16px;
-    word-break: break-word;
+  }
+  p {
+    font-size: 16px;
+    color: #333;
+  }
+`
+
+const CtaButton = styled.button`
+  background-color: var(--color-main-blue);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 12px;
+  &:hover {
+    background-color: #002134;
+    transform: scale(1.05);
+  }
+  &:focus {
+    outline: none;
+  }
+  @media (max-width: 768px) {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+
+  &.initial-hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: none;
   }
 `
 
 const HeroImage = styled.div`
-  grid-area: middle-r;
+  position: relative;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 2;
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
+  }
 `
 
-const WaveWarp = styled.div`
-  z-index: 100;
+const BackgroundImage = styled.div`
   position: absolute;
-  top: 275px;
-
-  -webkit-mask-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 1),
-    rgba(0, 0, 0, 0)
-  );
-`
-
-const CtaBtnContainer = styled.div`
-  grid-area: middle-l;
-  display: grid;
-  margin-top: 125px; // Force the cta button down for now
-  width: max-content; // and make it so you can't click outside of it
-  height: max-content;
-`
-
-const CtaButton = styled.button`
-  background-color: #004066;
-  color: var(--color-main-white);
-  border: none;
-  padding: 8px 13px;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 12px 0px;
-
-  &:hover {
-    background-color: #002134;
-  }
-
-  &:focus {
-    outline: none;
-  }
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  background: url("/src/images/wavewarp.webp") no-repeat center center / cover;
+  opacity: 0.2;
 `
 
 const HeroBanner = () => {
+  const [initialLoad, setInitialLoad] = useState(true)
+
+  useEffect(() => {
+    setTimeout(() => setInitialLoad(false), 0) // Ensure initialLoad is set to false after the initial render
+  }, [])
+
   const imageSrc = "/src/images/hero_parts.png"
 
-  const waveSrc = "/src/images/wavewarp.webp"
-
   return (
-    <>
-      <HeroBannerContainer>
-        <HeroContent>
-          <HeroTitle>
-            <h1>Your dream build is here.</h1>
-          </HeroTitle>
-          <HeroSubtitle>
-            <h2>Unleash innovation, elevate performance</h2>
-            <p>Explore our limitless choices on cutting-edge hardware.</p>
-          </HeroSubtitle>
-          <CtaBtnContainer>
-            <Link href="/categories">
-              <CtaButton>Shop Now</CtaButton>
-            </Link>
-          </CtaBtnContainer>
-          <HeroImage>
-            <Image
-              src={imageSrc}
-              width={1053}
-              height={681}
-              alt="Hero Banner"
-              priority={true}
-              loading="eager"
-            />
-          </HeroImage>
-        </HeroContent>
-        <WaveWarp>
-          <Image
-            src={waveSrc}
-            width={1053}
-            height={681}
-            priority={true}
-            alt="Hero Banner"
-          />
-        </WaveWarp>
-      </HeroBannerContainer>
-    </>
+    <HeroBannerContainer>
+      <BackgroundImage />
+      <HeroContent>
+        <HeroTitle>Build Your Ultimate PC</HeroTitle>
+        <HeroSubtitle>
+          <h2>We have what you need.</h2>
+          <p>
+            Discover the latest in high-performance hardware and accessories.
+          </p>
+        </HeroSubtitle>
+        <Link href="/categories" passHref>
+          <CtaButton className={initialLoad ? "initial-hidden" : ""}>
+            Shop Now
+          </CtaButton>
+        </Link>
+      </HeroContent>
+      <HeroImage>
+        <Image
+          src={imageSrc}
+          layout="intrinsic"
+          width={600}
+          height={400}
+          objectFit="contain"
+          alt="Hero Banner"
+          priority={true}
+          loading="eager"
+        />
+      </HeroImage>
+    </HeroBannerContainer>
   )
 }
 

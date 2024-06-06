@@ -1,44 +1,35 @@
 import React, { useEffect, useRef, useState } from "react"
 import Head from "next/head"
 import About from "../components/hero/About"
-import Brands from "../components/hero/Brands"
 import BrandGrid from "../components/common/BrandGrid"
 import HeroBanner from "../components/hero/HeroBanner"
 import CategoryNavigation from "../components/categories/CategoryNavigation"
 import TopDeals from "../components/shopping/TopDeals"
-import styled, { keyframes } from "styled-components"
-
-const slideFadeIn = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`
+import NewsletterSignup from "../components/common/NewsletterSignup"
+import styled from "styled-components"
+import SecondaryHeroBanner from "../components/hero/SecondaryHeroBanner"
 
 const HomeContainer = styled.div`
-  display: grid;
-  grid-template-areas:
-    "hero-banner hero-banner hero-banner"
-    "brand-title brand-title brand-title"
-    "brand-swiper brand-swiper brand-swiper"
-    "cat-title cat-title cat-title"
-    "category-nav category-nav category-nav"
-    "about about about"
-    "top-deals-title top-deals-title top-deals-title"
-    "top-deals top-deals top-deals";
-  grid-template-columns: repeat(3, 1fr);
-  grid-row-gap: 20px;
-  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 0 30px;
+  max-width: 1200px;
+  margin: 0 auto;
 `
 
-const AnimatedCatTitle = styled.div`
-  display: grid;
+const Section = styled.section`
+  padding: 20px 0;
+`
+
+const Title = styled.h2`
   text-align: center;
-  grid-area: cat-title;
+  font-size: 34px;
+  font-weight: 600;
+  margin-bottom: 20px;
+`
+
+const AnimatedCatTitle = styled(Title)`
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.5s ease-out, transform 0.5s ease-out;
@@ -48,63 +39,59 @@ const AnimatedCatTitle = styled.div`
     transform: translateY(0);
   }
 
-  h2 {
-    font-size: 34px;
-    font-weight: 600;
-  }
-`
-
-const BrandTitle = styled.div`
-  padding: 0 2.5rem;
-  text-align: center;
-  grid-area: brand-title;
-
-  h2 {
-    font-size: 34px;
-    font-weight: 600;
-  }
-`
-
-const BrandSwiperContainer = styled.div`
-  margin: 0 30px;
-  grid-area: brand-swiper;
-`
-
-const TopDealsTitle = styled.div`
-  padding: 0 2.5rem;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  grid-area: top-deals-title;
-
-  h2 {
-    font-size: 34px;
-    font-weight: 600;
+  &.initial-hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: none;
   }
 `
 
 const Home = () => {
   const catTitleRef = useRef(null)
+  const catNavRef = useRef(null)
   const [inView, setInView] = useState(false)
+  const [catNavInView, setCatNavInView] = useState(false)
+  const [initialLoad, setInitialLoad] = useState(true)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    setTimeout(() => setInitialLoad(false), 0) // Ensure initialLoad is set to false after the initial render
+  }, [])
+
+  useEffect(() => {
+    const titleObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setInView(true)
-          observer.unobserve(entry.target) // Unobserve to prevent further triggers
+          titleObserver.unobserve(entry.target) // Unobserve to prevent further triggers
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    const navObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCatNavInView(true)
+          navObserver.unobserve(entry.target) // Unobserve to prevent further triggers
         }
       },
       { threshold: 0.1 }
     )
 
     if (catTitleRef.current) {
-      observer.observe(catTitleRef.current)
+      titleObserver.observe(catTitleRef.current)
+    }
+
+    if (catNavRef.current) {
+      navObserver.observe(catNavRef.current)
     }
 
     return () => {
       if (catTitleRef.current) {
-        observer.unobserve(catTitleRef.current)
+        titleObserver.unobserve(catTitleRef.current)
+      }
+      if (catNavRef.current) {
+        navObserver.unobserve(catNavRef.current)
       }
     }
   }, [])
@@ -120,22 +107,42 @@ const Home = () => {
         <meta property="og:title" content="TechNexus" key="title" />
       </Head>
       <HomeContainer>
-        <HeroBanner />
-        <AnimatedCatTitle ref={catTitleRef} className={inView ? "in-view" : ""}>
-          <h2>Shop by Category</h2>
-        </AnimatedCatTitle>
-        <CategoryNavigation
-          ref={catTitleRef}
-          className={inView ? "in-view" : ""}
-        />
-        <About />
-        <BrandSwiperContainer>
+        <Section>
+          <HeroBanner />
+        </Section>
+        <Section>
+          <Title>Our Brands</Title>
           <BrandGrid />
-        </BrandSwiperContainer>
-        <TopDealsTitle>
-          <h2>Deals you'll love</h2>
-        </TopDealsTitle>
-        <TopDeals />
+        </Section>
+        <Section>
+          <AnimatedCatTitle
+            ref={catTitleRef}
+            className={`${initialLoad ? "initial-hidden" : ""} ${
+              inView ? "in-view" : ""
+            }`}
+          >
+            Shop by Category
+          </AnimatedCatTitle>
+          <CategoryNavigation
+            ref={catNavRef}
+            className={`${initialLoad ? "initial-hidden" : ""} ${
+              catNavInView ? "in-view" : ""
+            }`}
+          />
+        </Section>
+        <Section>
+          <SecondaryHeroBanner />
+        </Section>
+        <Section>
+          <About />
+        </Section>
+        <Section>
+          <Title>Deals You'll Love</Title>
+          <TopDeals />
+        </Section>
+        <Section>
+          <NewsletterSignup />
+        </Section>
       </HomeContainer>
     </>
   )

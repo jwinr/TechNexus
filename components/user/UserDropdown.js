@@ -26,12 +26,19 @@ const Dropdown = styled.div`
   transform: translateY(-1000px); // Initially move it up slightly and hide
 
   &.visible {
+    opacity: 1;
     visibility: visible;
     transform: translateY(0); // Slide it into place
   }
 
   &.invisible {
+    opacity: 0;
     transform: translateY(-1000px);
+  }
+
+  &.initial-hidden {
+    transform: translateY(-1000px);
+    transition: none;
   }
 
   @media (max-width: 768px) {
@@ -83,6 +90,12 @@ const StyledUserButton = styled(UserButton)`
     &:hover {
       background-color: transparent;
     }
+  }
+
+  &.initial-hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: none;
   }
 `
 
@@ -148,8 +161,16 @@ const BtnText = styled.div`
   padding: 0 5px;
 `
 
-const UserDropdown = ({ isOpen, onToggle }) => {
+const UserDropdown = ({ isOpen: parentIsOpen, onToggle }) => {
   const [user, setUser] = useState(null)
+
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {}, [parentIsOpen])
 
   const checkUser = async () => {
     try {
@@ -171,7 +192,7 @@ const UserDropdown = ({ isOpen, onToggle }) => {
   }
 
   return (
-    <NavItem isOpen={isOpen} onToggle={onToggle} user={user}>
+    <NavItem isOpen={isMounted && parentIsOpen} onToggle={onToggle} user={user}>
       <DropdownMenu user={user} handleSignOut={handleSignOut} />
     </NavItem>
   )
@@ -223,8 +244,13 @@ function NavItem(props) {
   const userBtnRef = useRef(null)
   const [dropdownRight, setDropdownRight] = useState(0)
   const [setIsScrollDisabled] = useScrollControl()
+  const [isMounted, setIsMounted] = useState(false)
+  const [initialLoad, setInitialLoad] = useState(true)
 
   useEffect(() => {
+    setIsMounted(true)
+    setTimeout(() => setInitialLoad(false), 0) // Ensure initialLoad is set to false after the initial render
+
     if (isOpen) {
       setIsScrollDisabled(true)
       if (userBtnRef.current) {
@@ -249,7 +275,10 @@ function NavItem(props) {
 
   return (
     <>
-      <Backdrop isOpen={isOpen} onClick={onToggle} />
+      <Backdrop
+        className={initialLoad ? "initial-hidden" : isOpen ? "visible" : ""}
+        onClick={onToggle}
+      />
       <StyledUserButton
         onClick={onToggle}
         onKeyDown={handleKeyDown}
@@ -257,7 +286,9 @@ function NavItem(props) {
         isOpen={isOpen}
         aria-haspopup="true"
         aria-expanded={isOpen}
-        className={isOpen ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
+        className={`${initialLoad ? "initial-hidden" : ""} ${
+          isOpen ? "arrow-icon-visible" : ""
+        }`}
       >
         <IconContainer>
           <LiaUserCircleSolid />
@@ -270,7 +301,9 @@ function NavItem(props) {
       {React.cloneElement(props.children, {
         dropdownRight: dropdownRight,
         setOpen: onToggle,
-        className: isOpen ? "visible" : "invisible", // Add the visibility class
+        className: `${
+          initialLoad ? "initial-hidden" : isOpen ? "visible" : "invisible"
+        }`, // Add the visibility class only after mounted
         user: user,
       })}
     </>

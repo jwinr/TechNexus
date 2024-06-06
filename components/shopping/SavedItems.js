@@ -1,6 +1,5 @@
 import Cookies from "js-cookie"
 import Link from "next/link"
-import { slugify } from "../../utils/helpers"
 import { BsFillClockFill } from "react-icons/bs"
 
 function SavedItems({ moveBackToCart }) {
@@ -27,7 +26,7 @@ function SavedItems({ moveBackToCart }) {
     <div>
       <p className="cart-page-text-header">Saved for Later</p>
       <div className="saved-items-wrapper">
-        <Link href={`/product/${slugify(savedItem.name)}`}>
+        <Link href={`/product/${savedItem.name}`}>
           <img
             className="cart-image-container"
             src={savedItem.image}

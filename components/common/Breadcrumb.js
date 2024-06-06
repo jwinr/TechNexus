@@ -2,7 +2,6 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { RiArrowDropRightLine } from "react-icons/ri"
-import { titleIfy } from "../../utils/helpers"
 import styled from "styled-components"
 
 const BreadWrapper = styled.nav`
@@ -40,8 +39,7 @@ function Breadcrumb({ title, categoryName, categorySlug }) {
               </span>
             )
           } else {
-            const currentTitle =
-              customTitles[pathname] || title || titleIfy(pathname)
+            const currentTitle = customTitles[pathname] || title || pathname
 
             if (!isLast) {
               return (

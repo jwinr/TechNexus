@@ -94,8 +94,17 @@ export default function Layout({ children }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    console.log("Layout mounted - initial openDropdown:", openDropdown)
     setMounted(true)
   }, [])
+
+  const handleToggle = (dropdown) => {
+    setOpenDropdown((prevState) => {
+      const newState = prevState === dropdown ? null : dropdown
+      console.log(`Layout handleToggle - openDropdown: ${newState}`)
+      return newState
+    })
+  }
 
   // Render the Navbar only if the route is not /login
   const renderNavbar = !isLoginPage && (
@@ -107,16 +116,12 @@ export default function Layout({ children }) {
           </Logo>
           <CategoryDropdown
             isOpen={openDropdown === "category"}
-            onToggle={() =>
-              setOpenDropdown(openDropdown === "category" ? null : "category")
-            }
+            onToggle={() => handleToggle("category")}
           />
           <ProductSearchBar />
           <UserDropdown
             isOpen={openDropdown === "user"}
-            onToggle={() =>
-              setOpenDropdown(openDropdown === "user" ? null : "user")
-            }
+            onToggle={() => handleToggle("user")}
             aria-label="User Menu"
           />
           <CartLink aria-label="Shopping Cart" />

@@ -22,7 +22,7 @@ const Dropdown = styled.div`
   box-sizing: content-box;
   transition: visibility 0s, transform 0.3s cubic-bezier(0.3, 0.85, 0, 1),
     height var(--speed) ease;
-  left: ${(props) => props.left}px; // Dynamic left position
+  left: ${(props) => props.left}px;
   transform: translateY(-1000px); // Initially move it up slightly and hide
 
   &.visible {
@@ -32,6 +32,11 @@ const Dropdown = styled.div`
 
   &.invisible {
     transform: translateY(-1000px);
+  }
+
+  &.initial-hidden {
+    transform: translateY(-1000px);
+    transition: none;
   }
 
   @media (max-width: 768px) {
@@ -82,6 +87,12 @@ const StyledCategoryButton = styled(CategoryButton)`
     &:hover {
       background-color: transparent;
     }
+  }
+
+  &.initial-hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: none;
   }
 `
 
@@ -151,9 +162,17 @@ const BtnText = styled.div`
   padding: 0 5px;
 `
 
-const CategoryDropdown = ({ isOpen, onToggle }) => {
+const CategoryDropdown = ({ isOpen: parentIsOpen, onToggle }) => {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {}, [parentIsOpen])
+
   return (
-    <NavItem isOpen={isOpen} onToggle={onToggle}>
+    <NavItem isOpen={isMounted && parentIsOpen} onToggle={onToggle}>
       <DropdownMenu categories={categoriesConfig} />
     </NavItem>
   )
@@ -206,8 +225,13 @@ function NavItem(props) {
   const [dropdownLeft, setDropdownLeft] = useState(0)
   const [setIsScrollDisabled] = useScrollControl()
   const isMobileView = useMobileView()
+  const [isMounted, setIsMounted] = useState(false)
+  const [initialLoad, setInitialLoad] = useState(true)
 
   useEffect(() => {
+    setIsMounted(true)
+    setTimeout(() => setInitialLoad(false), 0) // Ensure initialLoad is set to false after the initial render
+
     if (isOpen) {
       setIsScrollDisabled(true)
       if (btnRef.current) {
@@ -229,7 +253,10 @@ function NavItem(props) {
 
   return (
     <>
-      <Backdrop isOpen={isOpen} onClick={onToggle} />
+      <Backdrop
+        className={initialLoad ? "initial-hidden" : isOpen ? "visible" : ""}
+        onClick={onToggle}
+      />
       {isMobileView ? (
         <StyledCategoryButton isOpen={!isOpen} onClick={onToggle}>
           <FiMenu />
@@ -242,7 +269,9 @@ function NavItem(props) {
           isOpen={isOpen}
           aria-haspopup="true"
           aria-expanded={isOpen}
-          className={isOpen ? "arrow-icon-visible" : ""} // Keep the button arrow visible when the dropdown is toggled
+          className={`${initialLoad ? "initial-hidden" : ""} ${
+            isOpen ? "arrow-icon-visible" : ""
+          }`}
         >
           <BtnText>Categories</BtnText>
           <div className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}>
@@ -253,7 +282,9 @@ function NavItem(props) {
       {React.cloneElement(props.children, {
         dropdownLeft: isMobileView ? 0 : dropdownLeft,
         setOpen: onToggle,
-        className: isOpen ? "visible" : "invisible", // Add the visibility class
+        className: `${
+          initialLoad ? "initial-hidden" : isOpen ? "visible" : "invisible"
+        }`, // Add the visibility class only after mounted
       })}
     </>
   )

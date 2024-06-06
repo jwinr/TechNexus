@@ -1,73 +1,74 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import styled from "styled-components"
 import Link from "next/link"
 import Image from "next/image"
 import categoriesConfig from "../../utils/categoriesConfig"
 
 const NavContainer = styled.div`
-  display: grid;
-  grid-area: category-nav; // Wrapping in a container so it can expand and center properly with long titles
-  z-index: 200;
-`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 
-const NavWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  padding-bottom: 25px;
-  padding-left: 35px;
-  padding-right: 35px;
-  grid-area: category-nav;
-  justify-items: start;
+  &.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
 `
 
 const NavItem = styled.div`
   text-align: center;
   text-decoration: none;
-  align-items: center;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 20px;
   font-weight: 500;
-  gap: 40px;
-
-  &:hover {
-    text-decoration: underline;
-  }
+  background-color: transparent;
 `
 
 const NavIcon = styled.div`
-  height: 48px;
-  width: 48px;
+  height: 150px;
+  width: 150px;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
 `
 
 const NavTitle = styled.div`
-  font-size: 14px;
+  font-size: 16px;
+  margin-top: 5px;
 `
 
-const CategoryNavigation = () => {
+const CategoryNavigation = React.forwardRef((props, ref) => {
   return (
-    <NavContainer>
-      <NavWrapper>
-        {categoriesConfig.map((category) => (
-          <Link key={category.id} href={`/categories/${category.slug}`}>
-            <NavItem>
-              <NavIcon>
-                <Image
-                  src={category.icon}
-                  width={150}
-                  height={150}
-                  alt={category.name}
-                />
-              </NavIcon>
-              <NavTitle>{category.name}</NavTitle>
-            </NavItem>
-          </Link>
-        ))}
-      </NavWrapper>
+    <NavContainer ref={ref} className={props.className}>
+      {categoriesConfig.map((category) => (
+        <Link key={category.id} href={`/categories/${category.slug}`} passHref>
+          <NavItem>
+            <NavIcon>
+              <Image
+                src={category.icon}
+                width={150}
+                height={150}
+                alt={category.name}
+              />
+            </NavIcon>
+            <NavTitle>{category.name}</NavTitle>
+          </NavItem>
+        </Link>
+      ))}
     </NavContainer>
   )
-}
+})
 
 export default CategoryNavigation
