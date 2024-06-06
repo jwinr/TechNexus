@@ -49,8 +49,10 @@ const AnimatedCatTitle = styled(Title)`
 const Home = () => {
   const catTitleRef = useRef(null)
   const catNavRef = useRef(null)
+  const secHeroRef = useRef(null)
   const [inView, setInView] = useState(false)
   const [catNavInView, setCatNavInView] = useState(false)
+  const [secHeroInView, setSecHeroInView] = useState(false)
   const [initialLoad, setInitialLoad] = useState(true)
 
   useEffect(() => {
@@ -72,7 +74,17 @@ const Home = () => {
       ([entry]) => {
         if (entry.isIntersecting) {
           setCatNavInView(true)
-          navObserver.unobserve(entry.target) // Unobserve to prevent further triggers
+          navObserver.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    const secObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setSecHeroInView(true)
+          secObserver.unobserve(entry.target)
         }
       },
       { threshold: 0.1 }
@@ -86,12 +98,19 @@ const Home = () => {
       navObserver.observe(catNavRef.current)
     }
 
+    if (secHeroRef.current) {
+      secObserver.observe(secHeroRef.current)
+    }
+
     return () => {
       if (catTitleRef.current) {
         titleObserver.unobserve(catTitleRef.current)
       }
       if (catNavRef.current) {
         navObserver.unobserve(catNavRef.current)
+      }
+      if (secHeroRef.current) {
+        secObserver.unobserve(secHeroRef.current)
       }
     }
   }, [])
@@ -130,7 +149,10 @@ const Home = () => {
           />
         </Section>
         <Section>
-          <SecondaryHeroBanner />
+          <SecondaryHeroBanner
+            ref={secHeroRef}
+            className={`${secHeroInView ? "in-view" : ""}`}
+          />
         </Section>
         <Section>
           <About />

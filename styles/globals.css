@@ -1,6 +1,5 @@
 /* ./styles/globals.css */
 @import url("./tailwind-base.css");
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=Montserrat&display=swap");
 
 :root {
   --color-bg-light: #f3f5f8;
@@ -25,7 +24,6 @@
 }
 
 body {
-  font-family: "Manrope", sans-serif;
   color: var(--color-text-dark);
 }
 

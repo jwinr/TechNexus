@@ -94,14 +94,12 @@ export default function Layout({ children }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    console.log("Layout mounted - initial openDropdown:", openDropdown)
     setMounted(true)
   }, [])
 
   const handleToggle = (dropdown) => {
     setOpenDropdown((prevState) => {
       const newState = prevState === dropdown ? null : dropdown
-      console.log(`Layout handleToggle - openDropdown: ${newState}`)
       return newState
     })
   }

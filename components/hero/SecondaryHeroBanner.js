@@ -13,6 +13,15 @@ const HeroBannerContainer = styled.div`
   overflow: hidden;
   padding: 50px 20px;
   margin: 20px 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+
+  &.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   @media (max-width: 768px) {
     flex-direction: column;
     padding: 30px 10px;
@@ -109,7 +118,7 @@ const BackgroundImage = styled.div`
   opacity: 0.2;
 `
 
-const SecondaryHeroBanner = () => {
+const SecondaryHeroBanner = React.forwardRef((props, ref) => {
   const [initialLoad, setInitialLoad] = useState(true)
 
   useEffect(() => {
@@ -119,7 +128,7 @@ const SecondaryHeroBanner = () => {
   const imageSrc = "/src/images/hero_parts.png"
 
   return (
-    <HeroBannerContainer>
+    <HeroBannerContainer ref={ref} className={props.className}>
       <BackgroundImage />
       <HeroContent>
         <HeroTitle>Build Your Ultimate PC</HeroTitle>
@@ -149,6 +158,6 @@ const SecondaryHeroBanner = () => {
       </HeroImage>
     </HeroBannerContainer>
   )
-}
+})
 
 export default SecondaryHeroBanner
