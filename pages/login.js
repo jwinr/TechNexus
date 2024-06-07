@@ -134,7 +134,7 @@ const InfoTooltip = styled.div`
   min-width: 0;
   text-align: left;
   box-shadow: rgba(156, 156, 156, 0.7) 0px 0px 6px;
-  animation: ${fadeIn} 0.2s ease;
+  animation: ${fadeIn} 0.3s ease;
   border: 1px solid transparent;
 
   &:after {

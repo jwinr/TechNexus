@@ -10,7 +10,7 @@ import StarRating from "../../components/shopping/StarRatings"
 import ProductSpecifications from "../../components/products/ProductSpecifications"
 import ProductReviews from "../../components/products/ProductReviews"
 import ProductHighlights from "../../components/products/ProductHighlights"
-import styled from "styled-components"
+import styled, { keyframes } from "styled-components"
 import { Accordion, AccordionItem as Item } from "@szhsin/react-accordion"
 import ChevronDown from "../../public/chevron-down.svg"
 import LoadingSpinner from "../../components/common/LoadingSpinner"
@@ -21,8 +21,23 @@ import { IoChevronDownOutline } from "react-icons/io5"
 import { IoLocationOutline } from "react-icons/io5"
 import { LiaTruckSolid } from "react-icons/lia"
 import { PiKeyReturn } from "react-icons/pi"
+import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
+import { Carousel } from "react-responsive-carousel"
+import "react-responsive-carousel/lib/styles/carousel.min.css"
+import { useMobileView } from "../../components/common/MobileViewDetector"
 
 import { useSiteContext } from "../../context/mainContext"
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(10%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+`
 
 const ItemWithChevron = ({ header, ...rest }) => (
   <Item
@@ -36,24 +51,22 @@ const ItemWithChevron = ({ header, ...rest }) => (
   />
 )
 
-const Wrapper = styled.div`
-  grid-area: desc;
+const AccordionWrapper = styled.div`
   padding: 15px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   border-radius: 8px;
+  margin-top: 20px;
+  background-color: white;
 `
 
 const SpinnerContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; // Center vertically on the entire viewport height
+  min-height: 100vh;
 `
 
-/**
- * @type {React.ExoticComponent<import('@szhsin/react-accordion').AccordionItemProps>}
- */
 const AccordionItem = styled(ItemWithChevron)`
   border-bottom: 1px solid #ccc;
   .szh-accordion__item {
@@ -98,57 +111,103 @@ const AccordionItem = styled(ItemWithChevron)`
 `
 
 const PageWrapper = styled.div`
-  display: grid;
-  grid-template-areas:
-    "thumbnails product details"
-    "desc desc desc";
-  grid-template-columns: 0.5fr 3fr 2fr;
-  padding: 45px 75px 75px 75px; // Offset for the breadcrumb
-  grid-row-gap: 20px;
-  grid-column-gap: 50px;
+  display: flex;
+  flex-direction: column;
+  padding: 45px 15px 75px 15px;
+
+  @media (min-width: 768px) {
+    padding: 45px 75px 75px 75px;
+  }
+`
+
+const MainSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 `
 
 const AdditionalImageContainer = styled.div`
-  grid-area: thumbnails;
-  flex-direction: column;
   display: flex;
-  justify-content: flex-start;
+  flex-direction: column;
   gap: 20px;
+  order: 3; // Make sure additional images are below the main image in mobile view
+
+  @media (min-width: 768px) {
+    order: 0; // Reset order in desktop view
+  }
 `
 
 const AdditionalImageThumbnail = styled.div`
   border: 1px solid gray;
   border-radius: 6px;
-  cursor: pointer; /* Pointer cursor when hovering */
-  padding: 3px; /* Offset for the border */
-  width: 100px;
-  height: 100px;
+  cursor: pointer;
+  padding: 3px;
+  width: 110px;
+  height: 110px;
   display: grid;
   align-content: center;
   overflow: hidden;
   position: relative;
+  background-color: white;
 
   &:hover {
-    border: 1px solid #4fbbff;
+    border: 1px solid var(--color-highlight);
   }
 
   img {
     width: 100%;
     height: 100%;
     padding: 3px;
-    object-fit: scale-down; /* Fallback for browsers that support object-fit */
+    object-fit: scale-down;
     position: absolute;
     top: 0;
     left: 0;
   }
 `
 
-const Product = styled.div`
-  grid-area: details;
-  justify-content: flex-start;
+const CarouselContainer = styled.div`
+  width: 100%;
+  .carousel .slide img {
+    height: 500px;
+    object-fit: contain;
+  }
+
+  .thumbs-wrapper,
+  .control-arrow,
+  .carousel-status {
+    display: none; // Don't render the overview thumbnails, control arrows, slide count..
+  }
+
+  @media (max-width: 768px) {
+    .carousel .slide img {
+      height: auto;
+    }
+  }
+`
+
+const ProductNameWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-content: flex-start;
+  order: 0; // Make sure product details are at the top in mobile view
+
+  @media (min-width: 768px) {
+    order: 0;
+  }
+`
+
+const Product = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  order: 4; // Price and purchase buttons at the bottom in mobile view
+
+  @media (min-width: 768px) {
+    order: 1; // And below the product details in desktop view
+  }
 
   h1 {
     font-size: 23px;
@@ -171,13 +230,10 @@ const CartBtnWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding-top: 5px; // Push it down from the price tag
+  padding-top: 5px;
 `
 
 const ProductDescription = styled.div`
-  grid-template-columns: 1fr 3fr;
-  display: grid;
-
   p {
     font-size: 14px;
     display: inline-block;
@@ -214,8 +270,6 @@ const ProductRatings = styled.div`
 `
 
 const ProductQna = styled.div`
-  grid-area: desc;
-
   h3 {
     font-size: 19px;
     margin-bottom: 10px;
@@ -227,11 +281,21 @@ const ProductQna = styled.div`
 `
 
 const MainImageContainer = styled.div`
-  grid-area: product;
-
-  justify-content: center;
-  max-height: 460px;
   display: flex;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 25px;
+  height: 500px;
+  width: 100%;
+  background-color: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+  @media (max-width: 768px) {
+    height: auto;
+    width: 100%;
+    order: 2; // Make sure main image is below the product details in mobile view
+  }
 `
 
 const ProductImage = styled.img`
@@ -242,19 +306,85 @@ const ProductImage = styled.img`
 
 const ZipWrapper = styled.div`
   display: flex;
-  font-weight: 700;
   font-size: 16px;
   padding: 15px 0;
   position: relative;
   align-items: center;
 `
 
-const ShipWrapper = styled.div`
-  display: flex;
-  font-weight: 700;
+const PopupContainer = styled.div`
+  position: absolute;
+  display: grid;
+  grid-template-columns: 1fr 0.5fr;
+  grid-template-rows: auto;
+  top: 100%;
+  left: 0;
+  color: black;
+  background-color: var(--color-main-white);
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 8px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 4px 1px;
+  animation: ${fadeIn} 0.3s ease;
+  z-index: 100;
+
+  &:before {
+    content: "";
+    background-color: inherit;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: -11px;
+    z-index: -1;
+    width: 18px;
+    height: 10px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-top-right-radius: 0px;
+    border: 1px solid transparent;
+    background-color: var(--color-main-white);
+    z-index: -2;
+    top: -6px;
+    left: 50%;
+    margin-left: -6px;
+    transform: rotate(45deg);
+    filter: drop-shadow(rgba(0, 0, 0, 0.2) 0px -2px 1px);
+  }
+`
+
+const ZipForm = styled.input`
+  border: 1px solid var(--color-border-gray);
+  border-radius: 0.25rem;
+  padding: 10px;
+  color: var(--color-text-dark);
+  line-height: 1.25;
+  margin-right: 10px;
+
+  &:focus + label,
+  &:not(:placeholder-shown) + label {
+    top: 0px;
+    left: 15px;
+    font-size: 12px;
+    color: var(--color-text-dark);
+  }
+`
+
+const Label = styled.label`
+  position: absolute;
+  top: 30%;
+  left: 15px;
+  color: var(--color-text-dark);
+  background-color: var(--color-main-white);
   font-size: 16px;
-  position: relative;
-  align-items: center;
+  pointer-events: none;
+  transition: all 0.3s ease;
 `
 
 const ZipUnderline = styled.div`
@@ -265,22 +395,50 @@ const ZipUnderline = styled.div`
   margin: 0 5px;
 `
 
-const ZipButton = styled.div`
+const ZipDropdownBtn = styled.button`
   display: flex;
   cursor: pointer;
   align-items: center;
-  user-select: none; // Prevent highlighting of text elements when the user clicks the dropdown
+  user-select: none;
 `
 
-const PopupContainer = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 10px;
-  z-index: 100;
+const ZipSubmitBtn = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease-in 0s;
+  border-radius: 6px;
+  color: var(--color-button-dark-gray);
+  border: medium;
+  font-weight: bold;
+  min-height: 44px;
+  padding: 0px 16px;
+  text-align: center;
+  background-color: var(--color-button-mid-gray);
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-button-dark-gray);
+    color: var(--color-button-mid-gray);
+  }
+
+  &:active {
+    background-color: var(--color-button-dark-gray);
+    color: var(--color-button-mid-gray);
+  }
+
+  &:focus-visible {
+    background-color: var(--color-button-dark-gray);
+    color: var(--color-button-mid-gray);
+  }
+`
+
+const ShipWrapper = styled.div`
+  display: flex;
+  font-weight: 700;
+  font-size: 16px;
+  position: relative;
+  align-items: center;
 `
 
 const DateWrapper = styled.div`
@@ -299,9 +457,7 @@ const ShippingOffer = styled.div`
 const ExchangeWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  margin: 8px 0;
-  padding: 12px 8px;
-  background-color: #f0f0f0;
+  margin: 15px 0;
 `
 
 const ExchangeHeader = styled.span`
@@ -323,6 +479,13 @@ const ExchangeContent = styled.div`
   font-size: 11px;
 `
 
+const ValidationMessage = styled.div`
+  color: #d32f2f;
+  font-size: 14px;
+  bottom: -20px;
+  text-align: left;
+`
+
 function ProductDetails() {
   const router = useRouter()
   const { slug } = router.query
@@ -334,21 +497,45 @@ function ProductDetails() {
   const [numberOfitems, updateNumberOfItems] = useState(1) // Start with 1 item as our quantity
   const { zipCode, setZipCode, deliveryDate, dayOfWeek, returnDate } =
     ShippingInfo()
+  const [zipCodeValid, setZipCodeValid] = useState(true)
   const [isZipPopupVisible, setIsZipPopupVisible] = useState(false)
   const [enteredZipCode, setEnteredZipCode] = useState("")
   const { addToCart, cart } = useSiteContext()
+  const [isOpen, setIsOpen] = useState(false)
+  const isMobileView = useMobileView()
 
   const toggleZipPopup = () => {
     setIsZipPopupVisible(!isZipPopupVisible)
+    setIsOpen(!isOpen)
   }
 
   const handleZipCodeChange = (event) => {
-    setEnteredZipCode(event.target.value)
+    const { name, value } = event.target
+    if (name === "zipCode") {
+      setEnteredZipCode(value)
+      // Reset the ZIP code validity state when the user starts editing
+      setZipCodeValid(true)
+    }
+  }
+
+  const handleZipCodeBlur = () => {
+    if (enteredZipCode.trim().length === 0) {
+      // Reset ZIP code validity only if the field is empty when blurred
+      setZipCodeValid(true)
+    } else {
+      // Validate ZIP code if field is not empty
+      setZipCodeValid(/^[0-9]{5}$/.test(enteredZipCode))
+    }
   }
 
   const handleZipCodeSubmit = () => {
-    setZipCode(enteredZipCode)
-    setIsZipPopupVisible(false)
+    const zipCodePattern = /^[0-9]{5}$/
+    if (zipCodePattern.test(enteredZipCode)) {
+      setZipCode(enteredZipCode)
+      setIsZipPopupVisible(false)
+    } else {
+      setZipCodeValid(false)
+    }
   }
 
   function addItemToCart(product) {
@@ -429,6 +616,9 @@ function ProductDetails() {
     )
   }
 
+  // Apply red border/text if information is invalid
+  const invalidStyle = { borderColor: "#D32F2F", color: "#D32F2F" }
+
   return (
     <div>
       <Head>
@@ -442,95 +632,232 @@ function ProductDetails() {
       </Head>
       <Breadcrumb categoryName={categoryName} categorySlug={categorySlug} />
       <PageWrapper>
-        <MainImageContainer>
-          <ProductImage src={hoveredImage} alt="Inventory item" />
-        </MainImageContainer>
-        <AdditionalImageContainer>
-          {product.images.map((image, index) => (
-            <AdditionalImageThumbnail
-              key={index}
-              className={
-                hoveredImage === image.image_url
-                  ? "additional-image-hovered"
-                  : ""
-              }
-              onMouseOver={(e) => {
-                e.preventDefault()
-                e.stopPropagation() // Stop the event from propagating up the DOM tree
-                setHoveredImage(image.image_url)
-              }}
-            >
-              <Image
-                src={image.image_url}
-                alt={`Product Thumbnail ${index}` + " - " + product.name}
-                // Dynamically generate alt text based on product name
-              />
-            </AdditionalImageThumbnail>
-          ))}
-        </AdditionalImageContainer>
-        <Product>
-          <h1>{product.name}</h1>
-          <ProductRatings>
-            <div>
-              <StarRating reviews={product.reviews} />
-            </div>
-            <p>
-              {product.reviews.length === 0
-                ? "Be the first to write a review"
-                : `(${product.reviews.length} review${
-                    product.reviews.length !== 1 ? "s" : ""
-                  })`}
-            </p>
-          </ProductRatings>
-          <h2>${product.price}</h2>
-          <ExchangeWrapper>
-            <ExchangeBox>
-              <PiKeyReturn />
-            </ExchangeBox>
-            <ExchangeContent>
-              <ExchangeHeader>15-DAY FREE & EASY RETURNS</ExchangeHeader>
-              <p>
-                If received {dayOfWeek}, the last day to return this item would
-                be {returnDate}.
-              </p>
-            </ExchangeContent>
-          </ExchangeWrapper>
-          <CartBtnWrapper>
-            <AddCart
-              title="Add to Cart"
-              onClick={() => addItemToCart(product)}
-            />
-            <SaveItem
-              title="Save for Later"
-              onClick={() => addItemToCart(product)}
-            />
-          </CartBtnWrapper>
-          <ZipWrapper>
-            <IoLocationOutline style={{ marginRight: "5px" }} size={24} />
-            Delivery to{" "}
-            <ZipButton onClick={toggleZipPopup}>
-              <ZipUnderline>{zipCode}</ZipUnderline>
-              {isZipPopupVisible && (
-                <PopupContainer onClick={(e) => e.stopPropagation()}>
-                  <input
-                    type="text"
-                    placeholder="Enter ZIP code"
-                    value={enteredZipCode}
-                    onChange={handleZipCodeChange}
+        <MainSection>
+          {!isMobileView && (
+            <AdditionalImageContainer>
+              {product.images.map((image, index) => (
+                <AdditionalImageThumbnail
+                  key={index}
+                  className={
+                    hoveredImage === image.image_url
+                      ? "additional-image-hovered"
+                      : ""
+                  }
+                  onMouseOver={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setHoveredImage(image.image_url)
+                  }}
+                >
+                  <Image
+                    src={image.image_url}
+                    alt={`Product Thumbnail ${index} - ${product.name}`}
                   />
-                  <button onClick={handleZipCodeSubmit}>Submit</button>
-                </PopupContainer>
-              )}
-              <IoChevronDownOutline />
-            </ZipButton>
-          </ZipWrapper>
-          <DateWrapper>Get it by {deliveryDate}</DateWrapper>
-          <ShipWrapper>
-            <LiaTruckSolid style={{ marginRight: "5px" }} size={24} />
-            <ShippingOffer>Free Shipping</ShippingOffer>
-          </ShipWrapper>
-        </Product>
-        <Wrapper>
+                </AdditionalImageThumbnail>
+              ))}
+            </AdditionalImageContainer>
+          )}
+          <MainImageContainer>
+            {isMobileView ? (
+              <CarouselContainer>
+                <Carousel showThumbs>
+                  {product.images.map((image, index) => (
+                    <div key={index}>
+                      <img
+                        src={image.image_url}
+                        alt={`Product Image ${index} - ${product.name}`}
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+              </CarouselContainer>
+            ) : (
+              <ProductImage src={hoveredImage} alt="Inventory item" />
+            )}
+          </MainImageContainer>
+          {isMobileView ? (
+            <>
+              <ProductNameWrapper>
+                <h1>{product.name}</h1>
+                <ProductRatings>
+                  <div>
+                    <StarRating reviews={product.reviews} />
+                  </div>
+                  <p>
+                    {product.reviews.length === 0
+                      ? "Be the first to write a review"
+                      : `(${product.reviews.length} review${
+                          product.reviews.length !== 1 ? "s" : ""
+                        })`}
+                  </p>
+                </ProductRatings>
+              </ProductNameWrapper>
+              <Product>
+                <h2>${product.price}</h2>
+                <ExchangeWrapper>
+                  <ExchangeBox>
+                    <PiKeyReturn />
+                  </ExchangeBox>
+                  <ExchangeContent>
+                    <ExchangeHeader>15-DAY FREE & EASY RETURNS</ExchangeHeader>
+                    <p>
+                      If received {dayOfWeek}, the last day to return this item
+                      would be {returnDate}.
+                    </p>
+                  </ExchangeContent>
+                </ExchangeWrapper>
+                <CartBtnWrapper>
+                  <AddCart
+                    title="Add to Cart"
+                    onClick={() => addItemToCart(product)}
+                  />
+                  <SaveItem
+                    title="Save for Later"
+                    onClick={() => addItemToCart(product)}
+                  />
+                </CartBtnWrapper>
+                <ZipWrapper>
+                  <IoLocationOutline style={{ marginRight: "5px" }} size={24} />
+                  Delivery to{" "}
+                  <ZipDropdownBtn onClick={toggleZipPopup}>
+                    <ZipUnderline>{zipCode}</ZipUnderline>
+                    {isZipPopupVisible && (
+                      <PopupContainer onClick={(e) => e.stopPropagation()}>
+                        <ZipForm
+                          type="tel"
+                          name="zipCode"
+                          placeholder=""
+                          value={enteredZipCode}
+                          isOpen={isOpen}
+                          aria-haspopup="true"
+                          aria-expanded={isOpen}
+                          onChange={handleZipCodeChange}
+                          style={!zipCodeValid ? invalidStyle : {}}
+                          onBlur={handleZipCodeBlur}
+                        />
+                        <Label
+                          htmlFor="zip"
+                          style={!zipCodeValid ? invalidStyle : {}}
+                        >
+                          Enter ZIP Code
+                        </Label>
+                        <ZipSubmitBtn onClick={handleZipCodeSubmit}>
+                          Submit
+                        </ZipSubmitBtn>
+                        {!zipCodeValid && (
+                          <ValidationMessage>
+                            Please enter a valid ZIP code.
+                          </ValidationMessage>
+                        )}
+                      </PopupContainer>
+                    )}
+                    <div
+                      className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}
+                      style={{ opacity: 1 }}
+                    >
+                      <RiArrowDownSLine />
+                    </div>
+                  </ZipDropdownBtn>
+                </ZipWrapper>
+                <DateWrapper>Get it by {deliveryDate}</DateWrapper>
+                <ShipWrapper>
+                  <LiaTruckSolid style={{ marginRight: "5px" }} size={24} />
+                  <ShippingOffer>Free Shipping</ShippingOffer>
+                </ShipWrapper>
+              </Product>
+            </>
+          ) : (
+            <ProductNameWrapper>
+              <h1>{product.name}</h1>
+              <ProductRatings>
+                <div>
+                  <StarRating reviews={product.reviews} />
+                </div>
+                <p>
+                  {product.reviews.length === 0
+                    ? "Be the first to write a review"
+                    : `(${product.reviews.length} review${
+                        product.reviews.length !== 1 ? "s" : ""
+                      })`}
+                </p>
+              </ProductRatings>
+              <Product>
+                <h2>${product.price}</h2>
+                <ExchangeWrapper>
+                  <ExchangeBox>
+                    <PiKeyReturn />
+                  </ExchangeBox>
+                  <ExchangeContent>
+                    <ExchangeHeader>15-DAY FREE & EASY RETURNS</ExchangeHeader>
+                    <p>
+                      If received {dayOfWeek}, the last day to return this item
+                      would be {returnDate}.
+                    </p>
+                  </ExchangeContent>
+                </ExchangeWrapper>
+                <CartBtnWrapper>
+                  <AddCart
+                    title="Add to Cart"
+                    onClick={() => addItemToCart(product)}
+                  />
+                  <SaveItem
+                    title="Save for Later"
+                    onClick={() => addItemToCart(product)}
+                  />
+                </CartBtnWrapper>
+                <ZipWrapper>
+                  <IoLocationOutline style={{ marginRight: "5px" }} size={24} />
+                  Delivery to{" "}
+                  <ZipDropdownBtn onClick={toggleZipPopup}>
+                    <ZipUnderline>{zipCode}</ZipUnderline>
+                    {isZipPopupVisible && (
+                      <PopupContainer onClick={(e) => e.stopPropagation()}>
+                        <ZipForm
+                          type="tel"
+                          name="zipCode"
+                          placeholder=""
+                          value={enteredZipCode}
+                          isOpen={isOpen}
+                          aria-haspopup="true"
+                          aria-expanded={isOpen}
+                          onChange={handleZipCodeChange}
+                          style={!zipCodeValid ? invalidStyle : {}}
+                          onBlur={handleZipCodeBlur}
+                        />
+                        <Label
+                          htmlFor="zip"
+                          style={!zipCodeValid ? invalidStyle : {}}
+                        >
+                          Enter ZIP Code
+                        </Label>
+                        <ZipSubmitBtn onClick={handleZipCodeSubmit}>
+                          Submit
+                        </ZipSubmitBtn>
+                        {!zipCodeValid && (
+                          <ValidationMessage>
+                            Please enter a valid ZIP code.
+                          </ValidationMessage>
+                        )}
+                      </PopupContainer>
+                    )}
+                    <div
+                      className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}
+                      style={{ opacity: 1 }}
+                    >
+                      <RiArrowDownSLine />
+                    </div>
+                  </ZipDropdownBtn>
+                </ZipWrapper>
+                <DateWrapper>Get it by {deliveryDate}</DateWrapper>
+                <ShipWrapper>
+                  <LiaTruckSolid style={{ marginRight: "5px" }} size={24} />
+                  <ShippingOffer>Free Shipping</ShippingOffer>
+                </ShipWrapper>
+              </Product>
+            </ProductNameWrapper>
+          )}
+        </MainSection>
+        <AccordionWrapper>
           <Accordion transition transitionTimeout={250}>
             <AccordionItem header="Overview" initialEntered>
               <ProductDescription>
@@ -552,7 +879,7 @@ function ProductDetails() {
               </ProductQna>
             </AccordionItem>
           </Accordion>
-        </Wrapper>
+        </AccordionWrapper>
       </PageWrapper>
     </div>
   )

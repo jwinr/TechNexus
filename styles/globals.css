@@ -11,12 +11,12 @@
   --color-text-dark: #333;
   --color-text-light-gray: #595959;
   --color-border-gray: #a1a1a1;
+  --color-button-dark-gray: #666666;
+  --color-button-light-gray: #d6d6d6;
+  --color-button-mid-gray: #eeeeee;
   --color-highlight: #0e87eb;
   --color-link-blue: #366cd9;
   --color-success-green: #008300;
-  --swiper-theme-color: var(
-    --color-text-dark
-  ) !important; /* Override the Swiper button colors */
   --speed: 500ms;
   --focus-outline-width: 1px;
   --focus-outline-offset: 2px;

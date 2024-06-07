@@ -78,7 +78,6 @@ const CtaButton = styled.button`
 
   &.initial-hidden {
     opacity: 0;
-    transform: translateY(20px);
     transition: none;
   }
 `

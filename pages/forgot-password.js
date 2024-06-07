@@ -138,8 +138,10 @@ const ResetBtn = styled.button`
 
   &:disabled {
     cursor: not-allowed;
-    color: #666666 !important; // Override the hover & active styles when the button is disabled
-    background-color: rgb(214, 214, 214) !important;
+    color: var(
+      --color-button-dark-gray
+    ) !important; // Override the hover & active styles when the button is disabled
+    background-color: var(--color-button-light-gray) !important;
   }
 
   &:hover {
@@ -183,7 +185,7 @@ const Logo = styled.div`
 const VerificationInput = styled.input`
   border-width: 0px 0px 4px;
   border-bottom-style: solid;
-  border-bottom-color: rgb(214, 214, 214);
+  border-bottom-color: var(--color-button-light-gray);
   border-radius: 0px;
   text-align: center;
   width: 90%;
@@ -226,8 +228,10 @@ const VerifyBtn = styled.button`
 
   &:disabled {
     cursor: not-allowed;
-    color: #666666 !important; // Override the hover & active styles when the button is disabled
-    background-color: rgb(214, 214, 214) !important;
+    color: var(
+      --color-button-dark-gray
+    ) !important; // Override the hover & active styles when the button is disabled
+    background-color: var(--color-button-light-gray) !important;
   }
 
   &:hover {

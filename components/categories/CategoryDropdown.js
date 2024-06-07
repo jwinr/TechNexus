@@ -7,6 +7,7 @@ import { FiMenu } from "react-icons/fi"
 import Link from "next/link"
 import Backdrop from "../common/Backdrop"
 import { filter } from "../../utils/helpers.js"
+import { useRouter } from "next/router.js"
 import categoriesConfig from "../../utils/categoriesConfig"
 
 const Dropdown = styled.div`
@@ -309,6 +310,8 @@ function DropdownItem({
   setOpen,
   isOpen,
 }) {
+  const router = useRouter()
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       if (goToMenu) {

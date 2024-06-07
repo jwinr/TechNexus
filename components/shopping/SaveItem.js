@@ -1,35 +1,57 @@
 import React, { useState } from "react"
 import styled, { keyframes, css } from "styled-components"
 import { GoBookmarkFill } from "react-icons/go"
+import { filter } from "../../utils/helpers.js"
 
 const Container = styled.div`
   width: 100%;
   height: 44px;
+  max-width: 480px;
 `
 
-const Button = styled.button`
-  width: 100%;
-  height: 44px;
-  font-size: 1rem;
-  border-radius: 4px;
-  letter-spacing: 0.05em;
-  color: #004066;
-  background-color: #cce5ff;
-  transition: background-color 0.3s;
-  display: flex;
-  justify-content: center;
+const buttonFilter = filter("button")
+
+const Button = styled(buttonFilter(["isLoading"]))`
   align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+  border-radius: 6px;
+  color: var(--color-main-white);
+  border: medium;
+  font-weight: bold;
+  min-height: 44px;
+  padding: 0px 16px;
+  width: 100%;
+  text-align: center;
+  background-color: var(--color-main-blue);
+  display: flex;
 
   &:hover {
-    background-color: #99c2ff;
+    background-color: var(--color-main-dark-blue);
+  }
+
+  &:active {
+    background-color: var(--color-main-dark-blue);
+  }
+
+  &:focus-visible {
+    background-color: var(--color-main-dark-blue);
   }
 
   /* Apply cursor: not-allowed style when loading */
   ${({ isLoading }) =>
     isLoading &&
     css`
-      cursor: not-allowed;
-      background-color: #002134;
+      cursor: not-allowed !important;
+      color: var(--color-button-dark-gray) !important;
+      background-color: var(--color-button-light-gray) !important;
+
+      &:hover,
+      &:active,
+      &:focus-visible {
+        color: var(--color-button-dark-gray) !important;
+        background-color: var(--color-button-light-gray) !important;
+      }
     `}
 `
 
@@ -47,7 +69,7 @@ const LoadingSpinner = styled.div`
   height: 25px;
   border-color: var(--color-main-white);
   border-width: 3px;
-  border-left-color: #266aca;
+  border-left-color: var(--color-button-dark-gray);
   border-radius: 40px;
   border-style: solid;
   font-size: 0;
@@ -71,13 +93,19 @@ export default function AddCart({ title, onClick }) {
 
   return (
     <Container>
-      <Button isLoading={isLoading} onClick={handleClick}>
+      <Button
+        isLoading={isLoading}
+        onClick={handleClick}
+        tabIndex={isLoading ? -1 : 0} // Prevent the button from being part of the tab index when it should be disabled
+      >
         {isLoading ? (
           <LoadingSpinner />
         ) : (
-          <GoBookmarkFill size={19} style={{ marginRight: "16px" }} />
+          <>
+            <GoBookmarkFill size={19} style={{ marginRight: "16px" }} />
+            {title}
+          </>
         )}
-        {title}
       </Button>
     </Container>
   )
