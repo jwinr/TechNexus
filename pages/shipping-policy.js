@@ -23,8 +23,9 @@ const SubheaderText = styled.h2`
   font-size: 25px;
 `
 
-const ListWrapper = styled.div`
+const ListWrapper = styled.ol`
   padding-left: 40px;
+  list-style: disc;
 `
 
 const ShippingPolicy = () => {
@@ -57,7 +58,7 @@ const ShippingPolicy = () => {
           Shipping estimates are based on product availability and chosen
           shipping methods:
         </p>
-        <ListWrapper>
+        <ListWrapper role="list">
           <li>
             <b>In-Stock Items:</b> Orders for items in stock are estimated to
             ship the next business day. Delivery times depend on the destination
@@ -81,7 +82,7 @@ const ShippingPolicy = () => {
         </p>
         <SubheaderText>Shipping Days</SubheaderText>
         <p>Our simulated shipping days are:</p>
-        <ListWrapper>
+        <ListWrapper role="list">
           <li>Monday</li>
           <li>Tuesday</li>
           <li>Wednesday</li>

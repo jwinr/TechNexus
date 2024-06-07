@@ -10,7 +10,9 @@ import { filter } from "../../utils/helpers.js"
 import { config } from "../../utils/config.js"
 import { useRouter } from "next/router"
 
-const Dropdown = styled.div`
+const FilteredDiv = filter("div")(["isOpen"])
+
+const Dropdown = styled(FilteredDiv)`
   position: absolute;
   top: 65px;
   width: 275px;
