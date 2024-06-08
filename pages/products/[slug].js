@@ -22,8 +22,10 @@ import { IoLocationOutline } from "react-icons/io5"
 import { LiaTruckSolid } from "react-icons/lia"
 import { PiKeyReturn } from "react-icons/pi"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
-import { Carousel } from "react-responsive-carousel"
-import "react-responsive-carousel/lib/styles/carousel.min.css"
+import { Swiper, SwiperSlide } from "swiper/react"
+import "swiper/css"
+import "swiper/css/pagination"
+import { Pagination } from "swiper/modules"
 import { useMobileView } from "../../components/common/MobileViewDetector"
 
 import { useSiteContext } from "../../context/mainContext"
@@ -113,7 +115,7 @@ const AccordionItem = styled(ItemWithChevron)`
 const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 45px 15px 75px 15px;
+  padding: 25px 15px 75px 15px; // Leave some room for the breadcrumb component on mobile view
 
   @media (min-width: 768px) {
     padding: 45px 75px 75px 75px;
@@ -170,21 +172,29 @@ const AdditionalImageThumbnail = styled.div`
 `
 
 const CarouselContainer = styled.div`
+  display: flex;
+  border-radius: 8px;
   width: 100%;
-  .carousel .slide img {
+  background-color: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  order: 2; // Make sure main image is below the product details in mobile view
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  img {
+    padding: 25px; // Applying padding to the image itself so there isn't horizontal white space
     height: 500px;
     object-fit: contain;
   }
 
-  .thumbs-wrapper,
-  .control-arrow,
-  .carousel-status {
-    display: none; // Don't render the overview thumbnails, control arrows, slide count..
-  }
-
   @media (max-width: 768px) {
-    .carousel .slide img {
-      height: auto;
+    img {
+      height: 300px;
     }
   }
 `
@@ -205,24 +215,31 @@ const Product = styled.div`
   flex-direction: column;
   order: 4; // Price and purchase buttons at the bottom in mobile view
 
+  h2 {
+    // Product price
+    font-weight: bold;
+    display: inline-block;
+    font-size: 19px;
+  }
+
   @media (min-width: 768px) {
     order: 1; // And below the product details in desktop view
-  }
 
-  h1 {
-    font-size: 23px;
-    font-weight: 800;
-    line-height: 1.25;
-    word-break: break-word;
-  }
+    h1 {
+      font-size: 23px;
+      font-weight: 800;
+      line-height: 1.25;
+      word-break: break-word;
+    }
 
-  h2 {
-    font-size: 23px;
-    font-weight: 700;
-  }
+    h2 {
+      font-size: 23px;
+      font-weight: 700;
+    }
 
-  p {
-    font-size: 14px;
+    p {
+      font-size: 14px;
+    }
   }
 `
 
@@ -292,7 +309,8 @@ const MainImageContainer = styled.div`
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 
   @media (max-width: 768px) {
-    height: auto;
+    padding: 25px 0; // We don't need side padding, or else there will be white space during the carousel transitions
+    height: 350px;
     width: 100%;
     order: 2; // Make sure main image is below the product details in mobile view
   }
@@ -460,8 +478,7 @@ const ExchangeWrapper = styled.div`
   margin: 15px 0;
 `
 
-const ExchangeHeader = styled.span`
-  font-size: 13px;
+const ExchangeHeader = styled.p`
   font-weight: 800;
   margin-bottom: 4px;
 `
@@ -476,7 +493,6 @@ const ExchangeBox = styled.div`
 const ExchangeContent = styled.div`
   display: flex;
   flex-direction: column;
-  font-size: 11px;
 `
 
 const ValidationMessage = styled.div`
@@ -657,24 +673,30 @@ function ProductDetails() {
               ))}
             </AdditionalImageContainer>
           )}
-          <MainImageContainer>
-            {isMobileView ? (
-              <CarouselContainer>
-                <Carousel showThumbs>
-                  {product.images.map((image, index) => (
-                    <div key={index}>
-                      <img
-                        src={image.image_url}
-                        alt={`Product Image ${index} - ${product.name}`}
-                      />
-                    </div>
-                  ))}
-                </Carousel>
-              </CarouselContainer>
-            ) : (
+          {isMobileView ? (
+            <CarouselContainer>
+              <Swiper
+                pagination={{
+                  dynamicBullets: true,
+                }}
+                modules={[Pagination]}
+                spaceBetween={10}
+              >
+                {product.images.map((image, index) => (
+                  <SwiperSlide key={index}>
+                    <img
+                      src={image.image_url}
+                      alt={`Product Image ${index} - ${product.name}`}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </CarouselContainer>
+          ) : (
+            <MainImageContainer>
               <ProductImage src={hoveredImage} alt="Inventory item" />
-            )}
-          </MainImageContainer>
+            </MainImageContainer>
+          )}
           {isMobileView ? (
             <>
               <ProductNameWrapper>

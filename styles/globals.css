@@ -1,5 +1,4 @@
-/* ./styles/globals.css */
-@import url("./tailwind-base.css");
+/* General Styles */
 
 :root {
   --color-bg-light: #f3f5f8;
@@ -23,8 +22,96 @@
   --focus-outline: var(--focus-outline-width) solid var(--color-highlight);
 }
 
-body {
+/*
+1. Remove the margin in all browsers.
+2. Prevent padding and border from affecting element width.
+*/
+
+*,
+::before,
+::after {
+  margin: 0; /* 1 */
+  box-sizing: border-box; /* 2 */
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+*/
+
+html {
+  font-size: 16px;
   color: var(--color-text-dark);
+  line-height: 1.5; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  -moz-tab-size: 4; /* 3 */
+  tab-size: 4; /* 3 */
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit; /* 1 */
+  font-feature-settings: inherit; /* 1 */
+  font-variation-settings: inherit; /* 1 */
+  font-size: 100%; /* 1 */
+  font-weight: inherit; /* 1 */
+  line-height: inherit; /* 1 */
+  color: inherit; /* 1 */
+  margin: 0; /* 2 */
+  padding: 0; /* 3 */
+  border: none;
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+:disabled {
+  cursor: default;
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+h1 {
+  line-height: 1.25;
+  font-size: 19px;
+  font-weight: bold;
 }
 
 .feat-category-divider-line {

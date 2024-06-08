@@ -9,6 +9,10 @@ const BreadWrapper = styled.nav`
   padding: 30px 0 0 30px;
   display: inline-flex;
   align-items: center;
+
+  @media (max-width: 768px) {
+    padding: 15px 0 0 15px; // Align with the product page padding
+  }
 `
 
 function Breadcrumb({ title, categoryName, categorySlug }) {
