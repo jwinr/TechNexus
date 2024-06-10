@@ -52,18 +52,12 @@ const Navbar = styled.div`
 `
 
 const SiteWrapper = styled.div`
-  background-color: var(--color-bg-light);
+  background-color: var(--color-main-white);
   display: flex;
   justify-content: center;
   z-index: 100;
   position: relative;
   min-height: calc(-63px + 100vh);
-`
-
-const FooterContainer = styled.footer`
-  background-color: #f2f2f2;
-  display: flex;
-  flex-direction: column;
 `
 
 const Logo = styled.a`
@@ -136,9 +130,7 @@ export default function Layout({ children }) {
       <SiteWrapper>
         <Content>{children}</Content>
       </SiteWrapper>
-      <FooterContainer>
-        <Footer />
-      </FooterContainer>
+      <Footer />
       {mounted && (
         <Toaster
           toastOptions={{

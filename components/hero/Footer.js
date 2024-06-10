@@ -1,38 +1,23 @@
 import React from "react"
 import Link from "next/link"
 import styled from "styled-components"
-import { BiSolidBookHeart } from "react-icons/bi"
 import {
   RiFacebookFill,
   RiTwitterXFill,
   RiInstagramLine,
   RiYoutubeFill,
 } from "react-icons/ri"
+import LogoSymbol from "../../public/logo_dark.svg"
 
 const FooterContainer = styled.footer`
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  background-color: var(--color-main-dark-gray);
-  color: white;
+  display: flex;
+  background-color: var(--color-main-neutral);
   text-align: center;
   position: relative;
   padding: 25px 0px;
-  margin-bottom: -1px; /* Overlap the container to fix a 1px border visual render bug */
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: 10px;
-    left: calc(25% - 10px);
-    width: 1px;
-    background-color: rgba(243, 245, 248, 0.5);
-  }
+  justify-content: space-evenly;
 
   @media (max-width: 768px) {
-    display: flex;
     flex-direction: column;
     align-items: center;
     gap: 25px;
@@ -44,14 +29,28 @@ const FooterContainer = styled.footer`
   }
 `
 
-const FooterColumnContainer = styled.div`
+const SlimFooter = styled.div`
+  background-color: var(--color-main-dark-gray);
+  color: white;
   display: flex;
-  justify-content: space-around;
-  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 25px 0px;
 
   @media (max-width: 768px) {
-    display: flex;
-    justify-content: center;
+    gap: 15px;
+  }
+`
+
+const FooterColumnContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly; /* Distribute the columns evenly */
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
     padding-top: 25px; /* Match the padding of the FooterContainer */
     border-top: 1px solid rgba(243, 245, 248, 0.5);
   }
@@ -61,9 +60,10 @@ const FooterColumn = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 30%; /* Ensuring each column has equal width */
 
   @media (max-width: 768px) {
-    width: 45%;
+    width: 100%;
   }
 `
 
@@ -77,31 +77,9 @@ const FooterTitle = styled.div`
   }
 `
 
-const FooterQuestionTitle = styled.div`
-  font-weight: bold;
-  font-size: 20px;
-  margin-bottom: 10px;
-
-  @media (max-width: 768px) {
-    font-size: 18px;
-  }
-`
-
-const Email = styled.p`
-  font-size: 13px;
-  font-weight: 500;
-  &:hover {
-    text-decoration: underline;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 12px;
-  }
-`
-
 const FooterLink = styled.div`
   text-decoration: none;
-  font-size: 12px;
+  font-size: 14px;
   &:hover {
     text-decoration: underline;
   }
@@ -111,39 +89,10 @@ const FooterLink = styled.div`
   }
 `
 
-const FooterQuestionLink = styled.div`
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: 600;
-  &:hover {
-    text-decoration: underline;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 14px;
-  }
-`
-
-const BottomFlexContainer = styled.div`
-  background-color: var(--color-main-dark-gray);
-  color: rgba(243, 245, 248, 0.5);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  padding: 0px 50px;
-  height: 44px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    padding: 20px;
-    font-size: 10px;
-    height: auto;
-  }
-`
-
 const BottomLinksWrapper = styled.div`
   display: flex;
+  padding-left: 24px;
+  padding-right: 24px;
 
   @media (max-width: 768px) {
     margin-top: 10px;
@@ -151,6 +100,7 @@ const BottomLinksWrapper = styled.div`
 `
 
 const FooterLinkBottom = styled.div`
+  font-size: 14px;
   text-decoration: none;
   color: var(--color-main-white);
   margin-right: 16px;
@@ -174,58 +124,60 @@ const SocialMedia = styled.div`
   }
 `
 
-const HelpCenter = styled.div`
+const LogoBox = styled.div`
   display: flex;
-  align-items: center;
-  font-size: 24px;
-  gap: 5px;
-  margin-bottom: 10px;
+  justify-content: center;
+
+  svg {
+    width: 140px;
+    fill: white;
+    margin-bottom: 25px;
+  }
 
   @media (max-width: 768px) {
-    font-size: 20px;
-    gap: 10px;
+    svg {
+      width: 100px;
+      height: 100px;
+    }
   }
+`
+
+const CopyrightText = styled.p`
+  font-size: 14px;
+  opacity: 0.6;
+  margin-bottom: 15px;
 `
 
 const Footer = () => {
   return (
-    <div>
+    <>
       <FooterContainer>
-        <FooterColumn>
-          <FooterQuestionTitle>Have a question?</FooterQuestionTitle>
-          <Link href="/hc" passHref>
-            <HelpCenter>
-              <BiSolidBookHeart />
-              <FooterQuestionLink>Visit our Help Center</FooterQuestionLink>
-            </HelpCenter>
-          </Link>
-          <Link href="mailto:help@jwtechnexus.com">
-            <Email>help@jwtechnexus.com</Email>
-          </Link>
-        </FooterColumn>
         <FooterColumnContainer>
           <FooterColumn>
-            <FooterTitle>Orders & Returns</FooterTitle>
-            <Link href="/hc">
-              <FooterLink>Order Status</FooterLink>
+            <FooterTitle>About Us</FooterTitle>
+            <Link href="/about-us">
+              <FooterLink>About TechNexus</FooterLink>
             </Link>
-            <Link href="/shipping-policy">
-              <FooterLink>Shipping Policy</FooterLink>
-            </Link>
-            <Link href="/hc">
-              <FooterLink>Return Policy</FooterLink>
+            <Link href="/accessibility">
+              <FooterLink>Accessibility Commitment</FooterLink>
             </Link>
           </FooterColumn>
           <FooterColumn>
-            <FooterTitle>Company</FooterTitle>
-            <Link href="/about-us">
-              <FooterLink>About Us</FooterLink>
+            <FooterTitle>Customer Service</FooterTitle>
+            <Link href="/hc">
+              <FooterLink>Help Center</FooterLink>
+            </Link>
+            <Link href="/return-policy">
+              <FooterLink>Returns</FooterLink>
+            </Link>
+            <Link href="/shipping-policy">
+              <FooterLink>Shipping</FooterLink>
             </Link>
             <Link href="/contact-us">
               <FooterLink>Contact Us</FooterLink>
             </Link>
-            <Link href="/blog">
-              <FooterLink>Blog</FooterLink>
+            <Link href="/hc">
+              <FooterLink>Order Status</FooterLink>
             </Link>
           </FooterColumn>
           <FooterColumn>
@@ -267,19 +219,21 @@ const Footer = () => {
           </FooterColumn>
         </FooterColumnContainer>
       </FooterContainer>
-
-      <BottomFlexContainer>
-        <div>© TechNexus, Inc. All Rights Reserved.</div>
+      <SlimFooter>
+        <LogoBox>
+          <LogoSymbol />
+        </LogoBox>
+        <CopyrightText>© TechNexus, Inc. All Rights Reserved.</CopyrightText>
         <BottomLinksWrapper>
+          <Link href="/terms-of-service">
+            <FooterLinkBottom>Terms Of Service</FooterLinkBottom>
+          </Link>
           <Link href="/privacy-policy">
             <FooterLinkBottom>Privacy Policy</FooterLinkBottom>
           </Link>
-          <Link href="/terms-of-service">
-            <FooterLinkBottom>Terms and Conditions</FooterLinkBottom>
-          </Link>
         </BottomLinksWrapper>
-      </BottomFlexContainer>
-    </div>
+      </SlimFooter>
+    </>
   )
 }
 
