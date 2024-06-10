@@ -26,7 +26,7 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import "swiper/css"
 import "swiper/css/pagination"
 import { Pagination } from "swiper/modules"
-import { useMobileView } from "../../components/common/MobileViewDetector"
+import { useMobileView } from "../../utils/MobileViewDetector"
 
 import { useSiteContext } from "../../context/mainContext"
 
@@ -204,6 +204,10 @@ const ProductNameWrapper = styled.div`
   flex-direction: column;
   order: 0; // Make sure product details are at the top in mobile view
 
+  h1 {
+    font-size: 23px;
+  }
+
   @media (min-width: 768px) {
     order: 0;
   }
@@ -228,7 +232,6 @@ const Product = styled.div`
     h1 {
       font-size: 23px;
       font-weight: 800;
-      line-height: 1.25;
       word-break: break-word;
     }
 
@@ -382,7 +385,6 @@ const ZipForm = styled.input`
   border-radius: 0.25rem;
   padding: 10px;
   color: var(--color-text-dark);
-  line-height: 1.25;
   margin-right: 10px;
 
   &:focus + label,

@@ -6,7 +6,7 @@ import { Amplify } from "aws-amplify"
 import amplifyconfig from "../src/amplifyconfiguration.json"
 Amplify.configure(amplifyconfig)
 import { ContextProviderComponent } from "../context/mainContext"
-import { MobileViewProvider } from "../components/common/MobileViewDetector"
+import { MobileViewProvider } from "../utils/MobileViewDetector"
 import ErrorBoundary from "../components/common/ErrorBoundary"
 
 const manrope = Manrope({ subsets: ["latin"] })

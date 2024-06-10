@@ -88,8 +88,9 @@ export default function Layout({ children }) {
 
   const [openDropdown, setOpenDropdown] = useState(null)
 
-  // Check if the current route is /login
+  // Check if the current route is /login or /404
   const isLoginPage = router.pathname === "/login"
+  const is404Page = router.pathname === "/404"
 
   const [mounted, setMounted] = useState(false)
 
@@ -104,8 +105,9 @@ export default function Layout({ children }) {
     })
   }
 
-  // Render the Navbar only if the route is not /login
-  const renderNavbar = !isLoginPage && (
+  // Render the Navbar only if the route is not /login or /404
+  // This also extends to any invalid path routes, i.e. /<any-nonexistent-path>
+  const renderNavbar = !isLoginPage && !is404Page && (
     <NavbarContainer>
       <NavbarWrapper>
         <Navbar>

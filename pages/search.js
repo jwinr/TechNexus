@@ -9,7 +9,7 @@ import LoadingSpinner from "../components/common/LoadingSpinner"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
 import toast from "react-hot-toast"
-import { useMobileView } from "../components/common/MobileViewDetector"
+import { useMobileView } from "../../utils/MobileViewDetector"
 import ErrorBoundary from "../components/common/ErrorBoundary"
 
 // Lazy-loaded components

@@ -53,7 +53,6 @@ const Logo = styled.div`
   font-size: 2.5rem;
   font-weight: normal;
   letter-spacing: 0.05em;
-  line-height: 1;
 `
 
 const HeaderText = styled.div`

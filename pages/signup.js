@@ -53,7 +53,6 @@ const EntryContainer = styled.input`
   padding-bottom: 10px;
   padding-left: 10px;
   color: var(--color-text-dark);
-  line-height: 1.25;
   outline: none;
   padding-right: 40px;
 `

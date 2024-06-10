@@ -31,7 +31,6 @@ const HeroContent = styled.div`
 const HeroTitle = styled.h1`
   font-size: 48px;
   font-weight: 700;
-  line-height: 1.2;
   margin-bottom: 20px;
   color: #003366;
   @media (max-width: 768px) {
@@ -42,7 +41,6 @@ const HeroTitle = styled.h1`
 const HeroSubtitle = styled.div`
   font-size: 20px;
   font-weight: 500;
-  line-height: 1.5;
   color: #0067b8;
   margin-bottom: 20px;
   @media (max-width: 768px) {
