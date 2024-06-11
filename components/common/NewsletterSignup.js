@@ -29,7 +29,7 @@ const NewsletterInput = styled.input`
   padding: 10px;
   font-size: 16px;
   border-radius: 5px;
-  border: 1px solid var(--color-border-gray);
+  border: 1px solid var(--sc-color-border-gray);
   min-width: 375px;
 
   @media (max-width: 768px) {
@@ -40,8 +40,8 @@ const NewsletterInput = styled.input`
 const NewsletterButton = styled.button`
   padding: 10px 20px;
   font-size: 16px;
-  background-color: var(--color-main-blue);
-  color: var(--color-main-white);
+  background-color: var(--sc-color-blue);
+  color: var(--sc-color-white);
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -116,7 +116,7 @@ const NewsletterSignup = () => {
             value={email}
             onChange={handleEmailChange}
             style={{
-              borderColor: emailValid ? "var(--color-border-gray)" : "red",
+              borderColor: emailValid ? "var(--sc-color-border-gray)" : "red",
             }}
           />
           <NewsletterButton>Subscribe</NewsletterButton>

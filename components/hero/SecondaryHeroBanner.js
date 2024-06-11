@@ -62,8 +62,8 @@ const HeroSubtitle = styled.div`
 `
 
 const CtaButton = styled.button`
-  background-color: var(--color-main-blue);
-  color: #fff;
+  background-color: var(--sc-color-blue);
+  color: var(--sc-color-white);
   border: none;
   padding: 12px 24px;
   border-radius: 8px;

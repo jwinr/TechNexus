@@ -157,7 +157,7 @@ const AdditionalImageThumbnail = styled.div`
   background-color: white;
 
   &:hover {
-    border: 1px solid var(--color-highlight);
+    border: 1px solid var(--sc-color-blue-highlight);
   }
 
   img {
@@ -307,7 +307,7 @@ const MainImageContainer = styled.div`
   padding: 25px;
   height: 500px;
   width: 100%;
-  background-color: white;
+  background-color: var(--sc-color-white);
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 
@@ -341,7 +341,7 @@ const PopupContainer = styled.div`
   top: 100%;
   left: 0;
   color: black;
-  background-color: var(--color-main-white);
+  background-color: var(--sc-color-white);
   border: 1px solid transparent;
   border-radius: 3px;
   padding: 8px;
@@ -370,7 +370,7 @@ const PopupContainer = styled.div`
     height: 10px;
     border-top-right-radius: 0px;
     border: 1px solid transparent;
-    background-color: var(--color-main-white);
+    background-color: var(--sc-color-white);
     z-index: -2;
     top: -6px;
     left: 50%;
@@ -381,10 +381,10 @@ const PopupContainer = styled.div`
 `
 
 const ZipForm = styled.input`
-  border: 1px solid var(--color-border-gray);
+  border: 1px solid var(--sc-color-border-gray);
   border-radius: 0.25rem;
   padding: 10px;
-  color: var(--color-text-dark);
+  color: var(--sc-color-text);
   margin-right: 10px;
 
   &:focus + label,
@@ -392,7 +392,7 @@ const ZipForm = styled.input`
     top: 0px;
     left: 15px;
     font-size: 12px;
-    color: var(--color-text-dark);
+    color: var(--sc-color-text);
   }
 `
 
@@ -400,8 +400,8 @@ const Label = styled.label`
   position: absolute;
   top: 30%;
   left: 15px;
-  color: var(--color-text-dark);
-  background-color: var(--color-main-white);
+  color: var(--sc-color-text);
+  background-color: var(--sc-color-white);
   font-size: 16px;
   pointer-events: none;
   transition: all 0.3s ease;
@@ -428,28 +428,28 @@ const ZipSubmitBtn = styled.button`
   justify-content: center;
   transition: all 0.1s ease-in 0s;
   border-radius: 6px;
-  color: var(--color-button-dark-gray);
+  color: var(--sc-color-button-text-disabled);
   border: medium;
   font-weight: bold;
   min-height: 44px;
   padding: 0px 16px;
   text-align: center;
-  background-color: var(--color-button-mid-gray);
+  background-color: var(--sc-color-blue);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: var(--color-button-dark-gray);
-    color: var(--color-button-mid-gray);
+    background-color: var(--sc-color-button-text-disabled);
+    color: var(--sc-color-blue);
   }
 
   &:active {
-    background-color: var(--color-button-dark-gray);
-    color: var(--color-button-mid-gray);
+    background-color: var(--sc-color-button-text-disabled);
+    color: var(--sc-color-blue);
   }
 
   &:focus-visible {
-    background-color: var(--color-button-dark-gray);
-    color: var(--color-button-mid-gray);
+    background-color: var(--sc-color-button-text-disabled);
+    color: var(--sc-color-blue);
   }
 `
 

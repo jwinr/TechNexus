@@ -38,7 +38,7 @@ const Column = styled.div`
 `
 
 const Outline = styled.div`
-  border: 2px solid rgb(0, 64, 102);
+  border: 2px solid var(--sc-color-blue);
   border-radius: 50%;
   width: 80px;
   height: 80px;
@@ -49,7 +49,7 @@ const Outline = styled.div`
 `
 
 const Logo = styled.div`
-  color: #004066;
+  color: var(--sc-color-blue);
   font-size: 2.5rem;
   font-weight: normal;
   letter-spacing: 0.05em;

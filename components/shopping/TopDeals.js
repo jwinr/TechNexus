@@ -15,7 +15,7 @@ const Container = styled.div`
 
 const ItemContainer = styled.div`
   padding: 15px;
-  background-color: var(--color-main-white);
+  background-color: var(--sc-color-white);
   border-radius: 8px;
 `
 
@@ -29,8 +29,8 @@ const ImgContainer = styled.div`
   height: 218px;
 
   &:hover {
-    background-color: var(--color-main-white);
-    border-color: var(--color-border-gray);
+    background-color: var(--sc-color-white);
+    border-color: var(--sc-color-border-gray);
   }
 `
 

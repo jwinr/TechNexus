@@ -38,7 +38,7 @@ const NavIcon = styled.div`
   align-items: center;
   border-radius: 12px;
   overflow: hidden;
-  background-color: white;
+  background-color: var(--sc-color-white);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;

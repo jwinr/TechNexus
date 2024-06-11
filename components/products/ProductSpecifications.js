@@ -62,7 +62,7 @@ const InfoButton = styled.button`
     width: 17px;
     height: 17px;
     color: #4fbbff;
-    background-color: var(--color-main-white);
+    background-color: var(--sc-color-white);
     font-weight: 800;
     display: flex;
     align-items: center;
@@ -72,8 +72,8 @@ const InfoButton = styled.button`
 
 const InfoTooltip = styled.div`
   position: absolute;
-  background-color: var(--color-text-dark);
-  color: white;
+  background-color: var(--sc-color-text);
+  color: var(--sc-color-white);
   padding: 10px;
   border-radius: 5px;
   font-size: 13px;
@@ -86,7 +86,7 @@ const InfoTooltip = styled.div`
   &:after {
     border-right: solid 10px transparent;
     border-left: solid 10px transparent;
-    border-top: solid 10px var(--color-text-dark);
+    border-top: solid 10px var(--sc-color-text);
     transform: translateX(-50%);
     position: absolute;
     z-index: -1;
@@ -152,7 +152,7 @@ const Tooltip = ({ attribute_name, hasAdditionalInfo }) => {
 const SpecsValue = styled.span`
   grid-area: value;
   font-size: 14px;
-  color: var(--color-text-dark);
+  color: var(--sc-color-text);
 `
 
 const LineBreak = styled.div`

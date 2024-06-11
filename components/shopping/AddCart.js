@@ -16,14 +16,14 @@ const Button = styled(buttonFilter(["isLoading"]))`
   justify-content: center;
   transition: background-color 0.3s;
   border-radius: 6px;
-  color: var(--color-main-white);
+  color: var(--sc-color-white);
   border: medium;
   font-weight: bold;
   min-height: 44px;
   padding: 0px 16px;
   width: 100%;
   text-align: center;
-  background-color: var(--color-main-blue);
+  background-color: var(--sc-color-blue);
   display: flex;
 
   &:hover {
@@ -43,14 +43,14 @@ const Button = styled(buttonFilter(["isLoading"]))`
     isLoading &&
     css`
       cursor: not-allowed !important;
-      color: var(--color-button-dark-gray) !important;
-      background-color: var(--color-button-light-gray) !important;
+      color: var(--sc-color-button-text-disabled) !important;
+      background-color: var(--sc-color-button-disabled) !important;
 
       &:hover,
       &:active,
       &:focus-visible {
-        color: var(--color-button-dark-gray) !important;
-        background-color: var(--color-button-light-gray) !important;
+        color: var(--sc-color-button-text-disabled) !important;
+        background-color: var(--sc-color-button-disabled) !important;
       }
     `}
 `
@@ -67,9 +67,9 @@ const rotate = keyframes`
 const LoadingSpinner = styled.div`
   width: 25px;
   height: 25px;
-  border-color: var(--color-main-white);
+  border-color: var(--sc-color-white);
   border-width: 3px;
-  border-left-color: var(--color-button-dark-gray);
+  border-left-color: var(--sc-color-button-text-disabled);
   border-radius: 40px;
   border-style: solid;
   font-size: 0;

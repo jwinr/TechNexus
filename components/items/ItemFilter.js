@@ -13,7 +13,7 @@ const DropdownButton = styled.button`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
-  color: var(--color-main-white);
+  color: var(--sc-color-white);
   padding-left: 20px;
   padding-right: 20px;
   padding-top: 8px;
@@ -23,7 +23,7 @@ const DropdownButton = styled.button`
   align-items: center;
   display: flex;
   width: 100%;
-  background-color: var(--color-main-blue);
+  background-color: var(--sc-color-blue);
   transition: background-color 0.2s;
 
   &:hover {
@@ -43,7 +43,7 @@ const ArrowIcon = styled.div`
 
 const DropdownContent = styled.div`
   position: absolute;
-  background-color: var(--color-main-white);
+  background-color: var(--sc-color-white);
   border: 1px solid #d1d5db;
   border-radius: 8px;
   max-height: 275px;

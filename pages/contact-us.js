@@ -34,7 +34,7 @@ const EmailText = styled.h2`
 `
 
 const ContactCard = styled.div`
-  background-color: var(--color-main-white);
+  background-color: var(--sc-color-white);
   width: 100%;
   border-radius: 10px;
   max-width: 66.67%;
@@ -46,7 +46,7 @@ const ContactCard = styled.div`
 `
 
 const CardDetails = styled.div`
-  background-color: var(--color-main-white);
+  background-color: var(--sc-color-white);
   flex-direction: column;
   align-items: flex-start;
   gap: 20px;

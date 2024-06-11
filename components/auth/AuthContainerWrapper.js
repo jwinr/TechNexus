@@ -9,7 +9,7 @@ const AuthContainerWrapper = styled.div`
   width: 500px;
   margin: 48px auto;
   align-items: center;
-  background-color: var(--color-main-white);
+  background-color: var(--sc-color-white);
   box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
   border-radius: 20px;
 

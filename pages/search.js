@@ -49,8 +49,8 @@ const TotalItems = styled.p`
 `
 
 const SortDropdown = styled.select`
-  background-color: var(--color-main-white);
-  border: 1px solid var(--color-border-gray);
+  background-color: var(--sc-color-white);
+  border: 1px solid var(--sc-color-border-gray);
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
 `

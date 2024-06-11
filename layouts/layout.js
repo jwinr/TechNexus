@@ -15,7 +15,7 @@ const NavbarContainer = styled.div`
   color: #000;
   display: flex;
   position: sticky;
-  background-color: white;
+  background-color: var(--sc-color-white);
   box-shadow: 0 8px 21px -12px rgba(0, 0, 0, 0.2);
   top: 0;
   z-index: 300;
@@ -27,7 +27,7 @@ const NavbarContainer = styled.div`
 
 const NavbarWrapper = styled.div`
   display: flex;
-  background-color: white !important;
+  background-color: var(--sc-color-white) !important;
   border-bottom: 1px solid #e4e4e4;
   padding: 7px 0px 7px 0px;
 `
@@ -52,7 +52,7 @@ const Navbar = styled.div`
 `
 
 const SiteWrapper = styled.div`
-  background-color: var(--color-main-white);
+  background-color: var(--sc-color-white);
   display: flex;
   justify-content: center;
   z-index: 100;
@@ -138,7 +138,7 @@ export default function Layout({ children }) {
             style: {
               width: "320px",
               height: "85px",
-              background: "#fff",
+              background: "var(--sc-color-white)",
               padding: "10px 20px",
               display: "flex",
               justifyContent: "space-around",

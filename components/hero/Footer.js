@@ -11,7 +11,7 @@ import LogoSymbol from "../../public/logo_dark.svg"
 
 const FooterContainer = styled.footer`
   display: flex;
-  background-color: var(--color-main-neutral);
+  background-color: var(--sc-color-neutral);
   text-align: center;
   position: relative;
   padding: 25px 0px;
@@ -30,8 +30,8 @@ const FooterContainer = styled.footer`
 `
 
 const SlimFooter = styled.div`
-  background-color: var(--color-main-dark-gray);
-  color: white;
+  background-color: var(--sc-color-footer-black);
+  color: var(--sc-color-white);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -102,7 +102,7 @@ const BottomLinksWrapper = styled.div`
 const FooterLinkBottom = styled.div`
   font-size: 14px;
   text-decoration: none;
-  color: var(--color-main-white);
+  color: var(--sc-color-white);
   margin-right: 16px;
   &:hover {
     text-decoration: underline;
@@ -130,7 +130,7 @@ const LogoBox = styled.div`
 
   svg {
     width: 140px;
-    fill: white;
+    fill: var(--sc-color-white);
     margin-bottom: 25px;
   }
 

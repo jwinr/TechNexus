@@ -28,7 +28,7 @@ const Title = styled.h1`
 
 const Description = styled.p`
   font-size: 1.2rem;
-  color: var(--color-main-neutral-dark);
+  color: var(--sc-color-neutral-dark);
   max-width: 600px;
   line-height: 1.5;
   margin-bottom: 30px;
@@ -42,8 +42,8 @@ const ContactButton = styled.a`
   display: inline-block;
   padding: 10px 20px;
   font-size: 1rem;
-  color: white;
-  background-color: var(--color-main-blue);
+  color: var(--sc-color-white);
+  background-color: var(--sc-color-blue);
   border-radius: 5px;
   text-decoration: none;
   transition: background-color 0.3s ease;

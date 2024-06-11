@@ -46,13 +46,13 @@ const AccountText = styled.label`
 `
 
 const EntryContainer = styled.input`
-  border: 1px solid var(--color-border-gray);
+  border: 1px solid var(--sc-color-border-gray);
   border-radius: 0.25rem;
   width: 350px;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  color: var(--color-text-dark);
+  color: var(--sc-color-text);
   outline: none;
   padding-right: 40px;
 `
@@ -100,11 +100,11 @@ const SignInBtn = styled.button`
   justify-content: center;
   border-radius: 6px;
   padding: 8px 20px;
-  color: var(--color-main-white);
+  color: var(--sc-color-white);
   border: medium;
   width: 350px;
   text-align: center;
-  background-color: var(--color-main-blue);
+  background-color: var(--sc-color-blue);
   transition: background-color 0.3s;
 
   &:hover {
@@ -158,11 +158,11 @@ const CtaShopBtn = styled.button`
   transition: all 0.1s ease-in 0s;
   border-radius: 20px;
   padding: 8px 20px;
-  color: var(--color-main-white);
+  color: var(--sc-color-white);
   border: medium;
   width: 250px;
   text-align: center;
-  background-color: var(--color-main-blue);
+  background-color: var(--sc-color-blue);
   transition: background-color 0.2s;
 
   &:hover {

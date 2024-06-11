@@ -31,13 +31,13 @@ const EntryWrapper = styled.div`
 `
 
 const EntryContainer = styled.input`
-  border: 1px solid var(--color-border-gray);
+  border: 1px solid var(--sc-color-border-gray);
   border-radius: 0.25rem;
   width: 100%;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  color: var(--color-text-dark);
+  color: var(--sc-color-text);
   padding-right: 40px;
   transition: border-color 0.3s;
 
@@ -46,7 +46,7 @@ const EntryContainer = styled.input`
     top: 0px;
     left: 10px;
     font-size: 12px;
-    color: var(--color-text-dark);
+    color: var(--sc-color-text);
   }
 `
 
@@ -55,8 +55,8 @@ const Label = styled.label`
   top: 50%;
   left: 10px;
   transform: translateY(-50%);
-  color: var(--color-text-dark);
-  background-color: var(--color-main-white);
+  color: var(--sc-color-text);
+  background-color: var(--sc-color-white);
   font-size: 16px;
   pointer-events: none;
   transition: all 0.3s ease;
@@ -125,22 +125,27 @@ const ResetBtn = styled.button`
   font-weight: bold;
   align-self: center;
   border-radius: 6px;
-  color: ${(props) => (props.disabled ? "#666666" : "#fff")};
+  color: ${(props) =>
+    props.disabled
+      ? "var(--sc-color-button-text-disabled)"
+      : "var(--sc-color-white)"};
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   min-height: 44px;
   padding: 0px 16px;
   width: 100%;
   background-color: ${(props) =>
-    props.disabled ? "rgb(214, 214, 214)" : "#00599c"};
+    props.disabled
+      ? "var(--sc-color-button-disabled)"
+      : "var(--sc-color-blue)"};
   transition: background-color 0.3s;
   margin-top: 24px;
 
   &:disabled {
     cursor: not-allowed;
     color: var(
-      --color-button-dark-gray
+      --sc-color-button-text-disabled
     ) !important; // Override the hover & active styles when the button is disabled
-    background-color: var(--color-button-light-gray) !important;
+    background-color: var(--sc-color-button-disabled) !important;
   }
 
   &:hover {
@@ -184,7 +189,7 @@ const Logo = styled.div`
 const VerificationInput = styled.input`
   border-width: 0px 0px 4px;
   border-bottom-style: solid;
-  border-bottom-color: var(--color-button-light-gray);
+  border-bottom-color: var(--sc-color-button-disabled);
   border-radius: 0px;
   text-align: center;
   width: 90%;
@@ -215,22 +220,27 @@ const VerificationInput = styled.input`
 const VerifyBtn = styled.button`
   font-weight: bold;
   border-radius: 6px;
-  color: ${(props) => (props.disabled ? "#666666" : "#fff")};
+  color: ${(props) =>
+    props.disabled
+      ? "var(--sc-color-button-text-disabled)"
+      : "var(--sc-color-white)"};
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   min-height: 44px;
   padding: 0px 16px;
   width: 100%;
   background-color: ${(props) =>
-    props.disabled ? "rgb(214, 214, 214)" : "#00599c"};
+    props.disabled
+      ? "var(--sc-color-button-disabled)"
+      : "var(--sc-color-blue)"};
   transition: background-color 0.3s;
   margin-top: 24px;
 
   &:disabled {
     cursor: not-allowed;
     color: var(
-      --color-button-dark-gray
+      --sc-color-button-text-disabled
     ) !important; // Override the hover & active styles when the button is disabled
-    background-color: var(--color-button-light-gray) !important;
+    background-color: var(--sc-color-button-disabled) !important;
   }
 
   &:hover {
@@ -258,7 +268,7 @@ const RequirementList = styled.ul`
   text-align: left;
   font-size: 12px;
   font-weight: 400;
-  color: rgb(102, 102, 102);
+  color: var(--sc-color-button-text-disabled);
   padding-left: 20px;
   margin: 8px 0px 0px;
   align-self: flex-start;
@@ -266,11 +276,11 @@ const RequirementList = styled.ul`
 
 const RequirementListItem = styled.li`
   margin-bottom: 4px;
-  color: rgb(0, 131, 0);
+  color: var(--sc-color-green);
   list-style: none;
   margin-left: -12px;
 
-  color: ${(props) => (props.met ? "rgb(0, 131, 0)" : "#d32f2f")};
+  color: ${(props) => (props.met ? "var(--sc-color-green)" : "#d32f2f")};
 
   &:before {
     content: ${(props) => (props.met ? "'✓'" : "''")};
@@ -282,7 +292,7 @@ const RequirementListItem = styled.li`
 
 const RequirementListItemDone = styled.div`
   position: absolute;
-  color: var(--color-success-green);
+  color: var(--sc-color-green);
   font-size: 14px;
   bottom: -20px;
 

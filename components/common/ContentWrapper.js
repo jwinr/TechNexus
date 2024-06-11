@@ -5,7 +5,7 @@ const ContentWrapper = styled.div`
   width: calc(100% - 0px);
   margin: 0px auto;
   max-width: 1400px;
-  background-color: var(--color-main-white);
+  background-color: var(--sc-color-white);
 `
 
 function Content({ children }) {

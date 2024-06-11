@@ -39,13 +39,13 @@ const SearchInput = styled.input`
   outline: none;
   font-size: 15px;
   width: 100%;
-  background-color: var(--color-main-light-gray);
+  background-color: var(--sc-color-white-highlight);
 `
 
 const SubmitButton = styled.button`
   right: 31px;
   position: relative;
-  color: var(--color-text-dark);
+  color: var(--sc-color-text);
   width: 35px;
   height: 38px;
   font-size: 20px;

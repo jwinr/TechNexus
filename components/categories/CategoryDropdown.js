@@ -14,7 +14,7 @@ const Dropdown = styled.div`
   position: absolute;
   top: 65px;
   width: 275px;
-  background-color: var(--color-main-white);
+  background-color: var(--sc-color-white);
   border-radius: 0 0 8px 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 0 20px;
@@ -53,7 +53,7 @@ const StyledCategoryButton = styled(CategoryButton)`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
-  color: var(--color-text-dark);
+  color: var(--sc-color-text);
   padding-left: 16px;
   padding-right: 8px;
   height: 100%;
@@ -66,7 +66,7 @@ const StyledCategoryButton = styled(CategoryButton)`
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: var(--color-main-light-gray);
+    background-color: var(--sc-color-white-highlight);
   }
 
   &:focus-visible {

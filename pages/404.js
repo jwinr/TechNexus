@@ -50,14 +50,14 @@ const HomeButton = styled.button`
   justify-content: center;
   transition: all 0.1s ease-in 0s;
   border-radius: 6px;
-  color: var(--color-main-white);
+  color: var(--sc-color-white);
   border: medium;
   font-weight: bold;
   min-height: 44px;
   padding: 0px 16px;
   width: 100%;
   text-align: center;
-  background-color: var(--color-main-blue);
+  background-color: var(--sc-color-blue);
   transition: background-color 0.2s;
   margin-top: 25px;
 

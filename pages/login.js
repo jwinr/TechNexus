@@ -46,13 +46,13 @@ const EntryWrapper = styled.div`
 `
 
 const EntryContainer = styled.input`
-  border: 1px solid var(--color-border-gray);
+  border: 1px solid var(--sc-color-border-gray);
   border-radius: 0.25rem;
   width: 100%;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  color: var(--color-text-dark);
+  color: var(--sc-color-text);
   padding-right: 40px;
   transition: border-color 0.3s;
 
@@ -61,7 +61,7 @@ const EntryContainer = styled.input`
     top: 0px;
     left: 10px;
     font-size: 12px;
-    color: var(--color-text-dark);
+    color: var(--sc-color-text);
   }
 `
 
@@ -70,8 +70,8 @@ const Label = styled.label`
   top: 50%;
   left: 10px;
   transform: translateY(-50%);
-  color: var(--color-text-dark);
-  background-color: var(--color-main-white);
+  color: var(--sc-color-text);
+  background-color: var(--sc-color-white);
   font-size: 16px;
   pointer-events: none;
   transition: all 0.3s ease;
@@ -96,20 +96,20 @@ const InfoButton = styled.button`
 
   &:focus .info-icon,
   &:hover .info-icon {
-    color: var(--color-main-white);
-    background-color: var(--color-main-blue);
+    color: var(--sc-color-white);
+    background-color: var(--sc-color-blue);
     transition: all 0.3s;
   }
 
   .info-icon {
     appearance: none;
     background-color: transparent;
-    border: 2px solid var(--color-main-blue);
+    border: 2px solid var(--sc-color-blue);
     border-radius: 50%;
     width: 17px;
     height: 17px;
-    color: var(--color-main-blue);
-    background-color: var(--color-main-white);
+    color: var(--sc-color-blue);
+    background-color: var(--sc-color-white);
     font-weight: 800;
     display: flex;
     align-items: center;
@@ -122,8 +122,8 @@ const InfoTooltip = styled.div`
   position: absolute;
   transform: translateX(45%);
   left: 50%;
-  background-color: white;
-  color: var(--color-text-dark);
+  background-color: var(--sc-color-white);
+  color: var(--sc-color-text);
   padding: 10px;
   border-radius: 5px;
   font-size: 16px;
@@ -141,7 +141,7 @@ const InfoTooltip = styled.div`
     width: 10px;
     height: 10px;
     border: 1px solid transparent;
-    background-color: var(--color-main-white);
+    background-color: var(--sc-color-white);
     z-index: -2;
     left: -6px;
     top: 50%;
@@ -191,14 +191,14 @@ const SignInBtn = styled.button`
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  color: var(--color-main-white);
+  color: var(--sc-color-white);
   border: medium;
   font-weight: bold;
   min-height: 44px;
   padding: 0px 16px;
   width: 100%;
   text-align: center;
-  background-color: var(--color-main-blue);
+  background-color: var(--sc-color-blue);
   transition: background-color 0.3s;
 
   &:hover {
@@ -288,12 +288,12 @@ const PolicyContainer = styled.div`
   flex-direction: column;
   text-align: center;
   font-size: 12px;
-  color: var(--color-text-light-gray);
+  color: var(--sc-color-text-light-gray);
   margin: 10px 0px 0px;
   align-items: center;
 
   a {
-    color: var(--color-link-blue);
+    color: var(--sc-color-link-blue);
     width: fit-content;
   }
 
