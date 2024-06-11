@@ -132,7 +132,7 @@ const ResetBtn = styled.button`
   width: 100%;
   background-color: ${(props) =>
     props.disabled ? "rgb(214, 214, 214)" : "#00599c"};
-  transition: background-color 0.2s;
+  transition: background-color 0.3s;
   margin-top: 24px;
 
   &:disabled {
@@ -222,7 +222,7 @@ const VerifyBtn = styled.button`
   width: 100%;
   background-color: ${(props) =>
     props.disabled ? "rgb(214, 214, 214)" : "#00599c"};
-  transition: background-color 0.2s;
+  transition: background-color 0.3s;
   margin-top: 24px;
 
   &:disabled {

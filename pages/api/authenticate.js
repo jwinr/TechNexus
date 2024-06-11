@@ -1,13 +1,12 @@
 import { CognitoIdentityServiceProvider } from "aws-sdk"
-import { config } from "../../utils/config"
 import jwt from "jsonwebtoken"
 
 // Initialize AWS Cognito SDK
 const cognito = new CognitoIdentityServiceProvider()
 
 // Use the cognitoUserPoolId from the config object
-const userPoolId = config.cognitoUserPoolId
-const JWT_SECRET = config.jwtSecret
+const userPoolId = process.env.COGNITO_USER_POOL_ID
+const JWT_SECRET = process.env.JWT_SECRET
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {

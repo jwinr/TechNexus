@@ -7,7 +7,6 @@ import Link from "next/link"
 import Backdrop from "../common/Backdrop"
 import { getCurrentUser, fetchAuthSession, signOut } from "aws-amplify/auth"
 import { filter } from "../../utils/helpers.js"
-import { config } from "../../utils/config.js"
 import { useRouter } from "next/router"
 
 const FilteredDiv = filter("div")(["isOpen"])

@@ -10,7 +10,6 @@ import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
 import SignUpPage from "./signup"
 import ForgotPassword from "./forgot-password.js"
 import LogoSymbol from "../public/logo_n.svg"
-import { config } from "../utils/config.js"
 import Link from "next/link.js"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 
@@ -191,7 +190,6 @@ const ResetText = styled.button`
 const SignInBtn = styled.button`
   align-items: center;
   justify-content: center;
-  transition: all 0.1s ease-in 0s;
   border-radius: 6px;
   color: var(--color-main-white);
   border: medium;
@@ -201,7 +199,7 @@ const SignInBtn = styled.button`
   width: 100%;
   text-align: center;
   background-color: var(--color-main-blue);
-  transition: background-color 0.2s;
+  transition: background-color 0.3s;
 
   &:hover {
     background-color: var(--color-main-dark-blue);

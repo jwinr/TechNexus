@@ -98,7 +98,6 @@ const ValidationMessage = styled.div`
 const SignInBtn = styled.button`
   align-items: center;
   justify-content: center;
-  transition: all 0.1s ease-in 0s;
   border-radius: 6px;
   padding: 8px 20px;
   color: var(--color-main-white);
@@ -106,13 +105,17 @@ const SignInBtn = styled.button`
   width: 350px;
   text-align: center;
   background-color: var(--color-main-blue);
-  transition: background-color 0.2s;
+  transition: background-color 0.3s;
 
   &:hover {
     background-color: var(--color-main-dark-blue);
   }
 
   &:active {
+    background-color: var(--color-main-dark-blue);
+  }
+
+  &:focus-visible {
     background-color: var(--color-main-dark-blue);
   }
 `

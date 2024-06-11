@@ -158,6 +158,9 @@ const Footer = () => {
             <Link href="/about-us">
               <FooterLink>About TechNexus</FooterLink>
             </Link>
+            <Link href="/careers">
+              <FooterLink>Careers</FooterLink>
+            </Link>
             <Link href="/accessibility">
               <FooterLink>Accessibility Commitment</FooterLink>
             </Link>
