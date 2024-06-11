@@ -1,5 +1,6 @@
 import React from "react"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import styled from "styled-components"
 import {
   RiFacebookFill,
@@ -8,6 +9,7 @@ import {
   RiYoutubeFill,
 } from "react-icons/ri"
 import LogoSymbol from "../../public/logo_dark.svg"
+import { GoChecklist, GoShieldCheck } from "react-icons/go"
 
 const FooterContainer = styled.footer`
   display: flex;
@@ -37,10 +39,6 @@ const SlimFooter = styled.div`
   align-items: center;
   position: relative;
   padding: 25px 0px;
-
-  @media (max-width: 768px) {
-    gap: 15px;
-  }
 `
 
 const FooterColumnContainer = styled.div`
@@ -91,8 +89,8 @@ const FooterLink = styled.div`
 
 const BottomLinksWrapper = styled.div`
   display: flex;
-  padding-left: 24px;
-  padding-right: 24px;
+  justify-content: center;
+  gap: 15px;
 
   @media (max-width: 768px) {
     margin-top: 10px;
@@ -101,11 +99,18 @@ const BottomLinksWrapper = styled.div`
 
 const FooterLinkBottom = styled.div`
   font-size: 14px;
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
   color: var(--sc-color-white);
-  margin-right: 16px;
+
   &:hover {
     text-decoration: underline;
+  }
+
+  svg {
+    margin-right: 5px;
+    font-size: 16px;
   }
 
   @media (max-width: 768px) {
@@ -137,7 +142,6 @@ const LogoBox = styled.div`
   @media (max-width: 768px) {
     svg {
       width: 100px;
-      height: 100px;
     }
   }
 `
@@ -149,8 +153,20 @@ const CopyrightText = styled.p`
 `
 
 const Footer = () => {
-  return (
-    <>
+  const router = useRouter()
+
+  // Check if the current route is /login, /signup, /forgot-password or /404
+  const isLoginPage = router.pathname === "/login"
+  const isSignupPage = router.pathname === "/signup"
+  const isForgotPassPage = router.pathname === "/forgot-password"
+  const is404Page = router.pathname === "/404"
+
+  // Render the Footer only if the route is not /login, /signup, /forgot-password or /404
+  // This also extends to any invalid path routes, i.e. /<any-nonexistent-path>
+  const renderFooter = !isLoginPage &&
+    !isSignupPage &&
+    !isForgotPassPage &&
+    !is404Page && (
       <FooterContainer>
         <FooterColumnContainer>
           <FooterColumn>
@@ -222,6 +238,11 @@ const Footer = () => {
           </FooterColumn>
         </FooterColumnContainer>
       </FooterContainer>
+    )
+
+  return (
+    <>
+      {renderFooter}
       <SlimFooter>
         <LogoBox>
           <LogoSymbol />
@@ -229,10 +250,16 @@ const Footer = () => {
         <CopyrightText>© TechNexus, Inc. All Rights Reserved.</CopyrightText>
         <BottomLinksWrapper>
           <Link href="/terms-of-service">
-            <FooterLinkBottom>Terms Of Service</FooterLinkBottom>
+            <FooterLinkBottom>
+              <GoChecklist />
+              Terms Of Service
+            </FooterLinkBottom>
           </Link>
           <Link href="/privacy-policy">
-            <FooterLinkBottom>Privacy Policy</FooterLinkBottom>
+            <FooterLinkBottom>
+              <GoShieldCheck />
+              Privacy Policy
+            </FooterLinkBottom>
           </Link>
         </BottomLinksWrapper>
       </SlimFooter>

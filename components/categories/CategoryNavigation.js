@@ -68,6 +68,7 @@ const NavLink = styled(Link)`
   text-decoration: none;
 
   &:hover ${NavIcon} {
+    // Apply the transition when we hover over the link
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }

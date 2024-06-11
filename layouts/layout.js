@@ -77,8 +77,10 @@ export default function Layout({ children }) {
 
   const [openDropdown, setOpenDropdown] = useState(null)
 
-  // Check if the current route is /login or /404
+  // Check if the current route is /login, /signup, /forgot-password or /404
   const isLoginPage = router.pathname === "/login"
+  const isSignupPage = router.pathname === "/signup"
+  const isForgotPassPage = router.pathname === "/forgot-password"
   const is404Page = router.pathname === "/404"
 
   const [mounted, setMounted] = useState(false)
@@ -94,30 +96,33 @@ export default function Layout({ children }) {
     })
   }
 
-  // Render the Navbar only if the route is not /login or /404
+  // Render the Navbar only if the route is not /login, /signup, /forgot-password or /404
   // This also extends to any invalid path routes, i.e. /<any-nonexistent-path>
-  const renderNavbar = !isLoginPage && !is404Page && (
-    <NavbarContainer>
-      <NavbarWrapper>
-        <Navbar>
-          <Logo href="/" aria-label="Home">
-            <BannerLogo alt="TechNexus Logo" />
-          </Logo>
-          <CategoryDropdown
-            isOpen={openDropdown === "category"}
-            onToggle={() => handleToggle("category")}
-          />
-          <ProductSearchBar />
-          <UserDropdown
-            isOpen={openDropdown === "user"}
-            onToggle={() => handleToggle("user")}
-            aria-label="User Menu"
-          />
-          <CartLink aria-label="Shopping Cart" />
-        </Navbar>
-      </NavbarWrapper>
-    </NavbarContainer>
-  )
+  const renderNavbar = !isLoginPage &&
+    !isSignupPage &&
+    !isForgotPassPage &&
+    !is404Page && (
+      <NavbarContainer>
+        <NavbarWrapper>
+          <Navbar>
+            <Logo href="/" aria-label="Home">
+              <BannerLogo alt="TechNexus Logo" />
+            </Logo>
+            <CategoryDropdown
+              isOpen={openDropdown === "category"}
+              onToggle={() => handleToggle("category")}
+            />
+            <ProductSearchBar />
+            <UserDropdown
+              isOpen={openDropdown === "user"}
+              onToggle={() => handleToggle("user")}
+              aria-label="User Menu"
+            />
+            <CartLink aria-label="Shopping Cart" />
+          </Navbar>
+        </NavbarWrapper>
+      </NavbarContainer>
+    )
 
   return (
     <>

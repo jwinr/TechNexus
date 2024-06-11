@@ -7,11 +7,20 @@ const AuthContainerWrapper = styled.div`
   flex-direction: column;
   gap: 15px;
   width: 500px;
-  margin: 48px auto;
+  margin: 15px auto;
   align-items: center;
   background-color: var(--sc-color-white);
   box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
   border-radius: 20px;
+
+  @media (max-width: 1200px) {
+    width: 80%;
+  }
+
+  @media (max-width: 1024px) {
+    margin: 10% auto;
+    width: 70%;
+  }
 
   @media (max-width: 768px) {
     height: 100%;

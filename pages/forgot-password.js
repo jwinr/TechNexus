@@ -3,7 +3,8 @@ import Head from "next/head"
 import styled from "styled-components"
 import { resetPassword, confirmResetPassword } from "aws-amplify/auth"
 import { useRouter } from "next/router"
-import LogoSymbol from "../public/logo_n.svg"
+import LogoSymbol from "../public/logo_n.png"
+import Image from "next/image"
 import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 import { IoCheckmarkCircleSharp } from "react-icons/io5"
@@ -167,22 +168,14 @@ const SubheaderText = styled.div`
   text-align: center;
 `
 
-const Logo = styled.div`
+const LogoBox = styled.div`
   display: flex;
-  align-self: center;
-  max-width: 100%;
-  max-height: 100%;
-
-  svg {
-    width: auto;
-    height: 40px;
-  }
+  align-items: center;
+  width: 140px;
 
   @media (max-width: 768px) {
-    .Tech_Nexus {
-      margin: 3px;
-      grid-area: nav-logo;
-    }
+    max-width: 75px;
+    width: auto;
   }
 `
 
@@ -571,11 +564,12 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
       <Head>
         <title>Login: TechNexus</title>
         <meta property="og:title" content="Login: TechNexus" key="title" />
+        <meta name="description" content="Reset your password." />
       </Head>
       <AuthContainerWrapper>
-        <Logo>
-          <LogoSymbol />
-        </Logo>
+        <LogoBox>
+          <Image src={LogoSymbol} alt="TechNexus Logo" priority={true} />
+        </LogoBox>
         {currentStep === "initial" && (
           <>
             <HeaderText>Forgot Password</HeaderText>

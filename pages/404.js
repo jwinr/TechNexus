@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import Head from "next/head"
-import LogoSymbol from "../public/logo_n.svg"
+import Image from "next/image"
+import LogoSymbol from "../public/logo_n.png"
 import { useRouter } from "next/router"
 
 const NotFoundWrapper = styled.div`
@@ -22,13 +23,8 @@ const LogoBox = styled.div`
   display: flex;
   justify-content: center;
 
-  svg {
-    width: 140px;
-    height: 140px;
-  }
-
   @media (max-width: 768px) {
-    svg {
+    img {
       width: 100px;
       height: 100px;
     }
@@ -38,6 +34,7 @@ const LogoBox = styled.div`
 const Message = styled.p`
   font-size: 42px;
   font-weight: 800;
+  margin-top: 25px;
 
   @media (max-width: 768px) {
     align-self: center;
@@ -62,15 +59,15 @@ const HomeButton = styled.button`
   margin-top: 25px;
 
   &:hover {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
   }
 
   &:active {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
   }
 
   &:focus-visible {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
   }
 
   @media (min-width: 768px) {
@@ -85,10 +82,16 @@ const Custom404 = () => {
   const handleHomeClick = () => {
     router.push("/")
   }
+
   return (
     <>
       <Head>
         <title>TechNexus - Page Not Found</title>
+        <meta
+          property="og:title"
+          content="TechNexus - Page Not Found"
+          key="title"
+        />
         <meta
           name="description"
           content="Page not found. The page you are looking for does not exist."
@@ -97,7 +100,13 @@ const Custom404 = () => {
       <NotFoundWrapper>
         <LogoBox>
           <a href="/" aria-label="Home">
-            <LogoSymbol alt="TechNexus Logo" />
+            <Image
+              src={LogoSymbol}
+              alt="TechNexus Logo"
+              layout="intrinsic"
+              width={140}
+              height={140}
+            />
           </a>
         </LogoBox>
         <Message>

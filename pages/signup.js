@@ -4,7 +4,8 @@ import * as Styled from "../components/auth/SignStyles"
 import styled from "styled-components"
 import { useRouter } from "next/router"
 import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
-import LogoSymbol from "../public/logo_n.svg"
+import LogoSymbol from "../public/logo_n.png"
+import Image from "next/image"
 import Head from "next/head"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 
@@ -133,44 +134,41 @@ const ResetText = styled.a`
   }
 `
 
-const Logo = styled.div`
+const LogoBox = styled.div`
   display: flex;
   align-items: center;
-  max-width: 100%;
-  max-height: 100%;
-
-  svg {
-    width: auto;
-    height: 40px;
-  }
+  width: 140px;
 
   @media (max-width: 768px) {
-    .Tech_Nexus {
-      margin: 3px;
-      grid-area: nav-logo;
-    }
+    max-width: 75px;
+    width: auto;
   }
 `
 
 const CtaShopBtn = styled.button`
   align-items: center;
   justify-content: center;
-  transition: all 0.1s ease-in 0s;
   border-radius: 20px;
-  padding: 8px 20px;
   color: var(--sc-color-white);
   border: medium;
+  font-weight: bold;
+  min-height: 44px;
+  padding: 8px 20px;
   width: 250px;
   text-align: center;
   background-color: var(--sc-color-blue);
-  transition: background-color 0.2s;
+  transition: background-color 0.3s;
 
   &:hover {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
   }
 
   &:active {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
+  }
+
+  &:focus-visible {
+    background-color: var(--sc-color-dark-blue);
   }
 `
 
@@ -366,11 +364,15 @@ const SignUpPage = ({ toggleSignUp }) => {
       <Head>
         <title>Login: TechNexus</title>
         <meta property="og:title" content="Login: TechNexus" key="title" />
+        <meta
+          name="description"
+          content="Get the most out of TechNexus by creating an account."
+        />
       </Head>
       <AuthContainerWrapper>
-        <Logo>
-          <LogoSymbol />
-        </Logo>
+        <LogoBox>
+          <Image src={LogoSymbol} alt="TechNexus Logo" priority={true} />
+        </LogoBox>
         {/* Conditional rendering based on signUpResponse */}
         {/* Conditional rendering based on signUpStep */}
         {true ? ( // Change this to signUpResponse && signUpResponse.nextStep && signUpResponse.nextStep.signUpStep === "CONFIRM_SIGN_UP" for actual use
@@ -457,7 +459,10 @@ const SignUpPage = ({ toggleSignUp }) => {
                   style={!passwordValid ? invalidStyle : {}}
                   onBlur={handlePasswordBlur}
                 />
-                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
                   {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
                 </IconButton>
               </InputIconWrapper>
@@ -479,7 +484,10 @@ const SignUpPage = ({ toggleSignUp }) => {
                   style={!confirmPasswordValid ? invalidStyle : {}}
                   onBlur={handleConfirmPasswordBlur}
                 />
-                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
                   {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
                 </IconButton>
               </InputIconWrapper>

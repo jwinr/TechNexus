@@ -9,7 +9,8 @@ import { jwtDecode } from "jwt-decode"
 import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
 import SignUpPage from "./signup"
 import ForgotPassword from "./forgot-password.js"
-import LogoSymbol from "../public/logo_n.svg"
+import LogoSymbol from "../public/logo_n.png"
+import Image from "next/image"
 import Link from "next/link.js"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 
@@ -202,15 +203,15 @@ const SignInBtn = styled.button`
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
   }
 
   &:active {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
   }
 
   &:focus-visible {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
   }
 `
 
@@ -306,22 +307,14 @@ const PolicyContainer = styled.div`
   }
 `
 
-const Logo = styled.div`
+const LogoBox = styled.div`
   display: flex;
   align-items: center;
-  max-width: 100%;
-  max-height: 100%;
-
-  svg {
-    width: auto;
-    height: 40px;
-  }
+  width: 140px;
 
   @media (max-width: 768px) {
-    .Tech_Nexus {
-      margin: 3px;
-      grid-area: nav-logo;
-    }
+    max-width: 75px;
+    width: auto;
   }
 `
 
@@ -566,11 +559,15 @@ const Login = () => {
           <Head>
             <title>Login: TechNexus</title>
             <meta property="og:title" content="Login: TechNexus" key="title" />
+            <meta
+              name="description"
+              content="Get the most out of TechNexus by signing in to your account."
+            />
           </Head>
           <AuthContainerWrapper>
-            <Logo>
-              <LogoSymbol />
-            </Logo>
+            <LogoBox>
+              <Image src={LogoSymbol} alt="TechNexus Logo" priority={true} />
+            </LogoBox>
             <HeaderText>Sign in to TechNexus</HeaderText>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             <EntryWrapper>
@@ -610,7 +607,10 @@ const Login = () => {
               >
                 Password
               </Label>
-              <IconButton onClick={() => setShowPassword(!showPassword)}>
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
                 <IconContainer>
                   <LiaEyeSolid className={showPassword ? "hide" : "show"} />
                   <LiaEyeSlashSolid
