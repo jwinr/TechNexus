@@ -6,9 +6,9 @@ import categoriesConfig from "../../utils/categoriesConfig"
 const NavContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
+  justify-content: space-around; // Space the categories apart evenly
   width: 100%;
+  gap: 20px;
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.5s ease-out, transform 0.5s ease-out;
@@ -17,17 +17,6 @@ const NavContainer = styled.div`
     opacity: 1;
     transform: translateY(0);
   }
-`
-
-const NavItem = styled.div`
-  text-align: center;
-  text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  font-weight: 500;
-  background-color: transparent;
 `
 
 const NavIcon = styled.div`
@@ -42,11 +31,6 @@ const NavIcon = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
 
   div {
     height: 100%;
@@ -63,9 +47,30 @@ const NavIcon = styled.div`
   }
 `
 
+const NavItem = styled.div`
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 10px;
+  font-weight: 500;
+  background-color: transparent;
+  max-width: 175px; // Setting a max width so the icons are evenly distributed across the available space
+`
+
 const NavTitle = styled.div`
   font-size: 16px;
   margin-top: 5px;
+`
+
+const NavLink = styled(Link)`
+  text-decoration: none;
+
+  &:hover ${NavIcon} {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
 `
 
 const FallbackIcon = styled.div`
@@ -81,7 +86,11 @@ const CategoryNavigation = React.forwardRef((props, ref) => {
   return (
     <NavContainer ref={ref} className={props.className}>
       {categoriesConfig.map((category) => (
-        <Link key={category.id} href={`/categories/${category.slug}`} passHref>
+        <NavLink
+          key={category.id}
+          href={`/categories/${category.slug}`}
+          passHref
+        >
           <NavItem>
             <NavIcon>
               {category.icon ? (
@@ -92,7 +101,7 @@ const CategoryNavigation = React.forwardRef((props, ref) => {
             </NavIcon>
             <NavTitle>{category.name}</NavTitle>
           </NavItem>
-        </Link>
+        </NavLink>
       ))}
     </NavContainer>
   )

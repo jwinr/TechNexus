@@ -53,12 +53,7 @@ const SubmitButton = styled.button`
   justify-content: center;
   display: flex;
   border-radius: 0 8px 8px 0;
-  border: 1px dashed transparent;
-
-  &:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
-  }
+  border: 1px transparent;
 
   @media (max-width: 768px) {
     right: 5px;

@@ -63,13 +63,8 @@ const SiteWrapper = styled.div`
 const Logo = styled.a`
   display: flex;
   align-items: center;
-  border: 1px dashed transparent;
+  border: 1px transparent;
   border-radius: 10px;
-
-  &:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
-  }
 
   @media (max-width: 768px) {
     margin: 3px;

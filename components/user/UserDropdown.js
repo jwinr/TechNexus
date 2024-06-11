@@ -67,15 +67,10 @@ const StyledUserButton = styled(UserButton)`
   justify-self: flex-end;
   background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "#fff")};
   transition: background-color 0.3s;
-  border: 1px dashed transparent;
+  border: 1px transparent;
 
   &:hover {
     background-color: var(--sc-color-white-highlight);
-  }
-
-  &:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
   }
 
   &:hover .arrow-icon,

@@ -30,11 +30,6 @@ const Button = styled.button`
   justify-content: flex-end;
   transition: background-color 0.2s;
 
-  &:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
-  }
-
   &:hover {
     background-color: var(--sc-color-white-highlight);
   }

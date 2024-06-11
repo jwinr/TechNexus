@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import Link from "next/link"
+import { useRouter } from "next/router"
 import styled from "styled-components"
 import Image from "next/image"
 
@@ -48,27 +48,28 @@ const HeroSubtitle = styled.div`
   }
   p {
     font-size: 16px;
-    color: #333;
+    color: var(--sc-color-text);
   }
 `
 
 const CtaButton = styled.button`
   background-color: var(--sc-color-blue);
   color: var(--sc-color-white);
-  border: none;
   padding: 12px 24px;
   border-radius: 8px;
   font-size: 18px;
-  cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 12px;
+
   &:hover {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
     transform: scale(1.05);
   }
-  &:focus {
-    outline: none;
+
+  &:focus-visible {
+    background-color: var(--sc-color-dark-blue);
   }
+
   @media (max-width: 768px) {
     padding: 10px 20px;
     font-size: 16px;
@@ -108,10 +109,15 @@ const BackgroundImage = styled.div`
 
 const HeroBanner = () => {
   const [initialLoad, setInitialLoad] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     setTimeout(() => setInitialLoad(false), 0) // Ensure initialLoad is set to false after the initial render
   }, [])
+
+  const handleClick = () => {
+    router.push("/categories")
+  }
 
   const imageSrc = "/src/images/hero_parts.png"
 
@@ -126,23 +132,17 @@ const HeroBanner = () => {
             Discover the latest in high-performance hardware and accessories.
           </p>
         </HeroSubtitle>
-        <Link href="/categories" passHref>
-          <CtaButton className={initialLoad ? "initial-hidden" : ""}>
-            Shop Now
-          </CtaButton>
-        </Link>
+        <CtaButton
+          onClick={handleClick}
+          className={initialLoad ? "initial-hidden" : ""}
+          aria-label="Shop Now and explore categories"
+          role="button"
+        >
+          Shop Now
+        </CtaButton>
       </HeroContent>
       <HeroImage>
-        <Image
-          src={imageSrc}
-          layout="intrinsic"
-          width={600}
-          height={400}
-          objectFit="contain"
-          alt="Hero Banner"
-          priority={true}
-          loading="eager"
-        />
+        <Image src={imageSrc} width={600} height={400} alt="Hero Banner" />
       </HeroImage>
     </HeroBannerContainer>
   )

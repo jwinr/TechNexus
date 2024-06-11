@@ -69,11 +69,6 @@ const StyledCategoryButton = styled(CategoryButton)`
     background-color: var(--sc-color-white-highlight);
   }
 
-  &:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
-  }
-
   &:hover .arrow-icon,
   &.arrow-icon-visible .arrow-icon {
     opacity: 1;
@@ -152,11 +147,6 @@ const ReturnButton = styled.div`
   display: flex;
   margin-right: 8px;
   cursor: pointer;
-
-  &:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
-  }
 `
 
 const BtnText = styled.div`
