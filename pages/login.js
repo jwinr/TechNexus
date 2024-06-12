@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
 import Head from "next/head"
-import { signIn, signOut, resetPassword } from "aws-amplify/auth"
+import { signIn, confirmSignUp, signOut, resetPassword } from "aws-amplify/auth"
 import { useRouter } from "next/router"
 import styled, { keyframes } from "styled-components"
 import Checkbox from "../components/common/Checkbox"
@@ -408,23 +408,22 @@ const Login = () => {
   // Apply red border/text if information is invalid
   const invalidStyle = { borderColor: "#D32F2F", color: "#D32F2F" }
 
-  // Mock signIn function for development environment
-  const signInMock = async ({ username, password }) => {
-    // Simulate successful sign-in
-    return {
-      accessToken: {
-        jwtToken: "dummyToken",
-        expiresIn: 3600,
-      },
-    }
-  }
-
-  // Mock reset function for development environment
+  /* Mock reset function for development environment
   const resetMock = async ({ username, password }) => {
     // Simulate a response that always triggers the RESET_PASSWORD step
     return {
       isSignedIn: false,
       nextStep: { signInStep: "RESET_PASSWORD" },
+    }
+  }
+  */
+
+  // Confirm the user automatically since we don't want to force that step
+  const confirmUser = async (username) => {
+    try {
+      await confirmSignUp(username)
+    } catch (error) {
+      console.error("Error confirming user automatically:", error)
     }
   }
 
@@ -463,39 +462,45 @@ const Login = () => {
         return
       }
 
-      // Call signIn with username and password (temporarily using the mock function)
-      // const isSignedIn = await signIn({ username, password })
+      // Call signIn with username and password
+      const response = await signIn({ username, password })
 
-      const isSignedIn = await resetMock({ username, password })
+      console.log("Sign-in response:", response)
 
-      console.log("Sign-in response:", isSignedIn)
+      if (response.nextStep) {
+        switch (response.nextStep.signInStep) {
+          case "CONFIRM_SIGN_UP":
+            try {
+              const res = await fetch("/api/confirm-user", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username }),
+              })
 
-      if (isSignedIn.isSignedIn) {
-        // Handle successful sign-in
-        const { accessToken } = isSignedIn
-        const { jwtToken, expiresIn } = accessToken
-        setToken(jwtToken)
-
-        // Set token as a secure HttpOnly cookie
-        Cookies.set("authToken", jwtToken, { secure: true, httpOnly: true })
-
-        // Decode the JWT token to extract the expiration time
-        const decodedToken = jwtDecode(jwtToken)
-        const expirationTime = decodedToken.exp // This will be a UNIX timestamp
-
-        // Set a timeout to automatically sign the user out when the token expires
-        const now = Date.now() / 1000 // Convert milliseconds to seconds
-        const timeUntilExpiration = expirationTime - now
-        setTimeout(() => {
-          signOut()
-        }, timeUntilExpiration * 1000) // Convert seconds back to milliseconds
-
-        // Navigate to another page
-        router.push("/")
-      } else if (isSignedIn.nextStep) {
-        // Handle different next steps
-        switch (isSignedIn.nextStep.signInStep) {
+              if (res.ok) {
+                const newResponse = await signIn({ username, password })
+                if (newResponse.isSignedIn) {
+                  router.push("/account")
+                } else {
+                  setErrorMessage(
+                    "An unexpected error occurred. Please try again later."
+                  )
+                }
+              } else {
+                setErrorMessage("Error confirming user automatically")
+              }
+            } catch (error) {
+              setErrorMessage("Error confirming user automatically")
+            }
+            break
           case "RESET_PASSWORD":
+            setShowResetPassword(true)
+            setResetPasswordStep(true)
+            setErrorMessage("")
+            break
+          case "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED":
             setShowResetPassword(true)
             setResetPasswordStep(true)
             setErrorMessage("")
@@ -506,9 +511,10 @@ const Login = () => {
             )
             break
         }
+      } else if (response.isSignedIn) {
+        router.push("/account")
       }
     } catch (error) {
-      // Extract the error name and compare it against the predefined error message array
       if (error.name && cognitoErrorMessages[error.name]) {
         setErrorMessage(cognitoErrorMessages[error.name])
       } else {

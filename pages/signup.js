@@ -374,8 +374,9 @@ const SignUpPage = ({ toggleSignUp }) => {
           <Image src={LogoSymbol} alt="TechNexus Logo" priority={true} />
         </LogoBox>
         {/* Conditional rendering based on signUpResponse */}
-        {/* Conditional rendering based on signUpStep */}
-        {true ? ( // Change this to signUpResponse && signUpResponse.nextStep && signUpResponse.nextStep.signUpStep === "CONFIRM_SIGN_UP" for actual use
+        {signUpResponse &&
+        signUpResponse.nextStep &&
+        signUpResponse.nextStep.signUpStep === "CONFIRM_SIGN_UP" ? (
           // Display confirmation message when signUpStep is CONFIRM_SIGN_UP
           <>
             <HeaderText>Your TechNexus acccount has been created.</HeaderText>
@@ -383,7 +384,6 @@ const SignUpPage = ({ toggleSignUp }) => {
             <CtaShopBtn onClick={handleRedirect} type="button">
               Shop now
             </CtaShopBtn>
-            {/* Additional message or instructions for email confirmation */}
           </>
         ) : (
           // Display sign-up form when signUpResponse does not exist or signUpStep is not CONFIRM_SIGN_UP
