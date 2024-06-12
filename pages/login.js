@@ -469,7 +469,7 @@ const Login = () => {
 
       if (response.nextStep) {
         switch (response.nextStep.signInStep) {
-          case "CONFIRM_SIGN_UP":
+          case "CONFIRM_SIGN_UP": // We're bypassing the required email verifications
             try {
               const res = await fetch("/api/confirm-user", {
                 method: "POST",
@@ -504,6 +504,9 @@ const Login = () => {
             setShowResetPassword(true)
             setResetPasswordStep(true)
             setErrorMessage("")
+            break
+          case "DONE":
+            router.push("/account")
             break
           default:
             setErrorMessage(

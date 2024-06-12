@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import Link from "next/link"
 import Image from "../common/Image"
 import AddCart from "../shopping/AddCart"
@@ -9,6 +9,7 @@ import ItemBrand from "../items/ItemBrand"
 import ItemRating from "../items/ItemRating"
 import { LiaTruckMovingSolid } from "react-icons/lia"
 import { LiaBookmark } from "react-icons/lia"
+import { WishlistContext } from "../../context/WishlistContext"
 
 const ListItemWrapper = styled.div`
   display: grid;
@@ -104,6 +105,25 @@ const ListItem = ({
   id,
   addToCartFromList,
 }) => {
+  const { addToWishlist } = useContext(WishlistContext)
+
+  const handleAddToWishlist = () => {
+    if (addToWishlist) {
+      const product = {
+        slug: link,
+        id: id,
+        name: title,
+        price: parseFloat(price), // Convert string price to float
+        quantity: 1,
+        brand: brand || "",
+        rating: rating || [],
+        image: image[0],
+      }
+
+      addToWishlist(product)
+    }
+  }
+
   const [currentImage, setCurrentImage] = useState(
     image.find((image) => image.is_main)
   )
@@ -155,7 +175,7 @@ const ListItem = ({
         <PriceWrapper>
           <ItemPrice price={`$${price}`} />
         </PriceWrapper>
-        <Bookmark>
+        <Bookmark onClick={handleAddToWishlist}>
           <LiaBookmark />
         </Bookmark>
       </Details>

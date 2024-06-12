@@ -1,6 +1,7 @@
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import styled, { keyframes, css } from "styled-components"
 import { GoBookmarkFill } from "react-icons/go"
+import { WishlistContext } from "../../context/WishlistContext"
 import { filter } from "../../utils/helpers.js"
 
 const Container = styled.div`
@@ -76,17 +77,24 @@ const LoadingSpinner = styled.div`
   animation: ${rotate} 2s 0.25s linear infinite;
 `
 
-export default function AddCart({ title, onClick }) {
+export default function SaveItem({ product }) {
   const [isLoading, setIsLoading] = useState(false)
+  const { addToWishlist, removeFromWishlist, wishlist } =
+    useContext(WishlistContext)
+
+  const isProductInWishlist = wishlist.some((item) => item.id === product.id)
 
   const handleClick = () => {
     if (!isLoading) {
       setIsLoading(true)
 
-      // Simulate a 600ms delay before executing the actual onClick action
       setTimeout(() => {
+        if (isProductInWishlist) {
+          removeFromWishlist(product.id)
+        } else {
+          addToWishlist(product)
+        }
         setIsLoading(false)
-        onClick()
       }, 600)
     }
   }
@@ -103,7 +111,7 @@ export default function AddCart({ title, onClick }) {
         ) : (
           <>
             <GoBookmarkFill size={19} style={{ marginRight: "16px" }} />
-            {title}
+            {isProductInWishlist ? "Remove from Wishlist" : "Save for Later"}
           </>
         )}
       </Button>

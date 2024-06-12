@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react"
-import { fetchAuthSession, signOut } from "aws-amplify/auth"
+import React, { useContext } from "react"
+import { UserContext } from "../context/UserContext"
+import { signOut } from "aws-amplify/auth"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 import Image from "next/image"
@@ -59,32 +60,8 @@ const LogoBox = styled.div`
 `
 
 const Account = () => {
-  const [userAttributes, setUserAttributes] = useState(null)
+  const userAttributes = useContext(UserContext)
   const router = useRouter()
-
-  useEffect(() => {
-    const fetchUserAttributes = async () => {
-      try {
-        const session = await fetchAuthSession()
-        const idTokenPayload = session.tokens.idToken.payload
-
-        // Store user attributes in local storage to prevent unnecessary API calls
-        localStorage.setItem("userAttributes", JSON.stringify(idTokenPayload))
-        setUserAttributes(idTokenPayload)
-      } catch (error) {
-        console.error("Error fetching user session:", error)
-        router.push("/login") // Redirect to login if user is not authenticated
-      }
-    }
-
-    // Check local storage for existing user attributes
-    const storedUserAttributes = localStorage.getItem("userAttributes")
-    if (storedUserAttributes) {
-      setUserAttributes(JSON.parse(storedUserAttributes))
-    } else {
-      fetchUserAttributes()
-    }
-  }, [router])
 
   const handleLogout = async () => {
     try {

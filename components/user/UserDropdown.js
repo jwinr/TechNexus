@@ -1,11 +1,18 @@
-import React, { useState, useEffect, useRef, useCallback } from "react"
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useContext,
+} from "react"
+import { UserContext } from "../../context/UserContext"
 import styled from "styled-components"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
 import { LiaUserCircleSolid } from "react-icons/lia"
 import { CSSTransition } from "react-transition-group"
 import Link from "next/link"
 import Backdrop from "../common/Backdrop"
-import { getCurrentUser, fetchAuthSession, signOut } from "aws-amplify/auth"
+import { signOut } from "aws-amplify/auth"
 import { filter } from "../../utils/helpers.js"
 import { useRouter } from "next/router"
 
@@ -159,8 +166,7 @@ const BtnText = styled.div`
 `
 
 const UserDropdown = ({ isOpen: parentIsOpen, onToggle }) => {
-  const [user, setUser] = useState(null)
-
+  const userAttributes = useContext(UserContext)
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
@@ -169,61 +175,29 @@ const UserDropdown = ({ isOpen: parentIsOpen, onToggle }) => {
 
   useEffect(() => {}, [parentIsOpen])
 
-  /* const checkUser = async () => {
-    try {
-      const { username, userId, signInDetails } = await getCurrentUser()
-
-      setUser({ username, userId, signInDetails })
-    } catch (error) {
-      setUser(null)
-      console.error("No user signed in:", error)
-    }
-  }
-
-  useEffect(() => {
-    checkUser()
-  }, [])
-  */
-
-  const mockGetCurrentUser = async () => {
-    // Simulate a delay to mimic the actual API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Return mock user data
-    return {
-      username: "mockUser",
-      userId: "mockUserId",
-      signInDetails: {
-        lastSignIn: "2024-06-06T12:34:56Z",
-      },
-    }
-  }
-
-  const checkUser = async () => {
-    try {
-      // Replace getCurrentUser with mockGetCurrentUser for development
-      const { username, userId, signInDetails } = await mockGetCurrentUser()
-
-      setUser({ username, userId, signInDetails })
-    } catch (error) {
-      setUser(null)
-      console.error("No user signed in:", error)
-    }
-  }
-
-  useEffect(() => {
-    checkUser()
-  }, [])
-
   const handleSignOut = async () => {
-    await signOut()
+    try {
+      await signOut()
+      localStorage.removeItem("userAttributes") // Remove user attributes from local storage on logout
+      router.push("/login")
+    } catch (error) {
+      console.error("Error signing out:", error)
+    }
   }
+
+  // Use userAttributes to assign the given_name. If userAttributes is not available, set given_name to null.
+  // This is so we can conditionally display “Hi, {user}” if user is available, otherwise display “Sign in”.
+  const given_name = userAttributes ? userAttributes.given_name : null
 
   return (
-    <NavItem isOpen={isMounted && parentIsOpen} onToggle={onToggle} user={user}>
+    <NavItem
+      isOpen={isMounted && parentIsOpen}
+      onToggle={onToggle}
+      user={given_name}
+    >
       <DropdownMenu
         isOpen={isMounted && parentIsOpen}
-        user={user}
+        user={given_name}
         handleSignOut={handleSignOut}
       />
     </NavItem>
@@ -332,7 +306,7 @@ function NavItem(props) {
         <IconContainer>
           <LiaUserCircleSolid />
         </IconContainer>
-        <BtnText>{user ? "Hi, " + user.username : "Sign in"}</BtnText>
+        <BtnText>{user ? `Hi, ${user}` : "Sign in"}</BtnText>
         <div className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}>
           <RiArrowDownSLine />
         </div>

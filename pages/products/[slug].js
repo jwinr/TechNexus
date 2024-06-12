@@ -27,7 +27,7 @@ import "swiper/css"
 import "swiper/css/pagination"
 import { Pagination } from "swiper/modules"
 import { useMobileView } from "../../utils/MobileViewDetector"
-
+import { WishlistContext } from "../../context/WishlistContext"
 import { useSiteContext } from "../../context/mainContext"
 
 const fadeIn = keyframes`
@@ -580,6 +580,24 @@ function ProductDetails() {
     console.log(formattedProduct)
   }
 
+  function formatProductForWishlist(product) {
+    return {
+      id: product.product_id || product.id,
+      price: parseFloat(product.price),
+      name: product.name,
+      brand: product.brand || "",
+      slug: product.slug || "",
+      rating: product.rating,
+      image: {
+        image_url:
+          product.images && product.images.length > 0
+            ? product.images[0].image_url
+            : "",
+        is_main: true,
+      },
+    }
+  }
+
   function increment() {
     updateNumberOfItems(numberOfitems + 1)
   }
@@ -736,8 +754,7 @@ function ProductDetails() {
                     onClick={() => addItemToCart(product)}
                   />
                   <SaveItem
-                    title="Save for Later"
-                    onClick={() => addItemToCart(product)}
+                    product={product} // Pass the product prop to SaveItem
                   />
                 </CartBtnWrapper>
                 <ZipWrapper>
@@ -825,8 +842,7 @@ function ProductDetails() {
                     onClick={() => addItemToCart(product)}
                   />
                   <SaveItem
-                    title="Save for Later"
-                    onClick={() => addItemToCart(product)}
+                    product={formatProductForWishlist(product)} // Pass the formatted product to SaveItem
                   />
                 </CartBtnWrapper>
                 <ZipWrapper>
