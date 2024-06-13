@@ -29,6 +29,7 @@ import { Pagination } from "swiper/modules"
 import { useMobileView } from "../../utils/MobileViewDetector"
 import { WishlistContext } from "../../context/WishlistContext"
 import { useSiteContext } from "../../context/mainContext"
+import AddToWishlistButton from "../../components/shopping/AddToWishListButton"
 
 const fadeIn = keyframes`
   from {
@@ -580,24 +581,6 @@ function ProductDetails() {
     console.log(formattedProduct)
   }
 
-  function formatProductForWishlist(product) {
-    return {
-      id: product.product_id || product.id,
-      price: parseFloat(product.price),
-      name: product.name,
-      brand: product.brand || "",
-      slug: product.slug || "",
-      rating: product.rating,
-      image: {
-        image_url:
-          product.images && product.images.length > 0
-            ? product.images[0].image_url
-            : "",
-        is_main: true,
-      },
-    }
-  }
-
   function increment() {
     updateNumberOfItems(numberOfitems + 1)
   }
@@ -841,9 +824,7 @@ function ProductDetails() {
                     title="Add to Cart"
                     onClick={() => addItemToCart(product)}
                   />
-                  <SaveItem
-                    product={formatProductForWishlist(product)} // Pass the formatted product to SaveItem
-                  />
+                  <AddToWishlistButton product={product} />
                 </CartBtnWrapper>
                 <ZipWrapper>
                   <IoLocationOutline style={{ marginRight: "5px" }} size={24} />

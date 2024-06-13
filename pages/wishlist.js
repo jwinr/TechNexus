@@ -1,5 +1,5 @@
-import React, { useContext } from "react"
-import { WishlistContext } from "../context/WishlistContext"
+import React, { useState, useEffect, useContext } from "react"
+import { UserContext } from "../context/UserContext"
 import styled from "styled-components"
 import Link from "next/link"
 
@@ -23,6 +23,23 @@ const ProductItem = styled.div`
   border-bottom: 1px solid #ddd;
 `
 
+const ProductInfo = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const ProductImage = styled.img`
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 10px;
+`
+
+const ProductDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 const RemoveButton = styled.button`
   background-color: #ff4d4d;
   color: white;
@@ -37,7 +54,41 @@ const RemoveButton = styled.button`
 `
 
 const Wishlist = () => {
-  const { wishlist, removeFromWishlist } = useContext(WishlistContext)
+  const { userAttributes } = useContext(UserContext)
+  const [wishlist, setWishlist] = useState([])
+
+  useEffect(() => {
+    if (userAttributes) {
+      fetch(`/api/wishlist?cognitoSub=${userAttributes.sub}`)
+        .then((response) => response.json())
+        .then((data) => setWishlist(data))
+    }
+  }, [userAttributes])
+
+  const removeFromWishlist = (productId) => {
+    if (userAttributes) {
+      fetch(`/api/wishlist`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cognitoSub: userAttributes.sub,
+          productId,
+        }),
+      })
+        .then((response) => response.json())
+        .then(() => {
+          // Update the wishlist state to reflect the item removal
+          setWishlist((currentWishlist) =>
+            currentWishlist.filter((item) => item.product_id !== productId)
+          )
+        })
+        .catch((error) => {
+          console.error("Error removing item from wishlist:", error)
+        })
+    }
+  }
 
   return (
     <WishlistContainer>
@@ -48,12 +99,20 @@ const Wishlist = () => {
         </p>
       ) : (
         wishlist.map((product) => (
-          <ProductItem key={product.id}>
-            <div>
-              <h3>{product.name}</h3>
-              <p>{product.description}</p>
-            </div>
-            <RemoveButton onClick={() => removeFromWishlist(product.id)}>
+          <ProductItem key={product.product_id}>
+            <ProductInfo>
+              <ProductImage
+                src={product.product_image_url}
+                alt={product.product_name}
+              />
+              <ProductDetails>
+                <h3>{product.product_name}</h3>
+                <p>{product.product_price}</p>
+              </ProductDetails>
+            </ProductInfo>
+            <RemoveButton
+              onClick={() => removeFromWishlist(product.product_id)}
+            >
               Remove
             </RemoveButton>
           </ProductItem>
