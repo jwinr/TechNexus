@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useContext } from "react"
 import Head from "next/head"
 import { signIn, confirmSignUp, signOut, resetPassword } from "aws-amplify/auth"
+import { fetchAuthSession } from "aws-amplify/auth"
 import { useRouter } from "next/router"
 import styled, { keyframes } from "styled-components"
 import Checkbox from "../components/common/Checkbox"
-import Cookies from "js-cookie"
-import { jwtDecode } from "jwt-decode"
 import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
 import SignUpPage from "./signup"
 import ForgotPassword from "./forgot-password.js"
@@ -13,6 +12,7 @@ import LogoSymbol from "../public/logo_n.png"
 import Image from "next/image"
 import Link from "next/link.js"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
+import { UserContext } from "../context/UserContext"
 
 // Custom error messages based on Cognito error codes
 const cognitoErrorMessages = {
@@ -25,6 +25,7 @@ const cognitoErrorMessages = {
     "The verification code has expired. Please request a new one.",
   LimitExceededException:
     "You have exceeded the allowed number of login attempts. Please try again later.",
+  UserAlreadyAuthenticatedException: "There is already a signed in user.",
 }
 
 const fadeIn = keyframes`
@@ -333,6 +334,29 @@ const Login = () => {
   const [emailValid, setEmailValid] = useState(true)
   const [showSignUp, setShowSignUp] = useState(false)
   const [resetPasswordStep, setResetPasswordStep] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false)
+  const { fetchUserAttributes } = useContext(UserContext)
+
+  // Check if there's already an active sign-in
+  useEffect(() => {
+    const checkUserAuthentication = async () => {
+      try {
+        const session = await fetchAuthSession()
+        if (session && session.tokens && session.tokens.idToken) {
+          await fetchUserAttributes()
+          router.push("/")
+        }
+      } catch (error) {
+        console.log("No authenticated user found", error)
+      } finally {
+        setAuthChecked(true) // We only want to run the check once
+      }
+    }
+
+    if (!authChecked) {
+      checkUserAuthentication()
+    }
+  }, [authChecked, router, fetchUserAttributes])
 
   const handleClick = () => {
     setShowTooltip(!showTooltip)
@@ -464,7 +488,6 @@ const Login = () => {
 
       // Call signIn with username and password
       const response = await signIn({ username, password })
-
       console.log("Sign-in response:", response)
 
       if (response.nextStep) {
@@ -482,7 +505,8 @@ const Login = () => {
               if (res.ok) {
                 const newResponse = await signIn({ username, password })
                 if (newResponse.isSignedIn) {
-                  router.push("/account")
+                  await fetchUserAttributes()
+                  router.push("/")
                 } else {
                   setErrorMessage(
                     "An unexpected error occurred. Please try again later."
@@ -492,6 +516,7 @@ const Login = () => {
                 setErrorMessage("Error confirming user automatically")
               }
             } catch (error) {
+              console.error("Error confirming user automatically:", error)
               setErrorMessage("Error confirming user automatically")
             }
             break
@@ -506,7 +531,8 @@ const Login = () => {
             setErrorMessage("")
             break
           case "DONE":
-            router.push("/account")
+            await fetchUserAttributes()
+            router.push("/")
             break
           default:
             setErrorMessage(
@@ -515,7 +541,10 @@ const Login = () => {
             break
         }
       } else if (response.isSignedIn) {
-        router.push("/account")
+        await fetchUserAttributes()
+        router.push("/")
+      } else {
+        setErrorMessage("Sign-in failed. Please try again.")
       }
     } catch (error) {
       if (error.name && cognitoErrorMessages[error.name]) {

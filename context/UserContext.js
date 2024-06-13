@@ -1,44 +1,82 @@
-import React, { createContext, useState, useEffect } from "react"
+import React, { createContext, useState, useEffect, useCallback } from "react"
 import { fetchAuthSession } from "aws-amplify/auth"
+import { Hub } from "aws-amplify/utils"
 
 export const UserContext = createContext()
 
 export const UserProvider = ({ children }) => {
   const [userAttributes, setUserAttributes] = useState(null)
+  const [authChecked, setAuthChecked] = useState(false) // Track if initial authentication check is completed
 
-  useEffect(() => {
-    const fetchUserAttributes = async () => {
-      try {
-        const session = await fetchAuthSession()
+  // Memoized function to fetch user attributes and set them in state
+  const fetchUserAttributes = useCallback(async () => {
+    try {
+      const session = await fetchAuthSession()
+      if (session && session.tokens && session.tokens.idToken) {
         const idTokenPayload = session.tokens.idToken.payload
 
-        // Store user attributes in local storage to prevent unnecessary API calls
-        // The obvious limitation here is that it wouldn't work as expected if the user clears their local storage,
-        // but it works well enough for this use case.
         console.log("Fetched from API:", idTokenPayload)
         localStorage.setItem("userAttributes", JSON.stringify(idTokenPayload))
         setUserAttributes(idTokenPayload)
-      } catch (error) {
-        console.error("Error fetching user session:", error)
-        // Redirect to login if user is not authenticated
-      }
-    }
 
-    // Check local storage for existing user attributes
+        // Send user data to the backend to create/update user record
+        await fetch("/api/user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            cognitoSub: idTokenPayload.sub,
+            email: idTokenPayload.email,
+            familyName: idTokenPayload.family_name,
+            givenName: idTokenPayload.given_name,
+          }),
+        })
+      } else {
+        console.error("Invalid session object:", session)
+      }
+    } catch (error) {
+      console.error("Error fetching user session:", error)
+    }
+  }, []) // Empty dependency array to make sure this function is only created once
+
+  useEffect(() => {
     const storedUserAttributes = localStorage.getItem("userAttributes")
     if (storedUserAttributes) {
-      console.log(
-        "Loaded from local storage:",
-        JSON.parse(storedUserAttributes)
-      )
+      // If user attributes are found in local storage, set them in state
       setUserAttributes(JSON.parse(storedUserAttributes))
+      setAuthChecked(true) // Mark authentication check as completed
     } else {
-      fetchUserAttributes()
+      // If not found in local storage, fetch user attributes from server
+      fetchUserAttributes().then(() => setAuthChecked(true))
     }
-  }, [])
+
+    // Start listening for messages
+    const hubListenerCancelToken = Hub.listen("auth", ({ payload }) => {
+      switch (payload.event) {
+        case "signedIn":
+          fetchUserAttributes() // Fetch user attributes on sign-in
+          break
+        case "signedOut":
+          localStorage.removeItem("userAttributes") // Remove user attributes from local storage on sign-out
+          setUserAttributes(null) // Clear user attributes from state
+          break
+        case "tokenRefresh":
+          fetchUserAttributes() // Fetch user attributes on token refresh
+          break
+        default:
+          break
+      }
+    })
+
+    // Stop listening for messages
+    return () => {
+      hubListenerCancelToken()
+    }
+  }, [fetchUserAttributes]) // Re-run effect only if fetchUserAttributes changes
 
   return (
-    <UserContext.Provider value={userAttributes}>
+    <UserContext.Provider value={{ userAttributes, fetchUserAttributes }}>
       {children}
     </UserContext.Provider>
   )

@@ -166,8 +166,9 @@ const BtnText = styled.div`
 `
 
 const UserDropdown = ({ isOpen: parentIsOpen, onToggle }) => {
-  const userAttributes = useContext(UserContext)
+  const { userAttributes } = useContext(UserContext)
   const [isMounted, setIsMounted] = useState(false)
+  const router = { useRouter }
 
   useEffect(() => {
     setIsMounted(true)

@@ -60,7 +60,7 @@ const LogoBox = styled.div`
 `
 
 const Account = () => {
-  const userAttributes = useContext(UserContext)
+  const { userAttributes } = useContext(UserContext)
   const router = useRouter()
 
   const handleLogout = async () => {
@@ -74,7 +74,7 @@ const Account = () => {
   }
 
   if (!userAttributes) {
-    return <p>Loading...</p>
+    return <p>Loading...</p> // I'll add a loader here soon
   }
 
   const { "cognito:username": username, email, given_name } = userAttributes
