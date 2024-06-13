@@ -9,7 +9,7 @@ import ItemBrand from "../items/ItemBrand"
 import ItemRating from "../items/ItemRating"
 import { LiaTruckMovingSolid } from "react-icons/lia"
 import { LiaBookmark } from "react-icons/lia"
-import { WishlistContext } from "../../context/WishlistContext"
+import { UserContext } from "../../context/UserContext"
 
 const ListItemWrapper = styled.div`
   display: grid;
@@ -105,7 +105,7 @@ const ListItem = ({
   id,
   addToCartFromList,
 }) => {
-  const { addToWishlist } = useContext(WishlistContext)
+  const { addToWishlist } = useContext(UserContext)
 
   const handleAddToWishlist = () => {
     if (addToWishlist) {

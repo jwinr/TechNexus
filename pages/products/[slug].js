@@ -27,7 +27,6 @@ import "swiper/css"
 import "swiper/css/pagination"
 import { Pagination } from "swiper/modules"
 import { useMobileView } from "../../utils/MobileViewDetector"
-import { WishlistContext } from "../../context/WishlistContext"
 import { useSiteContext } from "../../context/mainContext"
 import AddToWishlistButton from "../../components/shopping/AddToWishListButton"
 
@@ -591,22 +590,13 @@ function ProductDetails() {
   }
 
   useEffect(() => {
-    //console.log("Product slug:", slug) // This is the slug parameter from the URL
-    if (!slug) {
-      // Handle the case where slug is not provided
-      console.warn("No slug parameter provided.")
-      return
-    }
-
     // Fetch product details by slug from the API route
     const fetchProductDetails = async () => {
       try {
         const response = await fetch(`/api/products/${slug}`)
-        //console.log("API response:", response)
 
         if (response.ok) {
           const data = await response.json()
-          //console.log("Product data:", data)
           // Sort images based on the is_main property
           const sortedImages = [...data.images].sort(
             (a, b) => b.is_main - a.is_main
@@ -616,15 +606,16 @@ function ProductDetails() {
           setCategoryName(data.category_name)
           setCategorySlug(data.category_slug)
           setHoveredImage(sortedImages[0].image_url)
-        } else {
-          console.error("Error fetching product details:", response.status)
         }
       } catch (error) {
         console.error("Error:", error)
       }
     }
 
-    fetchProductDetails()
+    if (slug) {
+      // Don't run until the slug value is available
+      fetchProductDetails()
+    }
   }, [slug])
 
   if (!product) {
@@ -736,9 +727,7 @@ function ProductDetails() {
                     title="Add to Cart"
                     onClick={() => addItemToCart(product)}
                   />
-                  <SaveItem
-                    product={product} // Pass the product prop to SaveItem
-                  />
+                  <AddToWishlistButton product={product} />
                 </CartBtnWrapper>
                 <ZipWrapper>
                   <IoLocationOutline style={{ marginRight: "5px" }} size={24} />

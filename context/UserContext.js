@@ -32,8 +32,6 @@ export const UserProvider = ({ children }) => {
             givenName: idTokenPayload.given_name,
           }),
         })
-      } else {
-        console.error("Invalid session object:", session)
       }
     } catch (error) {
       console.error("Error fetching user session:", error)

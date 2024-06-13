@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react"
 import styled, { keyframes, css } from "styled-components"
 import { GoBookmarkFill } from "react-icons/go"
-import { WishlistContext } from "../../context/WishlistContext"
 import { filter } from "../../utils/helpers.js"
 
 const Container = styled.div`

@@ -8,7 +8,6 @@ Amplify.configure(amplifyconfig)
 import { ContextProviderComponent } from "../context/mainContext"
 import { MobileViewProvider } from "../utils/MobileViewDetector"
 import { UserProvider } from "../context/UserContext"
-import { WishlistProvider } from "../context/WishlistContext"
 import ErrorBoundary from "../components/common/ErrorBoundary"
 
 const manrope = Manrope({ subsets: ["latin"] })
@@ -24,15 +23,13 @@ function TechNexus({ Component, pageProps, categories }) {
       <React.StrictMode>
         <MobileViewProvider>
           <UserProvider>
-            <WishlistProvider>
-              <ContextProviderComponent>
-                <ErrorBoundary>
-                  <Layout categories={categories}>
-                    <Component {...pageProps} />
-                  </Layout>
-                </ErrorBoundary>
-              </ContextProviderComponent>
-            </WishlistProvider>
+            <ContextProviderComponent>
+              <ErrorBoundary>
+                <Layout categories={categories}>
+                  <Component {...pageProps} />
+                </Layout>
+              </ErrorBoundary>
+            </ContextProviderComponent>
           </UserProvider>
         </MobileViewProvider>
       </React.StrictMode>

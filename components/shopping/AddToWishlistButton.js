@@ -28,15 +28,15 @@ const Button = styled(buttonFilter(["isLoading"]))`
   display: flex;
 
   &:hover {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
   }
 
   &:active {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
   }
 
   &:focus-visible {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-dark-blue);
   }
 
   ${({ isLoading }) =>
@@ -81,10 +81,6 @@ export default function AddToWishlistButton({ product }) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    console.log("Received product:", product)
-  }, [product])
-
   const addToWishlist = async () => {
     if (userAttributes) {
       setIsLoading(true)
@@ -103,7 +99,6 @@ export default function AddToWishlistButton({ product }) {
               ? product.images[0].image_url
               : "",
         }
-        console.log("Sending to API:", requestBody)
         const response = await fetch("/api/wishlist", {
           method: "POST",
           headers: {
@@ -112,7 +107,6 @@ export default function AddToWishlistButton({ product }) {
           body: JSON.stringify(requestBody),
         })
         const responseData = await response.json()
-        console.log("Response from API:", responseData)
         if (!response.ok) {
           throw new Error(
             responseData.details || "Failed to add product to wishlist"

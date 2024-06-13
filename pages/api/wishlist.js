@@ -39,7 +39,6 @@ export default async function handler(req, res) {
       productImageUrl,
     } = req.body
     try {
-      console.log(req.body) // Log the received data
       let user = await query(
         "SELECT user_id FROM users WHERE cognito_sub = $1",
         [cognitoSub]
