@@ -4,9 +4,8 @@ import styled from "styled-components"
 const ProductInclusionsWrapper = styled.div`
   display: grid;
   padding-top: 10px;
-  grid-template-columns: 1fr 3fr; /* Adjusted grid columns */
-
-  position: relative; /* Establish positioning context for pseudo-element */
+  grid-template-columns: 1fr 3fr;
+  position: relative;
 `
 
 const Title = styled.h1`
@@ -40,21 +39,22 @@ const Divider = styled.div`
   border-bottom: 1px solid #ccc;
   width: 100%;
   top: 10px;
-  grid-column: 2; /* Occupy the second fractional unit */
+  grid-column: 2;
 `
 
 const ProductInclusions = ({ inclusions }) => {
   return (
     <ProductInclusionsWrapper>
-      <Title>What's Included</Title>
-      <Divider />
+      <>
+        <Title>What's Included</Title>
+        <Divider />
+      </>
       <InclusionList>
         {inclusions &&
           Array.isArray(inclusions) &&
-          inclusions.map((inclusion) => (
-            <InclusionItem
-              key={inclusion.id /* assuming inclusion has unique ID */}
-            >
+          inclusions.map((inclusion, index) => (
+            <InclusionItem key={inclusion.id || index}>
+              {/* Using index as a fallback for the key to avoid warnings if the id is not unique or missing */}
               <InclusionsContent>
                 <p>{inclusion.inclusion_description}</p>
               </InclusionsContent>

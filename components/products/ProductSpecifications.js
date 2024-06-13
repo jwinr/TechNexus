@@ -174,7 +174,7 @@ const ProductSpecifications = ({ attributes }) => {
           if (spec.category_name !== lastCategory) {
             lastCategory = spec.category_name
             return (
-              <>
+              <React.Fragment key={`${index}-category`}>
                 <LineBreak />
                 <SpecsItem key={index}>
                   <SpecsCat>{spec.category_name}</SpecsCat>
@@ -192,7 +192,7 @@ const ProductSpecifications = ({ attributes }) => {
                     hasAdditionalInfo={spec.additional_info}
                   />
                 )}
-              </>
+              </React.Fragment>
             )
           } else {
             return (
