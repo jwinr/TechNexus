@@ -688,7 +688,7 @@ const Login = () => {
             </KeepSignInWrapper>
             <EntryBtnWrapper>
               <SignInBtn onClick={handleSignIn} type="button">
-                Sign In
+                Sign in
               </SignInBtn>
             </EntryBtnWrapper>
             <EntryBtnWrapper>
