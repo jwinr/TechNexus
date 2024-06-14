@@ -5,9 +5,9 @@ import "../styles/globals.css"
 import { Amplify } from "aws-amplify"
 import amplifyconfig from "../src/amplifyconfiguration.json"
 Amplify.configure(amplifyconfig)
-import { ContextProviderComponent } from "../context/mainContext"
 import { MobileViewProvider } from "../utils/MobileViewDetector"
 import { UserProvider } from "../context/UserContext"
+import { CartProvider } from "../context/CartContext"
 import ErrorBoundary from "../components/common/ErrorBoundary"
 
 const manrope = Manrope({ subsets: ["latin"] })
@@ -23,13 +23,13 @@ function TechNexus({ Component, pageProps, categories }) {
       <React.StrictMode>
         <MobileViewProvider>
           <UserProvider>
-            <ContextProviderComponent>
+            <CartProvider>
               <ErrorBoundary>
                 <Layout categories={categories}>
                   <Component {...pageProps} />
                 </Layout>
               </ErrorBoundary>
-            </ContextProviderComponent>
+            </CartProvider>
           </UserProvider>
         </MobileViewProvider>
       </React.StrictMode>

@@ -1,5 +1,7 @@
-import React, { useState, useContext, useEffect } from "react"
-import styled, { keyframes, css } from "styled-components"
+// /components/shopping/AddToWishListButton.js
+
+import React, { useState, useContext } from "react"
+import styled, { css, keyframes } from "styled-components"
 import { GoBookmarkFill } from "react-icons/go"
 import { UserContext } from "../../context/UserContext"
 import { filter } from "../../utils/helpers.js"
@@ -28,15 +30,15 @@ const Button = styled(buttonFilter(["isLoading"]))`
   display: flex;
 
   &:hover {
-    background-color: var(--sc-color-dark-blue);
+    background-color: var(--color-main-dark-blue);
   }
 
   &:active {
-    background-color: var(--sc-color-dark-blue);
+    background-color: var(--color-main-dark-blue);
   }
 
   &:focus-visible {
-    background-color: var(--sc-color-dark-blue);
+    background-color: var(--color-main-dark-blue);
   }
 
   ${({ isLoading }) =>
@@ -79,44 +81,23 @@ const LoadingSpinner = styled.div`
 export default function AddToWishlistButton({ product }) {
   const { userAttributes } = useContext(UserContext)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
 
   const addToWishlist = async () => {
     if (userAttributes) {
       setIsLoading(true)
-      setError(null)
-      try {
-        const requestBody = {
+      const response = await fetch("/api/wishlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           cognitoSub: userAttributes.sub,
-          productId: product.product_id || product.id,
-          productName: product.name,
-          productPrice: parseFloat(product.price),
-          productBrand: product.brand,
-          productSlug: product.slug,
-          productRating: product.rating,
-          productImageUrl:
-            product.images && product.images.length > 0
-              ? product.images[0].image_url
-              : "",
-        }
-        const response = await fetch("/api/wishlist", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        })
-        const responseData = await response.json()
-        if (!response.ok) {
-          throw new Error(
-            responseData.details || "Failed to add product to wishlist"
-          )
-        }
-      } catch (error) {
-        console.error("Error adding to wishlist:", error)
-        setError(error.message)
-      } finally {
-        setIsLoading(false)
+          productId: product.id,
+        }),
+      })
+      setIsLoading(false)
+      if (!response.ok) {
+        console.error("Error adding to wishlist:", await response.text())
       }
     }
   }
@@ -126,7 +107,6 @@ export default function AddToWishlistButton({ product }) {
       <Button onClick={addToWishlist} isLoading={isLoading}>
         {isLoading ? <LoadingSpinner /> : <GoBookmarkFill />}
       </Button>
-      {error && <p>{error}</p>}
     </Container>
   )
 }

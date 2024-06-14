@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react"
 import { LiaShoppingCartSolid } from "react-icons/lia"
 import Link from "next/link"
 import styled from "styled-components"
-import { SiteContext } from "../../context/mainContext"
 
 const Container = styled(Link)`
   position: relative;
@@ -62,7 +61,8 @@ const Wrapper = styled.div`
 `
 
 function CartLink() {
-  const { numberOfItemsInCart = 0 } = useContext(SiteContext)
+  const numberOfItemsInCart = 0
+  // const { numberOfItemsInCart = 0 } = useContext(SiteContext) (old method)
 
   // Dynamically change the label based on 1 or more items
   const ariaLabel = `Cart, ${numberOfItemsInCart} ${

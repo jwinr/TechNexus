@@ -27,8 +27,8 @@ import "swiper/css"
 import "swiper/css/pagination"
 import { Pagination } from "swiper/modules"
 import { useMobileView } from "../../utils/MobileViewDetector"
-import { useSiteContext } from "../../context/mainContext"
 import AddToWishlistButton from "../../components/shopping/AddToWishListButton"
+import AddToCartButton from "../../components/shopping/AddToCartButton"
 
 const fadeIn = keyframes`
   from {
@@ -723,9 +723,9 @@ function ProductDetails() {
                   </ExchangeContent>
                 </ExchangeWrapper>
                 <CartBtnWrapper>
-                  <AddCart
-                    title="Add to Cart"
-                    onClick={() => addItemToCart(product)}
+                  <AddToCartButton
+                    productId={product.product_id}
+                    quantity={1}
                   />
                   <AddToWishlistButton product={product} />
                 </CartBtnWrapper>
@@ -809,9 +809,9 @@ function ProductDetails() {
                   </ExchangeContent>
                 </ExchangeWrapper>
                 <CartBtnWrapper>
-                  <AddCart
-                    title="Add to Cart"
-                    onClick={() => addItemToCart(product)}
+                  <AddToCartButton
+                    productId={product.product_id}
+                    quantity={1}
                   />
                   <AddToWishlistButton product={product} />
                 </CartBtnWrapper>

@@ -12,7 +12,6 @@ import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
 import toast from "react-hot-toast"
 import { useMobileView } from "../../utils/MobileViewDetector"
 import ErrorBoundary from "../../components/common/ErrorBoundary"
-import { SiteContext } from "../../context/mainContext"
 
 // Lazy-loaded components
 const ItemFilter = lazy(() => import("../../components/items/ItemFilter"))

@@ -1,6 +1,5 @@
 import { useState } from "react"
 import Head from "next/head"
-import { SiteContext, ContextProviderComponent } from "../context/mainContext"
 import { FaLongArrowAltLeft } from "react-icons/fa"
 import Link from "next/link"
 import Image from "../components/common/Image"
@@ -16,9 +15,7 @@ import { loadStripe } from "@stripe/stripe-js"
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
-const stripePromise = loadStripe(
-  "pk_test_51NxukpJAYSKWYZwjiu2Yd402WCaqjNUM7i6AYldf5eJoX2hWKUA5UDlHrzVBAx7fYn6B4t30k8Tw4s9c11vjpuGy00wC2KHPyx"
-)
+const stripePromise = loadStripe("pk_")
 
 function CheckoutWithContext(props) {
   return (
