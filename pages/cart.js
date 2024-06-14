@@ -101,11 +101,23 @@ const Cart = () => {
     const fetchCart = async () => {
       setLoading(true)
       try {
-        const response = await fetch(
-          `/api/cart?cognitoSub=${userAttributes?.sub}`
-        )
-        const data = await response.json()
-        setCart(data)
+        if (userAttributes) {
+          const response = await fetch(
+            `/api/cart?cognitoSub=${userAttributes.sub}`
+          )
+          const data = await response.json()
+          setCart(data)
+        } else {
+          const localCart = JSON.parse(localStorage.getItem("cart")) || []
+          if (localCart.length > 0) {
+            const productIds = localCart
+              .map((item) => item.product_id)
+              .join(",")
+            const response = await fetch(`/api/cart?productIds=${productIds}`)
+            const data = await response.json()
+            setCart(data)
+          }
+        }
       } catch (error) {
         console.error("Error fetching cart:", error)
       } finally {
@@ -113,20 +125,27 @@ const Cart = () => {
       }
     }
 
-    if (userAttributes) {
-      fetchCart()
-    }
+    fetchCart()
   }, [userAttributes, setCart])
 
   const removeFromCart = async (productId) => {
     try {
-      await fetch("/api/cart", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ cognitoSub: userAttributes.sub, productId }),
-      })
+      if (userAttributes) {
+        await fetch("/api/cart", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ cognitoSub: userAttributes.sub, productId }),
+        })
+      } else {
+        const localCart = JSON.parse(localStorage.getItem("cart")) || []
+        const updatedCart = localCart.filter(
+          (item) => item.product_id !== productId
+        )
+        localStorage.setItem("cart", JSON.stringify(updatedCart))
+        setCart(updatedCart)
+      }
 
       // Update cart state after removal
       setCart((prevCart) =>
@@ -152,31 +171,29 @@ const Cart = () => {
   // If the cart is empty..
   if (!cart || cart.length === 0) {
     return (
-      <>
-        <PageWrapper>
-          <CartContainer>
-            <EmptyCartContainer>
-              <EmptyHeader>Your cart is empty</EmptyHeader>
-              {userAttributes ? (
-                <>
-                  <span>Check out what we're featuring now!</span>
-                  <RedirectButton onClick={handleHomePage} type="button">
-                    Go to homepage
-                  </RedirectButton>
-                </>
-              ) : (
-                <>
-                  <span>Have an account? Sign in to see your cart</span>
-                  <RedirectButton onClick={handleSignIn} type="button">
-                    Sign in
-                  </RedirectButton>
-                </>
-              )}
-              <BsCartX size={200} />
-            </EmptyCartContainer>
-          </CartContainer>
-        </PageWrapper>
-      </>
+      <PageWrapper>
+        <CartContainer>
+          <EmptyCartContainer>
+            <EmptyHeader>Your cart is empty</EmptyHeader>
+            {userAttributes ? (
+              <>
+                <span>Check out what we're featuring now!</span>
+                <RedirectButton onClick={handleHomePage} type="button">
+                  Go to homepage
+                </RedirectButton>
+              </>
+            ) : (
+              <>
+                <span>Have an account? Sign in to see your cart</span>
+                <RedirectButton onClick={handleSignIn} type="button">
+                  Sign in
+                </RedirectButton>
+              </>
+            )}
+            <BsCartX size={200} />
+          </EmptyCartContainer>
+        </CartContainer>
+      </PageWrapper>
     )
   }
 

@@ -4,32 +4,57 @@ export default async function handler(req, res) {
   const { method } = req
 
   if (method === "GET") {
-    const { cognitoSub } = req.query
-    try {
-      const user = await query(
-        "SELECT user_id FROM users WHERE cognito_sub = $1",
-        [cognitoSub]
-      )
-      if (user.length === 0) {
-        return res.status(404).json({ error: "User not found" })
-      }
+    const { cognitoSub, productIds } = req.query
 
-      const cartItems = await query(
-        `SELECT 
-          c.product_id, 
-          p.name AS product_name, 
-          p.price AS product_price, 
-          i.image_url AS product_image_url 
-        FROM 
-          cart c 
-        JOIN 
-          products p ON c.product_id = p.product_id 
-        LEFT JOIN 
-          images i ON p.product_id = i.product_id AND i.is_main = TRUE 
-        WHERE 
-          c.user_id = $1`,
-        [user[0].user_id]
-      )
+    try {
+      let cartItems = []
+
+      if (cognitoSub) {
+        const user = await query(
+          "SELECT user_id FROM users WHERE cognito_sub = $1",
+          [cognitoSub]
+        )
+
+        if (user.length === 0) {
+          return res.status(404).json({ error: "User not found" })
+        }
+
+        cartItems = await query(
+          `SELECT 
+            c.product_id, 
+            p.name AS product_name, 
+            p.price AS product_price, 
+            i.image_url AS product_image_url 
+          FROM 
+            cart c 
+          JOIN 
+            products p ON c.product_id = p.product_id 
+          LEFT JOIN 
+            images i ON p.product_id = i.product_id AND i.is_main = TRUE 
+          WHERE 
+            c.user_id = $1`,
+          [user[0].user_id]
+        )
+      } else if (productIds) {
+        const productIdsArray = productIds
+          .split(",")
+          .map((id) => parseInt(id, 10))
+
+        cartItems = await query(
+          `SELECT 
+            p.product_id, 
+            p.name AS product_name, 
+            p.price AS product_price, 
+            i.image_url AS product_image_url 
+          FROM 
+            products p 
+          LEFT JOIN 
+            images i ON p.product_id = i.product_id AND i.is_main = TRUE 
+          WHERE 
+            p.product_id = ANY($1)`,
+          [productIdsArray]
+        )
+      }
 
       res.status(200).json(cartItems)
     } catch (error) {

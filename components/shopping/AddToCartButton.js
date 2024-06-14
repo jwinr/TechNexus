@@ -19,13 +19,10 @@ const Button = styled.button`
 `
 
 const AddToCartButton = ({ productId, quantity = 1 }) => {
-  const { userAttributes } = useContext(UserContext)
   const { addToCart } = useContext(CartContext)
 
   const handleAddToCart = async () => {
-    if (userAttributes) {
-      await addToCart(productId, quantity)
-    }
+    await addToCart(productId, quantity)
   }
 
   return <Button onClick={handleAddToCart}>Add to Cart</Button>
