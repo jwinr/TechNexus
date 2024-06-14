@@ -1,7 +1,5 @@
-// /components/shopping/AddToWishListButton.js
-
-import React, { useState, useContext } from "react"
-import styled, { css, keyframes } from "styled-components"
+import React, { useContext } from "react"
+import styled, { keyframes, css } from "styled-components"
 import { GoBookmarkFill } from "react-icons/go"
 import { UserContext } from "../../context/UserContext"
 import { filter } from "../../utils/helpers.js"
@@ -41,6 +39,7 @@ const Button = styled(buttonFilter(["isLoading"]))`
     background-color: var(--color-main-dark-blue);
   }
 
+  /* Apply cursor: not-allowed style when loading */
   ${({ isLoading }) =>
     isLoading &&
     css`
@@ -78,35 +77,24 @@ const LoadingSpinner = styled.div`
   animation: ${rotate} 2s 0.25s linear infinite;
 `
 
-export default function AddToWishlistButton({ product }) {
+export default function AddToWishlistButton({ productId }) {
   const { userAttributes } = useContext(UserContext)
-  const [isLoading, setIsLoading] = useState(false)
 
   const addToWishlist = async () => {
     if (userAttributes) {
-      setIsLoading(true)
-      const response = await fetch("/api/wishlist", {
+      await fetch("/api/wishlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          cognitoSub: userAttributes.sub,
-          productId: product.id,
-        }),
+        body: JSON.stringify({ cognitoSub: userAttributes.sub, productId }),
       })
-      setIsLoading(false)
-      if (!response.ok) {
-        console.error("Error adding to wishlist:", await response.text())
-      }
     }
   }
 
   return (
     <Container>
-      <Button onClick={addToWishlist} isLoading={isLoading}>
-        {isLoading ? <LoadingSpinner /> : <GoBookmarkFill />}
-      </Button>
+      <Button onClick={addToWishlist}>Add to Wishlist</Button>
     </Container>
   )
 }

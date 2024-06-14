@@ -81,7 +81,6 @@ export default function CategoryPage() {
   const [filteredItems, setFilteredItems] = useState(categoryData)
   const [sortBy, setSortBy] = useState("Most Popular")
   const isMobileView = useMobileView()
-  const { addToCart } = useContext(SiteContext)
 
   // Reset isFilterActive when the category changes (new page is loaded)
   useEffect(() => {

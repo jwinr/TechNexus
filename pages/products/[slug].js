@@ -518,7 +518,6 @@ function ProductDetails() {
   const [zipCodeValid, setZipCodeValid] = useState(true)
   const [isZipPopupVisible, setIsZipPopupVisible] = useState(false)
   const [enteredZipCode, setEnteredZipCode] = useState("")
-  const { addToCart, cart } = useSiteContext()
   const [isOpen, setIsOpen] = useState(false)
   const isMobileView = useMobileView()
 
@@ -554,30 +553,6 @@ function ProductDetails() {
     } else {
       setZipCodeValid(false)
     }
-  }
-
-  function addItemToCart(product) {
-    // Restructure the object so it aligns with the category page implementation
-    const formattedProduct = {
-      id: product.product_id || product.id,
-      price: parseFloat(product.price),
-      name: product.name,
-      brand: product.brand || "",
-      slug: product.slug || "",
-      rating: product.rating,
-      image: {
-        image_url:
-          product.images && product.images.length > 0
-            ? product.images[0].image_url
-            : "",
-        is_main: true,
-      },
-    }
-
-    formattedProduct["quantity"] = numberOfitems
-
-    addToCart(formattedProduct)
-    console.log(formattedProduct)
   }
 
   function increment() {
@@ -727,7 +702,7 @@ function ProductDetails() {
                     productId={product.product_id}
                     quantity={1}
                   />
-                  <AddToWishlistButton product={product} />
+                  <AddToWishlistButton productId={product.product_id} />
                 </CartBtnWrapper>
                 <ZipWrapper>
                   <IoLocationOutline style={{ marginRight: "5px" }} size={24} />
@@ -813,7 +788,7 @@ function ProductDetails() {
                     productId={product.product_id}
                     quantity={1}
                   />
-                  <AddToWishlistButton product={product} />
+                  <AddToWishlistButton productId={product.product_id} />
                 </CartBtnWrapper>
                 <ZipWrapper>
                   <IoLocationOutline style={{ marginRight: "5px" }} size={24} />

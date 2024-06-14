@@ -1,6 +1,6 @@
 import Layout from "../layouts/layout"
 import React from "react"
-import { Manrope } from "next/font/google"
+import localFont from "next/font/local"
 import "../styles/globals.css"
 import { Amplify } from "aws-amplify"
 import amplifyconfig from "../src/amplifyconfiguration.json"
@@ -10,29 +10,26 @@ import { UserProvider } from "../context/UserContext"
 import { CartProvider } from "../context/CartContext"
 import ErrorBoundary from "../components/common/ErrorBoundary"
 
-const manrope = Manrope({ subsets: ["latin"] })
+const SFPro = localFont({ src: "../public/fonts/SF-Pro.ttf" })
 
 function TechNexus({ Component, pageProps, categories }) {
   return (
     <>
-      <style jsx global>{`
-        html {
-          font-family: ${manrope.style.fontFamily};
-        }
-      `}</style>
-      <React.StrictMode>
-        <MobileViewProvider>
-          <UserProvider>
-            <CartProvider>
-              <ErrorBoundary>
-                <Layout categories={categories}>
-                  <Component {...pageProps} />
-                </Layout>
-              </ErrorBoundary>
-            </CartProvider>
-          </UserProvider>
-        </MobileViewProvider>
-      </React.StrictMode>
+      <main className={SFPro.className}>
+        <React.StrictMode>
+          <MobileViewProvider>
+            <UserProvider>
+              <CartProvider>
+                <ErrorBoundary>
+                  <Layout categories={categories}>
+                    <Component {...pageProps} />
+                  </Layout>
+                </ErrorBoundary>
+              </CartProvider>
+            </UserProvider>
+          </MobileViewProvider>
+        </React.StrictMode>
+      </main>
     </>
   )
 }

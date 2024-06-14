@@ -15,7 +15,6 @@ export const UserProvider = ({ children }) => {
       if (session && session.tokens && session.tokens.idToken) {
         const idTokenPayload = session.tokens.idToken.payload
 
-        console.log("Fetched from API:", idTokenPayload)
         localStorage.setItem("userAttributes", JSON.stringify(idTokenPayload))
         setUserAttributes(idTokenPayload)
 

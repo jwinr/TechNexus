@@ -1,5 +1,3 @@
-// /pages/api/cart.js
-
 import { query } from "./db"
 
 export default async function handler(req, res) {
@@ -18,22 +16,21 @@ export default async function handler(req, res) {
 
       const cartItems = await query(
         `SELECT 
-          c.cart_id, 
           c.product_id, 
           p.name AS product_name, 
           p.price AS product_price, 
-          c.quantity,
-          i.image_url AS product_image_url
+          i.image_url AS product_image_url 
         FROM 
           cart c 
         JOIN 
           products p ON c.product_id = p.product_id 
         LEFT JOIN 
-          images i ON p.product_id = i.product_id AND i.is_main = TRUE
+          images i ON p.product_id = i.product_id AND i.is_main = TRUE 
         WHERE 
           c.user_id = $1`,
         [user[0].user_id]
       )
+
       res.status(200).json(cartItems)
     } catch (error) {
       console.error("Error fetching cart:", error)
@@ -76,6 +73,7 @@ export default async function handler(req, res) {
       if (user.length === 0) {
         return res.status(404).json({ error: "User not found" })
       }
+
       await query("DELETE FROM cart WHERE user_id = $1 AND product_id = $2", [
         user[0].user_id,
         productId,
