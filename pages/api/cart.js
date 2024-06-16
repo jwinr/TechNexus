@@ -21,10 +21,12 @@ export default async function handler(req, res) {
 
         cartItems = await query(
           `SELECT 
-            c.product_id, 
+            c.product_id,
+            c.quantity,
             p.name AS product_name, 
             p.price AS product_price, 
-            i.image_url AS product_image_url 
+            i.image_url AS product_image_url,
+            p.slug as product_slug
           FROM 
             cart c 
           JOIN 
@@ -45,7 +47,8 @@ export default async function handler(req, res) {
             p.product_id, 
             p.name AS product_name, 
             p.price AS product_price, 
-            i.image_url AS product_image_url 
+            i.image_url AS product_image_url,
+            p.slug as product_slug
           FROM 
             products p 
           LEFT JOIN 
@@ -111,8 +114,34 @@ export default async function handler(req, res) {
         details: error.message,
       })
     }
+  } else if (method === "PATCH") {
+    const { cognitoSub, productId, quantity } = req.body
+
+    try {
+      const user = await query(
+        "SELECT user_id FROM users WHERE cognito_sub = $1",
+        [cognitoSub]
+      )
+
+      if (user.length === 0) {
+        return res.status(404).json({ error: "User not found" })
+      }
+
+      await query(
+        "UPDATE cart SET quantity = $1 WHERE user_id = $2 AND product_id = $3",
+        [quantity, user[0].user_id, productId]
+      )
+
+      res.status(200).json({ message: "Product quantity updated" })
+    } catch (error) {
+      console.error("Error updating product quantity:", error)
+      res.status(500).json({
+        error: "Error updating product quantity",
+        details: error.message,
+      })
+    }
   } else {
-    res.setHeader("Allow", ["GET", "POST", "DELETE"])
+    res.setHeader("Allow", ["GET", "POST", "DELETE", "PATCH"])
     res.status(405).end(`Method ${method} Not Allowed`)
   }
 }

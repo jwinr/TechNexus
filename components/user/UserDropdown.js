@@ -8,7 +8,7 @@ import React, {
 import { UserContext } from "../../context/UserContext"
 import styled from "styled-components"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
-import { LiaUserCircleSolid } from "react-icons/lia"
+import AccountIcon from "../../public/src/images/account.svg"
 import { CSSTransition } from "react-transition-group"
 import Link from "next/link"
 import Backdrop from "../common/Backdrop"
@@ -152,12 +152,15 @@ const ListHeader = styled.div`
 `
 
 const IconContainer = styled.div`
-  font-size: 26px;
   justify-content: center;
   display: grid;
 
+  svg {
+    width: 26px;
+  }
+
   @media (max-width: 768px) {
-    font-size: 28px;
+    width: 28px;
   }
 `
 
@@ -305,7 +308,7 @@ function NavItem(props) {
         }`}
       >
         <IconContainer>
-          <LiaUserCircleSolid />
+          <AccountIcon />
         </IconContainer>
         <BtnText>{user ? `Hi, ${user}` : "Sign in"}</BtnText>
         <div className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}>

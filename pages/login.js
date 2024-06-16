@@ -488,7 +488,6 @@ const Login = () => {
 
       // Call signIn with username and password
       const response = await signIn({ username, password })
-      console.log("Sign-in response:", response)
 
       if (response.nextStep) {
         switch (response.nextStep.signInStep) {

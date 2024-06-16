@@ -1,5 +1,6 @@
 import Layout from "../layouts/layout"
 import React from "react"
+import { useEffect } from "react"
 import localFont from "next/font/local"
 import "../styles/globals.css"
 import { Amplify } from "aws-amplify"

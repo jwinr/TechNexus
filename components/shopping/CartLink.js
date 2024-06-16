@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react"
-import { LiaShoppingCartSolid } from "react-icons/lia"
+import CartIcon from "../../public/src/images/cart.svg"
 import Link from "next/link"
 import styled from "styled-components"
 
@@ -51,12 +51,15 @@ const CartCircle = styled.div`
 `
 
 const Wrapper = styled.div`
-  font-size: 26px;
   justify-content: center;
   display: grid;
 
+  svg {
+    width: 24px;
+  }
+
   @media (max-width: 768px) {
-    font-size: 28px;
+    width: 26px;
   }
 `
 
@@ -73,7 +76,7 @@ function CartLink() {
     <Container href="/cart" tabIndex="-1" aria-label={ariaLabel}>
       <Button aria-label={ariaLabel}>
         <Wrapper>
-          <LiaShoppingCartSolid />
+          <CartIcon />
         </Wrapper>
       </Button>
       <CartCircle>{numberOfItemsInCart}</CartCircle>
