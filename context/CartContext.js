@@ -6,6 +6,7 @@ import React, {
   useCallback,
 } from "react"
 import { UserContext } from "./UserContext"
+import toast from "react-hot-toast"
 
 export const CartContext = createContext()
 
@@ -54,6 +55,18 @@ export const CartProvider = ({ children }) => {
   const addToCart = async (productId, quantity = 1) => {
     if (userAttributes) {
       try {
+        const existingItem = cart.find((item) => item.product_id === productId)
+        const newQuantity = existingItem
+          ? existingItem.quantity + quantity
+          : quantity
+
+        if (newQuantity > 10) {
+          toast.error("Sorry, you've reached the limit for this product.", {
+            position: "bottom-right",
+          })
+          return
+        }
+
         await fetch("/api/cart", {
           method: "POST",
           headers: {
@@ -66,6 +79,9 @@ export const CartProvider = ({ children }) => {
           }),
         })
         fetchCart()
+        toast.success("Added to cart!", {
+          position: "bottom-right",
+        })
       } catch (error) {
         console.error("Error adding to cart:", error)
       }
@@ -76,8 +92,21 @@ export const CartProvider = ({ children }) => {
       )
 
       if (existingItem) {
-        existingItem.quantity += quantity
+        const newQuantity = existingItem.quantity + quantity
+        if (newQuantity > 10) {
+          toast.error("Sorry, you've reached the limit for this product.", {
+            position: "bottom-right",
+          })
+          return
+        }
+        existingItem.quantity = newQuantity
       } else {
+        if (quantity > 10) {
+          toast.error("Sorry, you've reached the limit for this product.", {
+            position: "bottom-right",
+          })
+          return
+        }
         localCart.push({ product_id: productId, quantity })
       }
 

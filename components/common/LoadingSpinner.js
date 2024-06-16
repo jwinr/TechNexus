@@ -6,7 +6,7 @@ const SpinnerContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px; /* Adjust the height as needed */
+  height: 100px;
 `
 
 const Spinner = styled.div`

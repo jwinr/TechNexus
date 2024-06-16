@@ -1,31 +1,62 @@
-import React, { useContext } from "react"
-import { UserContext } from "../../context/UserContext"
+import React, { useContext, useState } from "react"
 import { CartContext } from "../../context/CartContext"
 import styled from "styled-components"
+import LoaderBtnSpin from "../common/LoaderBtnSpin"
+import { filter } from "../../utils/helpers.js"
+
+const spanFilter = filter("span")
 
 const Button = styled.button`
+  position: relative; // Allow the loader to be positioned absolutely within the button
+  justify-content: center;
   background-color: var(--sc-color-blue);
   color: white;
   padding: 10px 20px;
   border: none;
+  min-height: 44px;
   border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
+  display: flex;
+  font-weight: bold;
   transition: background 0.3s;
 
   &:hover {
     background-color: var(--sc-color-dark-blue);
   }
+
+  &:disabled {
+    background-color: var(--sc-color-dark-blue);
+    cursor: not-allowed;
+  }
+`
+
+const ButtonText = styled(spanFilter(["loading"]))`
+  opacity: ${({ loading }) => (loading ? 0 : 1)};
+  transition: opacity 0.3s ease-in-out;
 `
 
 const AddToCartButton = ({ productId, quantity = 1 }) => {
   const { addToCart } = useContext(CartContext)
+  const [loading, setLoading] = useState(false)
+
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
   const handleAddToCart = async () => {
-    await addToCart(productId, quantity)
+    setLoading(true)
+    try {
+      await Promise.all([addToCart(productId, quantity), delay(500)]) // Using a minimum delay to make sure the loading state is temporarily visible even if the API request is quick, since it could result in a rapid UI change
+    } catch (error) {
+      console.error("Failed to add to cart", error)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  return <Button onClick={handleAddToCart}>Add to Cart</Button>
+  return (
+    <Button onClick={handleAddToCart} disabled={loading}>
+      <ButtonText loading={loading}>Add to Cart</ButtonText>
+      <LoaderBtnSpin loading={loading} />
+    </Button>
+  )
 }
 
 export default AddToCartButton

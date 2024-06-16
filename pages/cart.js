@@ -9,6 +9,7 @@ import { VscClose } from "react-icons/vsc"
 import QuantityPicker from "../components/shopping/QuantityPicker"
 import Image from "next/image"
 import Link from "next/link"
+import toast from "react-hot-toast"
 
 const PageWrapper = styled.div`
   display: flex;
@@ -205,11 +206,9 @@ const Cart = () => {
     const fetchCart = async () => {
       if (userAttributes === null) {
         console.log("User attributes are null, skipping fetch")
-        setLoading(false)
-        return
+        return // Return when userAttributes are null so we don't set the loading state to false too early
       }
-
-      console.log("Fetching cart for userAttributes:", userAttributes)
+      // await new Promise((resolve) => setTimeout(resolve, 500)) // 500ms delay
 
       try {
         if (userAttributes) {
@@ -217,7 +216,6 @@ const Cart = () => {
             `/api/cart?cognitoSub=${userAttributes.sub}`
           )
           const data = await response.json()
-          console.log("Cart data fetched from server:", data)
           setCart(
             data.map((item) => ({ ...item, quantity: item.quantity || 1 }))
           )
@@ -229,7 +227,6 @@ const Cart = () => {
               .join(",")
             const response = await fetch(`/api/cart?productIds=${productIds}`)
             const data = await response.json()
-            console.log("Cart data fetched from local storage:", data)
             const detailedCart = localCart.map((item) => ({
               ...item,
               ...data.find((product) => product.product_id === item.product_id),
@@ -250,7 +247,6 @@ const Cart = () => {
 
   const removeFromCart = async (productId) => {
     try {
-      console.log("Removing product from cart with ID:", productId)
       if (userAttributes) {
         await fetch("/api/cart", {
           method: "DELETE",
@@ -271,7 +267,9 @@ const Cart = () => {
       setCart((prevCart) =>
         prevCart.filter((item) => item.product_id !== productId)
       )
-      console.log("Product removed from cart. Updated cart:", cart)
+      toast.success("Removed from cart.", {
+        position: "bottom-right",
+      })
     } catch (error) {
       console.error("Error removing product from cart:", error)
     }
@@ -286,7 +284,6 @@ const Cart = () => {
   }
 
   const calculateTotal = () => {
-    console.log("Calculating totals for cart:", cart)
     const cartWithQuantities = cart.map((item) => ({
       ...item,
       quantity: item.quantity || 1,
@@ -299,15 +296,6 @@ const Cart = () => {
     const estimatedTaxes = subtotal * 0.07
     const total = subtotal + freeShipping + estimatedTaxes
 
-    console.log(
-      "Subtotal:",
-      subtotal,
-      "Estimated Taxes:",
-      estimatedTaxes,
-      "Total:",
-      total
-    )
-
     return {
       subtotal: subtotal.toFixed(2),
       freeShipping: freeShipping.toFixed(2),
@@ -318,12 +306,6 @@ const Cart = () => {
 
   const handleQuantityChange = async (productId, newQuantity) => {
     try {
-      console.log(
-        "Updating quantity for product ID:",
-        productId,
-        "to new quantity:",
-        newQuantity
-      )
       if (userAttributes) {
         await fetch("/api/cart", {
           method: "PATCH",
@@ -354,7 +336,6 @@ const Cart = () => {
             : item
         )
       )
-      console.log("Updated cart after quantity change:", cart)
     } catch (error) {
       console.error("Error updating product quantity:", error)
     }
