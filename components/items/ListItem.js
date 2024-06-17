@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react"
 import Link from "next/link"
 import Image from "../common/Image"
-import AddCart from "../shopping/AddCart"
+import AddToCartButton from "../shopping/AddToCartButton"
 import styled from "styled-components"
 import ItemTitle from "../items/ItemTitle"
 import ItemPrice from "../items/ItemPrice"
@@ -138,23 +138,6 @@ const ListItem = ({
     ? currentImage.image_url
     : "/src/images/products/placeholder.jpg"
 
-  const handleAddToCartClick = () => {
-    if (addToCartFromList) {
-      const product = {
-        slug: link,
-        id: id,
-        name: title,
-        price: parseFloat(price), // Convert string price to float
-        quantity: 1,
-        brand: brand || "",
-        rating: rating || [],
-        image: image[0],
-      }
-
-      addToCartFromList(product)
-    }
-  }
-
   return (
     <ListItemWrapper>
       <Link href={`${link}`}>
@@ -185,7 +168,7 @@ const ListItem = ({
         </IconContainer>
         <p>Free Shipping</p>
       </ShippingContainer>
-      <AddCart full title="Add to Cart " onClick={handleAddToCartClick} />
+      <AddToCartButton productId={id} quantity={1} />
     </ListItemWrapper>
   )
 }

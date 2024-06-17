@@ -2,7 +2,6 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { useContext } from "react"
-import AddCart from "../../components/shopping/AddCart"
 import SaveItem from "../../components/shopping/SaveItem"
 import Image from "../../components/common/Image"
 import Breadcrumb from "../../components/common/Breadcrumb"
@@ -13,7 +12,7 @@ import ProductHighlights from "../../components/products/ProductHighlights"
 import styled, { keyframes } from "styled-components"
 import { Accordion, AccordionItem as Item } from "@szhsin/react-accordion"
 import ChevronDown from "../../public/chevron-down.svg"
-import LoadingSpinner from "../../components/common/LoadingSpinner"
+import LoaderDots from "../../components/common/LoaderDots"
 import ProductInclusions from "../../components/products/ProductInclusions"
 import QuantityPicker from "../../components/shopping/QuantityPicker"
 import ShippingInfo from "../../components/shopping/ShippingInfo"
@@ -60,13 +59,6 @@ const AccordionWrapper = styled.div`
   border-radius: 8px;
   margin-top: 20px;
   background-color: white;
-`
-
-const SpinnerContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
 `
 
 const AccordionItem = styled(ItemWithChevron)`
@@ -594,11 +586,7 @@ function ProductDetails() {
   }, [slug])
 
   if (!product) {
-    return (
-      <SpinnerContainer>
-        <LoadingSpinner />
-      </SpinnerContainer>
-    )
+    return <LoaderDots />
   }
 
   // Apply red border/text if information is invalid

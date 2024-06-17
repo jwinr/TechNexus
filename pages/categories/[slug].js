@@ -1,4 +1,3 @@
-// pages/categories/[slug].js
 import React, { useEffect, useState, lazy, Suspense, useContext } from "react"
 import { useRouter } from "next/router"
 import styled from "styled-components"
@@ -6,7 +5,7 @@ import Head from "next/head"
 import Breadcrumb from "../../components/common/Breadcrumb"
 import CategoryTitle from "../../components/categories/CategoryTitle"
 import ListItem from "../../components/items/ListItem"
-import LoadingSpinner from "../../components/common/LoadingSpinner"
+import LoaderDots from "../../components/common/LoaderDots"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
 import toast from "react-hot-toast"
@@ -62,13 +61,6 @@ const TitleWrapper = styled.div`
   grid-area: title;
 `
 
-const SpinnerContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(-63px + 100vh);
-`
-
 export default function CategoryPage() {
   const router = useRouter()
   const { slug } = router.query
@@ -108,11 +100,7 @@ export default function CategoryPage() {
   }, [slug])
 
   if (loading) {
-    return (
-      <SpinnerContainer>
-        <LoadingSpinner />
-      </SpinnerContainer>
-    )
+    return <LoaderDots />
   }
 
   // Callback function to update filtered items
@@ -252,7 +240,7 @@ export default function CategoryPage() {
             </SortDropdown>
           </SortText>
         </CategorySortPanel>
-        <Suspense fallback={<LoadingSpinner />}>
+        <Suspense fallback={<LoaderDots />}>
           <ErrorBoundary>
             <ItemFilter
               inventoryItems={categoryData.products}
@@ -261,7 +249,7 @@ export default function CategoryPage() {
             />
           </ErrorBoundary>
         </Suspense>
-        <Suspense fallback={<LoadingSpinner />}>
+        <Suspense fallback={<LoaderDots />}>
           <ErrorBoundary>
             <CategorizedItems isVisible={showFilteredItems}>
               {isFilterActive
@@ -294,7 +282,7 @@ export default function CategoryPage() {
             </CategorizedItems>
           </ErrorBoundary>
         </Suspense>
-        <Suspense fallback={<LoadingSpinner />}>
+        <Suspense fallback={<LoaderDots />}>
           <ErrorBoundary>
             <Pagination
               currentPage={currentPage}

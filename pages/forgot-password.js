@@ -8,7 +8,7 @@ import Image from "next/image"
 import PasswordToggle from "../components/common/PasswordToggle.js"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 import { IoCheckmarkCircleSharp } from "react-icons/io5"
-import LoadingSpinner from "../components/common/LoadingSpinner"
+import LoaderDots from "../components/common/LoaderDots"
 
 // Custom error messages based on Cognito error codes
 const cognitoErrorMessages = {
@@ -261,13 +261,6 @@ const RequirementListItemDone = styled.div`
   }
 `
 
-const SpinnerContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(-63px + 100vh);
-`
-
 const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
   const [code, setCode] = useState("")
   const [newPassword, setNewPassword] = useState("")
@@ -518,11 +511,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
   const invalidStyle = { borderColor: "#D32F2F", color: "#D32F2F" }
 
   if (loading) {
-    return (
-      <SpinnerContainer>
-        <LoadingSpinner />
-      </SpinnerContainer>
-    )
+    return <LoaderDots />
   }
 
   return (

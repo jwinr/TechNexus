@@ -5,7 +5,7 @@ import Head from "next/head"
 import Breadcrumb from "../components/common/Breadcrumb"
 import CategoryTitle from "../components/categories/CategoryTitle"
 import ListItem from "../components/items/ListItem"
-import LoadingSpinner from "../components/common/LoadingSpinner"
+import LoaderDots from "../components/common/LoaderDots"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
 import toast from "react-hot-toast"
@@ -61,13 +61,6 @@ const TitleWrapper = styled.div`
   grid-area: title;
 `
 
-const SpinnerContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; /* Center vertically on the entire viewport height */
-`
-
 const SearchResultsPage = ({ productQuery }) => {
   const router = useRouter()
   const { query } = router.query
@@ -102,11 +95,7 @@ const SearchResultsPage = ({ productQuery }) => {
   }, [query]) // Listen for changes to the query
 
   if (!productQuery || !productQuery.products) {
-    return (
-      <SpinnerContainer>
-        <LoadingSpinner />
-      </SpinnerContainer>
-    )
+    return <LoaderDots />
   }
 
   // Callback function to update filtered items
@@ -273,7 +262,7 @@ const SearchResultsPage = ({ productQuery }) => {
                 />
               ))}
         </CategorizedItems>
-        <React.Suspense fallback={<LoadingSpinner />}>
+        <React.Suspense fallback={<LoaderDots />}>
           <ErrorBoundary>
             <Pagination
               currentPage={currentPage}

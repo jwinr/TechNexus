@@ -205,10 +205,9 @@ const Cart = () => {
   useEffect(() => {
     const fetchCart = async () => {
       if (userAttributes === null) {
-        console.log("User attributes are null, skipping fetch")
-        return // Return when userAttributes are null so we don't set the loading state to false too early
+        /* console.log("User attributes are null, skipping fetch") // This was useful for early debugging */
       }
-      // await new Promise((resolve) => setTimeout(resolve, 500)) // 500ms delay
+      await new Promise((resolve) => setTimeout(resolve, 500)) // 500ms delay
 
       try {
         if (userAttributes) {
