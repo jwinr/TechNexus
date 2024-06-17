@@ -183,7 +183,7 @@ const UserDropdown = ({ isOpen: parentIsOpen, onToggle }) => {
     try {
       await signOut()
       localStorage.removeItem("userAttributes") // Remove user attributes from local storage on logout
-      router.push("/login")
+      router.reload() // Force a page refresh
     } catch (error) {
       console.error("Error signing out:", error)
     }

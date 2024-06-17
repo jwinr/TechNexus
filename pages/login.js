@@ -5,7 +5,7 @@ import { fetchAuthSession } from "aws-amplify/auth"
 import { useRouter } from "next/router"
 import styled, { keyframes } from "styled-components"
 import Checkbox from "../components/common/Checkbox"
-import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
+import PasswordToggle from "../components/common/PasswordToggle.js"
 import SignUpPage from "./signup"
 import ForgotPassword from "./forgot-password.js"
 import LogoSymbol from "../public/logo_n.png"
@@ -232,40 +232,6 @@ const ErrorMessage = styled.div`
   color: #d32f2f;
   font-size: 14px;
   padding: 10px 0;
-`
-
-const IconButton = styled.button`
-  position: absolute;
-  right: 10px;
-  padding: 5px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-`
-
-const IconContainer = styled.div`
-  position: relative;
-  width: 24px;
-  height: 24px;
-
-  & > svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-
-  .show {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .hide {
-    opacity: 0;
-    transform: translateY(-7px);
-  }
 `
 
 const EntryBtnWrapper = styled.div`
@@ -644,17 +610,11 @@ const Login = () => {
               >
                 Password
               </Label>
-              <IconButton
+              <PasswordToggle
                 onClick={() => setShowPassword(!showPassword)}
+                clicked={showPassword}
                 aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                <IconContainer>
-                  <LiaEyeSolid className={showPassword ? "hide" : "show"} />
-                  <LiaEyeSlashSolid
-                    className={showPassword ? "show" : "hide"}
-                  />
-                </IconContainer>
-              </IconButton>
+              />
               {!passwordValid && (
                 <ValidationMessage>
                   Please enter a valid password.

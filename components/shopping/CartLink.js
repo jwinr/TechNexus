@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react"
 import CartIcon from "../../public/src/images/cart.svg"
 import Link from "next/link"
 import styled from "styled-components"
+import { CartContext } from "../../context/CartContext"
 
 const Container = styled(Link)`
   position: relative;
@@ -64,12 +65,14 @@ const Wrapper = styled.div`
 `
 
 function CartLink() {
-  const numberOfItemsInCart = 0
-  // const { numberOfItemsInCart = 0 } = useContext(SiteContext) (old method)
+  const { cart } = useContext(CartContext)
+
+  // Calculate total quantity
+  const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0)
 
   // Dynamically change the label based on 1 or more items
-  const ariaLabel = `Cart, ${numberOfItemsInCart} ${
-    numberOfItemsInCart === 1 ? "item" : "items"
+  const ariaLabel = `Cart, ${totalQuantity} ${
+    totalQuantity === 1 ? "item" : "items"
   }`
 
   return (
@@ -79,7 +82,7 @@ function CartLink() {
           <CartIcon />
         </Wrapper>
       </Button>
-      <CartCircle>{numberOfItemsInCart}</CartCircle>
+      {totalQuantity > 0 && <CartCircle>{totalQuantity}</CartCircle>}
     </Container>
   )
 }

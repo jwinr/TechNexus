@@ -23,14 +23,17 @@ const Button = styled.button`
     background-color: var(--sc-color-dark-blue);
   }
 
-  &:disabled {
+  &:focus-visible {
     background-color: var(--sc-color-dark-blue);
-    cursor: not-allowed;
+  }
+
+  &:disabled {
+    cursor: pointer;
   }
 `
 
 const ButtonText = styled(spanFilter(["loading"]))`
-  opacity: ${({ loading }) => (loading ? 0 : 1)};
+  opacity: ${({ loading }) => (loading ? 0.2 : 1)};
   transition: opacity 0.3s ease-in-out;
 `
 
@@ -43,7 +46,7 @@ const AddToCartButton = ({ productId, quantity = 1 }) => {
   const handleAddToCart = async () => {
     setLoading(true)
     try {
-      await Promise.all([addToCart(productId, quantity), delay(500)]) // Using a minimum delay to make sure the loading state is temporarily visible even if the API request is quick, since it could result in a rapid UI change
+      await Promise.all([addToCart(productId, quantity), delay(1000)]) // Using a minimum delay to make sure the loading state is temporarily visible even if the API request is quick, since it could result in a rapid UI change
     } catch (error) {
       console.error("Failed to add to cart", error)
     } finally {

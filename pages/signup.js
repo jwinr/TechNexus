@@ -3,7 +3,7 @@ import { signUp } from "aws-amplify/auth"
 import * as Styled from "../components/auth/SignStyles"
 import styled from "styled-components"
 import { useRouter } from "next/router"
-import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia"
+import PasswordToggle from "../components/common/PasswordToggle.js"
 import LogoSymbol from "../public/logo_n.png"
 import Image from "next/image"
 import Head from "next/head"
@@ -69,14 +69,6 @@ const InputIconWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-`
-
-const IconButton = styled.button`
-  position: absolute;
-  right: 10px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
 `
 
 const EntryBtnWrapper = styled.div`
@@ -459,12 +451,11 @@ const SignUpPage = ({ toggleSignUp }) => {
                   style={!passwordValid ? invalidStyle : {}}
                   onBlur={handlePasswordBlur}
                 />
-                <IconButton
+                <PasswordToggle
                   onClick={() => setShowPassword(!showPassword)}
+                  clicked={showPassword}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
-                </IconButton>
+                />
               </InputIconWrapper>
               {!passwordValid && (
                 <ValidationMessage>
@@ -484,12 +475,11 @@ const SignUpPage = ({ toggleSignUp }) => {
                   style={!confirmPasswordValid ? invalidStyle : {}}
                   onBlur={handleConfirmPasswordBlur}
                 />
-                <IconButton
+                <PasswordToggle
                   onClick={() => setShowPassword(!showPassword)}
+                  clicked={showPassword}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <LiaEyeSlashSolid /> : <LiaEyeSolid />}
-                </IconButton>
+                />
               </InputIconWrapper>
               {!confirmPasswordValid && (
                 <ValidationMessage>Passwords do not match.</ValidationMessage>
