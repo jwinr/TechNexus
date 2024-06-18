@@ -9,6 +9,7 @@ Amplify.configure(amplifyconfig)
 import { MobileViewProvider } from "../utils/MobileViewDetector"
 import { UserProvider } from "../context/UserContext"
 import { CartProvider } from "../context/CartContext"
+import { FilterProvider } from "../context/FilterContext"
 import ErrorBoundary from "../components/common/ErrorBoundary"
 
 const SFPro = localFont({ src: "../public/fonts/SF-Pro.ttf" })
@@ -21,11 +22,13 @@ function TechNexus({ Component, pageProps, categories }) {
           <MobileViewProvider>
             <UserProvider>
               <CartProvider>
-                <ErrorBoundary>
-                  <Layout categories={categories}>
-                    <Component {...pageProps} />
-                  </Layout>
-                </ErrorBoundary>
+                <FilterProvider>
+                  <ErrorBoundary>
+                    <Layout categories={categories}>
+                      <Component {...pageProps} />
+                    </Layout>
+                  </ErrorBoundary>
+                </FilterProvider>
               </CartProvider>
             </UserProvider>
           </MobileViewProvider>

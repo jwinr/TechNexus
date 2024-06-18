@@ -1,4 +1,3 @@
-// Pagination.js
 import React, { useEffect } from "react"
 import styled, { css } from "styled-components"
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
@@ -138,7 +137,7 @@ const ArrowContainer = styled.div`
 const Pagination = ({ currentPage, totalPages, handlePageChange }) => {
   useEffect(() => {
     // Scroll to the top when currentPage changes
-    window.scrollTo({ top: 0, behavior: "smooth" })
+    window.scrollTo({ top: 0 })
   }, [currentPage])
 
   const renderPagination = () => {
@@ -157,12 +156,22 @@ const Pagination = ({ currentPage, totalPages, handlePageChange }) => {
     return paginationItems
   }
 
+  const handlePrevPageChange = () => {
+    if (currentPage > 1) {
+      handlePageChange(currentPage - 1)
+    } else {
+    }
+  }
+
+  const handleNextPageChange = () => {
+    if (currentPage < totalPages) {
+      handlePageChange(currentPage + 1)
+    }
+  }
+
   return (
     <PaginationWrapper>
-      <PrevButton
-        disabled={currentPage === 1}
-        onClick={() => handlePageChange(currentPage - 1)}
-      >
+      <PrevButton onClick={handlePrevPageChange} disabled={currentPage === 1}>
         <ArrowContainer>
           <ArrowIcon direction="back">
             <IoIosArrowBack />
@@ -172,8 +181,8 @@ const Pagination = ({ currentPage, totalPages, handlePageChange }) => {
       </PrevButton>
       {renderPagination()}
       <NextButton
+        onClick={handleNextPageChange}
         disabled={currentPage === totalPages}
-        onClick={() => handlePageChange(currentPage + 1)}
       >
         <ArrowContainer>
           {"Next "}

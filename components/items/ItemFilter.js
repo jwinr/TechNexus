@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from "react"
 import { RiArrowDownSLine } from "react-icons/ri"
-import styled, { keyframes } from "styled-components"
+import styled from "styled-components"
 import Checkbox from "../common/Checkbox"
+import { useFilters } from "../../context/FilterContext"
+import toast from "react-hot-toast"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
+import { useMobileView } from "../../utils/MobileViewDetector"
 
 const Container = styled.div`
   position: relative;
@@ -56,27 +61,25 @@ const DropdownContent = styled.div`
 `
 
 function ItemFilter({ inventoryItems, onFilterChange, attributes }) {
+  const { filterState, setFilterState } = useFilters()
+  const isMobileView = useMobileView()
+
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([])
   const [selectedAttributes, setSelectedAttributes] = useState({})
 
-  // Creating an array of null values based on the length of attributes
-  const attributeDropdownRefs = useRef(Array(attributes.length).fill(null))
-    .current // Mapping over the array of null values to create refs
-    .map(() => useRef(null))
-
+  const attributeDropdownRefs = useRef(
+    Array(attributes.length).fill(null)
+  ).current.map(() => useRef(null))
   const [priceRanges, setPriceRanges] = useState([])
 
   const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false)
   const [isAttributeDropdownOpen, setIsAttributeDropdownOpen] = useState({})
-
   const [isSticky, setIsSticky] = useState(false)
 
-  // Ref for the dropdown container to handle clicks outside the dropdown
   const dropdownPriceRef = useRef(null)
 
   const togglePriceDropdown = () => {
     setIsPriceDropdownOpen((prevState) => !prevState)
-    // Close all attribute dropdowns when opening the price dropdown
     setIsAttributeDropdownOpen({})
   }
 
@@ -91,14 +94,11 @@ function ItemFilter({ inventoryItems, onFilterChange, attributes }) {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll)
-
-    // Clean up the event listener when the component unmounts
     return () => {
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
 
-  // Close the dropdowns when clicking outside
   function handleClickOutside(event) {
     const allDropdownRefs = [dropdownPriceRef, ...attributeDropdownRefs].map(
       (ref) => ref.current
@@ -125,6 +125,13 @@ function ItemFilter({ inventoryItems, onFilterChange, attributes }) {
     setPriceRanges(uniquePriceRanges)
   }, [inventoryItems])
 
+  useEffect(() => {
+    console.log(
+      "Attribute dropdown states:",
+      filterState.isAttributeDropdownOpen
+    ) // Check state updates
+  }, [filterState.isAttributeDropdownOpen])
+
   const predefinedPriceRanges = [
     "$25 - $49.99",
     "$50 - $74.99",
@@ -139,20 +146,13 @@ function ItemFilter({ inventoryItems, onFilterChange, attributes }) {
     "$1250 - $1499.99",
     "$1500 - $1749.99",
   ]
-
   const togglePriceRangeSelection = (priceRange) => {
-    const updatedSelectedPriceRanges = [...selectedPriceRanges]
-
-    if (selectedPriceRanges.includes(priceRange)) {
-      updatedSelectedPriceRanges.splice(
-        updatedSelectedPriceRanges.indexOf(priceRange),
-        1
-      )
-    } else {
-      updatedSelectedPriceRanges.push(priceRange)
-    }
-
-    setSelectedPriceRanges(updatedSelectedPriceRanges)
+    setFilterState((prev) => ({
+      ...prev,
+      selectedPriceRanges: prev.selectedPriceRanges.includes(priceRange)
+        ? prev.selectedPriceRanges.filter((pr) => pr !== priceRange)
+        : [...prev.selectedPriceRanges, priceRange],
+    }))
   }
 
   // Toggle the state for a specific attribute dropdown
@@ -175,43 +175,39 @@ function ItemFilter({ inventoryItems, onFilterChange, attributes }) {
   }
 
   const toggleAttributeSelection = (attributeType, attributeValue) => {
-    setSelectedAttributes((prevSelectedAttributes) => {
-      const updatedSelectedAttributes = { ...prevSelectedAttributes }
-      const isSelected =
-        updatedSelectedAttributes[attributeType]?.includes(attributeValue)
-
-      updatedSelectedAttributes[attributeType] = isSelected
-        ? updatedSelectedAttributes[attributeType].filter(
-            (value) => value !== attributeValue
-          )
-        : [...(updatedSelectedAttributes[attributeType] || []), attributeValue]
-
-      return updatedSelectedAttributes
-    })
+    setFilterState((prev) => ({
+      ...prev,
+      selectedAttributes: {
+        ...prev.selectedAttributes,
+        [attributeType]: prev.selectedAttributes[attributeType]?.includes(
+          attributeValue
+        )
+          ? prev.selectedAttributes[attributeType].filter(
+              (val) => val !== attributeValue
+            )
+          : [...(prev.selectedAttributes[attributeType] || []), attributeValue],
+      },
+    }))
   }
 
-  const isAttributeSelected = (attributeType, attributeValue) => {
-    return (
-      selectedAttributes[attributeType] &&
-      selectedAttributes[attributeType].includes(attributeValue)
-    )
-  }
+  const isAttributeSelected = (attributeType, attributeValue) =>
+    filterState.selectedAttributes[attributeType]?.includes(attributeValue)
 
   const filterItems = () => {
     let filteredItems = [...inventoryItems]
 
     // Filter by selected price ranges
-    if (selectedPriceRanges.length > 0) {
+    if (filterState.selectedPriceRanges.length > 0) {
       filteredItems = filteredItems.filter((item) =>
-        selectedPriceRanges.some((selectedRange) =>
+        filterState.selectedPriceRanges.some((selectedRange) =>
           isItemInPriceRange(item, selectedRange)
         )
       )
     }
 
     // Filter items based on selected attributes
-    for (const attributeType in selectedAttributes) {
-      const selectedValues = selectedAttributes[attributeType]
+    for (const attributeType in filterState.selectedAttributes) {
+      const selectedValues = filterState.selectedAttributes[attributeType]
       if (selectedValues.length > 0) {
         filteredItems = filteredItems.filter((item) =>
           item.attributes.some(
@@ -223,21 +219,46 @@ function ItemFilter({ inventoryItems, onFilterChange, attributes }) {
       }
     }
 
-    // Only reset the filters if they are currently set and inventoryItems is not empty
-    if (
-      filteredItems.length === 0 &&
-      inventoryItems.length > 0 &&
-      (selectedPriceRanges.length > 0 ||
-        Object.keys(selectedAttributes).length > 0)
-    ) {
-      // If there are no filtered items, reset the filters
-      setSelectedPriceRanges([])
-      setSelectedAttributes({})
+    if (filteredItems.length === 0 && inventoryItems.length > 0) {
+      // If no items meet the filter criteria, reset the filters
+      setFilterState((prev) => ({
+        ...prev,
+        selectedPriceRanges: [],
+        selectedAttributes: {},
+      }))
+      // And show a message to the user
+      toast(
+        "We couldn't find any products with those filters. Your filters have been reset.",
+        {
+          duration: 4000,
+          style: { borderLeft: "5px solid #fdc220" },
+          icon: (
+            <FontAwesomeIcon
+              icon={faExclamationCircle}
+              style={{
+                color: "#fdc220",
+                animation:
+                  "toastZoom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
+                animationDelay: "100ms",
+              }}
+            />
+          ),
+          position: isMobileView ? "bottom-center" : "bottom-right", // Use 'bottom-center' for mobile view
+        }
+      )
+    } else {
+      onFilterChange(filteredItems) // Update the display based on filtered items
     }
-
-    onFilterChange(filteredItems)
-    //console.log("Filtered Items:", filteredItems);
   }
+
+  // Listen for changes in filter selections and reapply filters
+  useEffect(() => {
+    filterItems()
+  }, [
+    filterState.selectedPriceRanges,
+    filterState.selectedAttributes,
+    inventoryItems,
+  ])
 
   const isItemInPriceRange = (item, priceRange) => {
     const [minPrice, maxPrice] = priceRange
@@ -262,7 +283,10 @@ function ItemFilter({ inventoryItems, onFilterChange, attributes }) {
   return (
     <div className={containerClass}>
       {attributes.map((attribute, index) => (
-        <Container key={index} ref={attributeDropdownRefs[index]}>
+        <Container
+          key={attribute.attribute_type}
+          ref={attributeDropdownRefs[index]}
+        >
           <DropdownButton
             onClick={() => {
               toggleAttributeDropdown(attribute.attribute_type)
