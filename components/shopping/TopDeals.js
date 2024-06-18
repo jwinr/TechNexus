@@ -51,11 +51,15 @@ const TopDeals = () => {
   const [deals, setDeals] = useState([])
 
   useEffect(() => {
-    fetch(`/api/deals`)
+    fetch(`/api/deals`, {
+      headers: {
+        "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+      },
+    })
       .then((response) => response.json())
       .then((data) => setDeals(data))
       .catch((error) => console.error("Error fetching deals:", error))
-  }, []) // The empty dependency array ensures the effect runs only once
+  }, [])
 
   const loveDeals = deals.filter((deal) => deal.category === "deals_love")
 

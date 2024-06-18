@@ -49,20 +49,19 @@ const ProductReviews = ({ reviews }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
         },
         body: JSON.stringify({ reviewId, voteType: type }),
       })
 
       if (response.ok) {
         console.log("Vote recorded successfully")
-        // Perform additional actions after successful voting if needed
+        // Perform additional actions after successful voting..
       } else {
         console.error("Failed to record vote")
-        // Handle the error accordingly
       }
     } catch (error) {
       console.error("Error:", error)
-      // Handle any fetch-related errors
     }
   }
 

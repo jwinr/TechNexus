@@ -1,4 +1,3 @@
-// pages/api/categories.js
 import pool from "./db.js"
 
 export default async (req, res) => {

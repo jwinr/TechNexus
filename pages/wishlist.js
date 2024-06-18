@@ -59,7 +59,11 @@ const Wishlist = () => {
 
   useEffect(() => {
     if (userAttributes) {
-      fetch(`/api/wishlist?cognitoSub=${userAttributes.sub}`)
+      fetch(`/api/wishlist?cognitoSub=${userAttributes.sub}`, {
+        headers: {
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+        },
+      })
         .then((response) => response.json())
         .then((data) => setWishlist(data))
     }
@@ -71,6 +75,7 @@ const Wishlist = () => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
         },
         body: JSON.stringify({
           cognitoSub: userAttributes.sub,

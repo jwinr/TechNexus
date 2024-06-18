@@ -33,7 +33,11 @@ const BrandGrid = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/brands")
+        const response = await fetch("/api/brands", {
+          headers: {
+            "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+          },
+        })
         if (response.ok) {
           const data = await response.json()
           setBrandsData(data)

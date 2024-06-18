@@ -51,12 +51,22 @@ export default function CategoryPage() {
   // Fetch category data with pagination
   const fetchCategoryData = (page) => {
     setLoading(true)
-    fetch(`/api/categories/${slug}?page=${page}&limit=${productsPerPage}`)
+    fetch(`/api/categories/${slug}?page=${page}&limit=${productsPerPage}`, {
+      headers: {
+        "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+      },
+    })
       .then((response) => {
         if (response.ok) {
           return response.json()
-        } else {
+        } else if (response.status === 429) {
+          throw new Error(
+            "You've made too many requests in a short period. Please try again later."
+          )
+        } else if (response.status === 404) {
           throw new Error("Category not found")
+        } else {
+          throw new Error("An unexpected error occurred.")
         }
       })
       .then((data) => {
@@ -66,6 +76,7 @@ export default function CategoryPage() {
       })
       .catch((error) => {
         console.error("Error fetching category data:", error)
+        setError(error.message) // Set an error state to display to the user
         setLoading(false)
       })
   }

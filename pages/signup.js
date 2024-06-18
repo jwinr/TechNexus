@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import { signUp } from "aws-amplify/auth"
-import * as Styled from "../components/auth/SignStyles"
 import styled from "styled-components"
 import { useRouter } from "next/router"
 import PasswordToggle from "../components/common/PasswordToggle.js"

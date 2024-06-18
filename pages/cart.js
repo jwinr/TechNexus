@@ -212,7 +212,12 @@ const Cart = () => {
       try {
         if (userAttributes) {
           const response = await fetch(
-            `/api/cart?cognitoSub=${userAttributes.sub}`
+            `/api/cart?cognitoSub=${userAttributes.sub}`,
+            {
+              headers: {
+                "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+              },
+            }
           )
           const data = await response.json()
           setCart(
@@ -224,7 +229,11 @@ const Cart = () => {
             const productIds = localCart
               .map((item) => item.product_id)
               .join(",")
-            const response = await fetch(`/api/cart?productIds=${productIds}`)
+            const response = await fetch(`/api/cart?productIds=${productIds}`, {
+              headers: {
+                "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+              },
+            })
             const data = await response.json()
             const detailedCart = localCart.map((item) => ({
               ...item,
@@ -251,6 +260,7 @@ const Cart = () => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
           },
           body: JSON.stringify({ cognitoSub: userAttributes.sub, productId }),
         })
@@ -310,6 +320,7 @@ const Cart = () => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
           },
           body: JSON.stringify({
             cognitoSub: userAttributes.sub,

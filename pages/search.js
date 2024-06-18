@@ -290,7 +290,12 @@ export async function getServerSideProps(context) {
 
     // Fetch search results based on the encoded query
     const response = await fetch(
-      `http://localhost:3000/api/search?query=${encodedQuery}`
+      `http://localhost:3000/api/search?query=${encodedQuery}`,
+      {
+        headers: {
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+        },
+      }
     )
 
     if (!response.ok) {

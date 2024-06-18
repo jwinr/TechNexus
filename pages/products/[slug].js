@@ -560,7 +560,11 @@ function ProductDetails() {
     // Fetch product details by slug from the API route
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`/api/products/${slug}`)
+        const response = await fetch(`/api/products/${slug}`, {
+          headers: {
+            "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+          },
+        })
 
         if (response.ok) {
           const data = await response.json()
