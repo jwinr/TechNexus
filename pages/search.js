@@ -8,14 +8,14 @@ import LoaderDots from "../components/common/LoaderDots"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
 import toast from "react-hot-toast"
-import { useMobileView } from "../../utils/MobileViewDetector"
+import { useMobileView } from "../../context/MobileViewContext"
 import ErrorBoundary from "../components/common/ErrorBoundary"
+import PropFilter from "../utils/PropFilter"
+
+const divFilter = PropFilter("div")
 
 // Lazy-loaded components
 const ItemFilter = React.lazy(() => import("../components/items/ItemFilter"))
-const CategorizedItems = React.lazy(() =>
-  import("../components/items/CategorizedItemsContainer")
-)
 const Pagination = React.lazy(() => import("../components/common/Pagination"))
 
 const SearchGridContainer = styled.div`
@@ -28,6 +28,21 @@ const SearchGridContainer = styled.div`
     "items items items"
     "items items items"
     "pagination pagination pagination";
+`
+
+const CategorizedItemsContainer = styled(divFilter(["isVisible"]))`
+  display: grid;
+  grid-area: items;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 35px;
+  padding: 5px 75px 0px 75px;
+  transition: opacity 0.3s ease-in-out;
+  opacity: ${(props) => (props.isVisible ? 1 : 0)};
+  z-index: 100;
+
+  @media (max-width: 768px) {
+    max-width: 100vw;
+  }
 `
 
 const SearchSortPanel = styled.div`
@@ -239,7 +254,7 @@ const SearchResultsPage = ({ productQuery }) => {
           onFilterChange={handleFilterChange}
           attributes={productQuery.attributes || []} // Provide a default empty array
         />
-        <CategorizedItems isVisible={showFilteredItems}>
+        <CategorizedItemsContainer isVisible={showFilteredItems}>
           {isFilterActive
             ? currentProducts.map((item) => (
                 <ListItem
@@ -265,7 +280,7 @@ const SearchResultsPage = ({ productQuery }) => {
                   id={item.product_id}
                 />
               ))}
-        </CategorizedItems>
+        </CategorizedItemsContainer>
         <React.Suspense fallback={<LoaderDots />}>
           <ErrorBoundary>
             <Pagination

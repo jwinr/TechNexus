@@ -133,22 +133,6 @@ const Home = () => {
           <BrandGrid />
         </Section>
         <Section>
-          <AnimatedCatTitle
-            ref={catTitleRef}
-            className={`${initialLoad ? "initial-hidden" : ""} ${
-              inView ? "in-view" : ""
-            }`}
-          >
-            Shop by Category
-          </AnimatedCatTitle>
-          <CategoryNavigation
-            ref={catNavRef}
-            className={`${initialLoad ? "initial-hidden" : ""} ${
-              catNavInView ? "in-view" : ""
-            }`}
-          />
-        </Section>
-        <Section>
           <SecondaryHeroBanner
             ref={secHeroRef}
             className={`${secHeroInView ? "in-view" : ""}`}
@@ -160,6 +144,22 @@ const Home = () => {
         <Section>
           <Title>Deals You'll Love</Title>
           <TopDeals />
+        </Section>
+        <Section>
+          <AnimatedCatTitle
+            ref={catTitleRef}
+            className={`${initialLoad ? "initial-hidden" : ""} ${
+              inView ? "in-view" : ""
+            }`}
+          >
+            Featured categories
+          </AnimatedCatTitle>
+          <CategoryNavigation
+            ref={catNavRef}
+            className={`${initialLoad ? "initial-hidden" : ""} ${
+              catNavInView ? "in-view" : ""
+            }`}
+          />
         </Section>
         <Section>
           <NewsletterSignup />

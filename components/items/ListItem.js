@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react"
 import Link from "next/link"
-import Image from "../common/Image"
+import Image from "next/image"
 import AddToCartButton from "../shopping/AddToCartButton"
 import styled from "styled-components"
-import StarRatings from "../shopping/StarRatings"
+import StarRatings from "../review-stars/StarRatings"
 import { LiaTruckMovingSolid } from "react-icons/lia"
 import { LiaBookmark } from "react-icons/lia"
 import { UserContext } from "../../context/UserContext"
@@ -140,7 +140,7 @@ const ListItem = ({
       <Link href={`${link}`}>
         <Container>
           <ItemWrapper>
-            <Image alt={title} src={imageUrl} className="item-image-shrink" />
+            <img alt={title} src={imageUrl} className="item-image-shrink" />
           </ItemWrapper>
         </Container>
       </Link>

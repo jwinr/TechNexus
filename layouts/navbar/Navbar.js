@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { useRouter } from "next/router"
 import styled from "styled-components"
-import BannerLogo from "../../assets/images/logos/banner-logo.svg"
+import BannerLogo from "../../public/images/logo.svg"
 import CategoryDropdown from "../navbar/CategoryDropdown"
-import ProductSearchBar from "../../components/products/ProductSearchBar"
+import SearchBar from "./SearchBar"
 import CartLink from "../../components/shopping/CartLink"
 import UserDropdown from "../navbar/UserDropdown"
 
@@ -86,7 +86,7 @@ const Navbar = ({ openDropdown, handleToggle }) => {
             isOpen={openDropdown === "category"}
             onToggle={() => handleToggle("category")}
           />
-          <ProductSearchBar />
+          <SearchBar />
           <UserDropdown
             isOpen={openDropdown === "user"}
             onToggle={() => handleToggle("user")}

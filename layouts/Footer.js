@@ -8,7 +8,7 @@ import {
   RiInstagramLine,
   RiYoutubeFill,
 } from "react-icons/ri"
-import LogoSymbol from "../assets/images/logos/logo_dark.svg"
+import LogoSymbol from "../public/images/logo_dark.svg"
 import { GoChecklist, GoShieldCheck } from "react-icons/go"
 
 const FooterContainer = styled.footer`

@@ -47,6 +47,7 @@ yarn-error.log*
 
 # local content
 /assets/images/
+/public/images/
 /pages/api/categories/*.js
 /pages/api/products/*.js
 /pages/api/search.js

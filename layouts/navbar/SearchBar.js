@@ -12,7 +12,7 @@ const InputForm = styled.form`
   align-items: center;
 `
 
-const SearchBar = styled.div`
+const SearchBarContainer = styled.div`
   position: relative;
   display: flex;
   width: 100%;
@@ -78,7 +78,7 @@ const ClearButton = styled.button`
   }
 `
 
-const ProductSearchBar = () => {
+const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const router = useRouter()
 
@@ -107,7 +107,7 @@ const ProductSearchBar = () => {
   }, [])
 
   return (
-    <SearchBar>
+    <SearchBarContainer>
       <SearchContainer>
         <InputForm onSubmit={handleSearch}>
           <SearchInput
@@ -127,8 +127,8 @@ const ProductSearchBar = () => {
           </ClearButton>
         )}
       </SearchContainer>
-    </SearchBar>
+    </SearchBarContainer>
   )
 }
 
-export default ProductSearchBar
+export default SearchBar

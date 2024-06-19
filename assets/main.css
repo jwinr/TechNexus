@@ -1,0 +1,218 @@
+/* General Styles */
+
+@import "preflight.css";
+
+:root {
+  --sc-color-text: #333;
+  --sc-color-text-light-gray: #595959;
+  --sc-color-white: #fff;
+  --sc-color-white-highlight: #f7f7f7;
+  --sc-color-neutral: #f6f6f9;
+  --sc-color-blue: #00599c;
+  --sc-color-blue-highlight: #0e87eb;
+  --sc-color-dark-blue: #002d62;
+  --sc-color-link-blue: #366cd9;
+  --sc-color-footer-black: #141417;
+  --sc-color-green: #008300;
+  --sc-color-border-gray: #62626c;
+  --sc-color-button-text-disabled: #666666;
+  --sc-color-button-disabled: #d6d6d6;
+  --speed: 500ms;
+}
+
+html {
+  font-size: 16px;
+  color: var(--sc-color-text);
+}
+
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.brand-filter-container {
+  background: #f3f5f8;
+  grid-area: info;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 8px 30px;
+  gap: 5px;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.brand-filter-container.sticky {
+  position: sticky;
+  top: 65px;
+  left: 15px;
+  right: 15px;
+  margin: 0;
+  z-index: 200;
+}
+
+.brand-filter-container.sticky::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right,
+      transparent 0%,
+      #b3b3b3 50%,
+      transparent 100%);
+}
+
+.breadcrumb-part {
+  display: inline-flex;
+  /* Ensure each part is on the same line */
+  align-items: center;
+}
+
+.breadcrumb-part a {
+  text-decoration: underline;
+  /* Add underline to all links */
+}
+
+.breadcrumb-part a:hover {
+  text-decoration: none;
+}
+
+.item-image-shrink {
+  max-height: 175px;
+  padding: 6px;
+}
+
+.arrow-icon {
+  font-size: 18px;
+  color: var(--sc-color-text);
+  opacity: 0;
+  /* Hide the arrow icon */
+  transform: rotate(0deg);
+  /* Initial rotation state + allows it to flip back*/
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.arrow-icon-visible {
+  font-size: 18px;
+  color: var(--sc-color-text);
+  transition: transform 0.3s ease;
+}
+
+.left-arrow-icon {
+  font-size: 30px;
+  color: var(--sc-color-text);
+}
+
+.deal-box {
+  width: 350px;
+  padding: 20px;
+  border-radius: 10px;
+  border-color: var(--sc-color-border-gray);
+  display: flex;
+  flex-direction: column;
+  background: rgb(238, 238, 238);
+  box-shadow: rgb(214, 214, 214) 0px 0px 0px 1px;
+}
+
+.deal-box h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.deal-box p {
+  font-size: 14px;
+  color: #555;
+}
+
+.rotate-arrow {
+  transition: transform 0.3s;
+  transform: rotate(180deg);
+}
+
+@keyframes toastZoom {
+  0% {
+    transform: scale(0) rotate(45deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.c-star {
+  width: var(--size, 18px);
+  height: var(--size, 18px);
+  fill: #fed94b;
+
+  &.active {
+    fill: #fed94b;
+  }
+}
+
+.c-star-h {
+  width: var(--size, 18px);
+  height: var(--size, 18px);
+
+  &.active {
+    fill: none;
+    stroke: gray;
+    stroke-width: 2px;
+  }
+}
+
+.average-rating-text {
+  padding: 0 5px;
+}
+
+.go3958317564 {
+  /* Override the hot toast notif text */
+  justify-content: flex-start !important;
+  margin: 5px 10px !important;
+}
+
+/* CSSTransition classes for the category dropdown */
+
+.menu-primary-enter {
+  position: absolute;
+  transform: translateX(-110%);
+}
+
+.menu-primary-enter-active {
+  transform: translateX(0%);
+  transition: all var(--speed) ease;
+}
+
+.menu-primary-exit {
+  position: absolute;
+}
+
+.menu-primary-exit-active {
+  transform: translateX(-110%);
+  transition: all var(--speed) ease;
+}
+
+.menu-secondary-enter {
+  transform: translateX(110%);
+}
+
+.menu-secondary-enter-active {
+  transform: translateX(0%);
+  transition: all var(--speed) ease;
+}
+
+.menu-secondary-exit {
+  display: inherit;
+}
+
+.menu-secondary-exit-active {
+  transform: translateX(110%);
+  transition: all var(--speed) ease;
+}

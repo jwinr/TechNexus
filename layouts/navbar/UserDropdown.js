@@ -8,7 +8,7 @@ import React, {
 import { UserContext } from "../../context/UserContext"
 import styled from "styled-components"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
-import AccountIcon from "../../assets/images/icons/account.svg"
+import AccountIcon from "../../public/images/icons/account.svg"
 import { CSSTransition } from "react-transition-group"
 import Link from "next/link"
 import Backdrop from "./Backdrop"

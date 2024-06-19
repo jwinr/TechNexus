@@ -4,16 +4,16 @@ import styled from "styled-components"
 import Head from "next/head"
 import Breadcrumb from "../../components/common/Breadcrumb"
 import ListItem from "../../components/items/ListItem"
-import LoaderDots from "../../components/common/LoaderDots"
+import LoaderDots from "../../components/loaders/LoaderDots"
 import { useMobileView } from "../../utils/MobileViewDetector"
 import ErrorBoundary from "../../components/common/ErrorBoundary"
 import { useFilters } from "../../context/FilterContext"
+import PropFilter from "../../utils/PropFilter"
+
+const divFilter = PropFilter("div")
 
 // Lazy-loaded components
 const ItemFilter = lazy(() => import("../../components/items/ItemFilter"))
-const CategorizedItems = lazy(() =>
-  import("../../components/items/CategorizedItemsContainer")
-)
 const Pagination = lazy(() => import("../../components/common/Pagination"))
 
 const CategoryGridContainer = styled.div`
@@ -26,6 +26,21 @@ const CategoryGridContainer = styled.div`
     "items items items"
     "items items items"
     "pagination pagination pagination";
+`
+
+const CategorizedItemsContainer = styled(divFilter(["isVisible"]))`
+  display: grid;
+  grid-area: items;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 35px;
+  padding: 5px 75px 0px 75px;
+  transition: opacity 0.3s ease-in-out;
+  opacity: ${(props) => (props.isVisible ? 1 : 0)};
+  z-index: 100;
+
+  @media (max-width: 768px) {
+    max-width: 100vw;
+  }
 `
 
 const TitleWrapper = styled.div`
@@ -80,7 +95,6 @@ export default function CategoryPage() {
       })
       .catch((error) => {
         console.error("Error fetching category data:", error)
-        setError(error.message) // Set an error state to display to the user
         setLoading(false)
       })
   }
@@ -177,7 +191,7 @@ export default function CategoryPage() {
         </Suspense>
         <Suspense fallback={<LoaderDots />}>
           <ErrorBoundary>
-            <CategorizedItems isVisible={true}>
+            <CategorizedItemsContainer isVisible={true}>
               {(isFilterActive ? filteredItems : categoryData.products).map(
                 (item) => (
                   <ListItem
@@ -192,7 +206,7 @@ export default function CategoryPage() {
                   />
                 )
               )}
-            </CategorizedItems>
+            </CategorizedItemsContainer>
           </ErrorBoundary>
         </Suspense>
         <Suspense fallback={<LoaderDots />}>

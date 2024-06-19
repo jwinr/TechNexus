@@ -1,5 +1,5 @@
 import React from "react"
-import StarSymbol from "../../assets/images/icons/star.svg"
+import StarSymbol from "../../public/images/icons/star.svg"
 
 function HalfFilledStar({ fractionalPart }) {
   const clipWidth = 34 * fractionalPart // Calculate the width of the clip path based on the fractional part

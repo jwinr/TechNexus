@@ -6,7 +6,7 @@ import { useFilters } from "../../context/FilterContext"
 import toast from "react-hot-toast"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
-import { useMobileView } from "../../utils/MobileViewDetector"
+import { useMobileView } from "../../context/MobileViewContext"
 
 const Container = styled.div`
   position: relative;
