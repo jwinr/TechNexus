@@ -1,7 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import Link from "next/link"
-import categoriesConfig from "../../utils/categoriesConfig"
+import CategoriesConfig from "../../utils/CategoriesConfig"
 
 const NavContainer = styled.div`
   display: flex;
@@ -86,7 +86,7 @@ const FallbackIcon = styled.div`
 const CategoryNavigation = React.forwardRef((props, ref) => {
   return (
     <NavContainer ref={ref} className={props.className}>
-      {categoriesConfig.map((category) => (
+      {CategoriesConfig.map((category) => (
         <NavLink
           key={category.id}
           href={`/categories/${category.slug}`}

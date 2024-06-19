@@ -8,15 +8,15 @@ import React, {
 import { UserContext } from "../../context/UserContext"
 import styled from "styled-components"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
-import AccountIcon from "../../public/src/images/account.svg"
+import AccountIcon from "../../assets/images/icons/account.svg"
 import { CSSTransition } from "react-transition-group"
 import Link from "next/link"
-import Backdrop from "../common/Backdrop"
+import Backdrop from "./Backdrop"
 import { signOut } from "aws-amplify/auth"
-import { filter } from "../../utils/helpers.js"
+import PropFilter from "../../utils/PropFilter"
 import { useRouter } from "next/router"
 
-const FilteredDiv = filter("div")(["isOpen"])
+const FilteredDiv = PropFilter("div")(["isOpen"])
 
 const Dropdown = styled(FilteredDiv)`
   position: absolute;
@@ -55,7 +55,7 @@ const Dropdown = styled(FilteredDiv)`
   }
 `
 
-const buttonFilter = filter("button")
+const buttonFilter = PropFilter("button")
 
 const UserButton = buttonFilter(["isOpen"])
 

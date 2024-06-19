@@ -1,7 +1,7 @@
 import React from "react"
-import FilledStar from "../common/FilledStar"
-import HalfFilledStar from "../common/HalfFilledStar"
-import EmptyStar from "../common/EmptyStar"
+import FilledStar from "./FilledStar"
+import HalfFilledStar from "./HalfFilledStar"
+import EmptyStar from "./EmptyStar"
 
 const StarRating = ({ reviews }) => {
   // Calculate the average rating
@@ -73,7 +73,7 @@ function calculateAverageRating(reviews) {
     }, 0)
 
     // Calculate the average rating for arrays
-    const averageRating = totalRating / (reviews.length * reviews[0].length) // Assuming all arrays have the same length
+    const averageRating = totalRating / (reviews.length * reviews[0].length)
     return averageRating
   } else {
     // Ratings are treated as a single array or an unknown format

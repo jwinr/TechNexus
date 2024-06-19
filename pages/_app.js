@@ -1,4 +1,4 @@
-import Layout from "../layouts/layout"
+import Layout from "../layouts/Layout"
 import React from "react"
 import { useEffect } from "react"
 import localFont from "next/font/local"
@@ -12,7 +12,7 @@ import { CartProvider } from "../context/CartContext"
 import { FilterProvider } from "../context/FilterContext"
 import ErrorBoundary from "../components/common/ErrorBoundary"
 
-const SFPro = localFont({ src: "../public/fonts/SF-Pro.ttf" })
+const SFPro = localFont({ src: "../assets/fonts/SF-Pro.ttf" })
 
 function TechNexus({ Component, pageProps, categories }) {
   return (

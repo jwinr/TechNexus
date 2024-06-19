@@ -1,8 +1,8 @@
 import React from "react"
 import styled, { keyframes } from "styled-components"
-import { filter } from "../../utils/helpers.js"
+import PropFilter from "../../utils/PropFilter"
 
-const divFilter = filter("div")
+const divFilter = PropFilter("div")
 
 const spin = keyframes`
     0% {

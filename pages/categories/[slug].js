@@ -3,7 +3,6 @@ import { useRouter } from "next/router"
 import styled from "styled-components"
 import Head from "next/head"
 import Breadcrumb from "../../components/common/Breadcrumb"
-import CategoryTitle from "../../components/categories/CategoryTitle"
 import ListItem from "../../components/items/ListItem"
 import LoaderDots from "../../components/common/LoaderDots"
 import { useMobileView } from "../../utils/MobileViewDetector"
@@ -33,6 +32,11 @@ const TitleWrapper = styled.div`
   display: flex;
   padding: 0px 30px;
   grid-area: title;
+
+  h1 {
+    font-size: 34px;
+    font-weight: 600;
+  }
 `
 
 export default function CategoryPage() {
@@ -160,7 +164,7 @@ export default function CategoryPage() {
       <Breadcrumb title={categoryData.name} />
       <CategoryGridContainer>
         <TitleWrapper>
-          <CategoryTitle title={categoryData.name} />
+          <h1>{categoryData.name}</h1>
         </TitleWrapper>
         <Suspense fallback={<LoaderDots />}>
           <ErrorBoundary>

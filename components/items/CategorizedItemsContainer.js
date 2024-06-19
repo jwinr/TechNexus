@@ -1,8 +1,8 @@
 import React from "react"
 import styled from "styled-components"
-import { filter } from "../../utils/helpers.js"
+import PropFilter from "../../utils/helpers/PropFilter"
 
-const divFilter = filter("div")
+const divFilter = PropFilter("div")
 
 const CategorizedItemsContainer = styled(divFilter(["isVisible"]))`
   display: grid;

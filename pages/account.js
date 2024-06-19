@@ -4,7 +4,7 @@ import { signOut } from "aws-amplify/auth"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 import Image from "next/image"
-import LogoSymbol from "../public/logo_n.png"
+import LogoSymbol from "../assets/images/logos/logo_n.png"
 
 const AccountContainer = styled.div`
   max-width: 800px;

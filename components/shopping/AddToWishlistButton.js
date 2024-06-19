@@ -2,7 +2,8 @@ import React, { useContext } from "react"
 import styled, { keyframes, css } from "styled-components"
 import { GoBookmarkFill } from "react-icons/go"
 import { UserContext } from "../../context/UserContext"
-import { filter } from "../../utils/helpers.js"
+import LoaderBtnSpin from "../loaders/LoaderBtnSpin"
+import PropFilter from "../../utils/PropFilter"
 
 const Container = styled.div`
   width: 100%;
@@ -10,7 +11,7 @@ const Container = styled.div`
   max-width: 480px;
 `
 
-const buttonFilter = filter("button")
+const buttonFilter = PropFilter("button")
 
 const Button = styled(buttonFilter(["isLoading"]))`
   align-items: center;
@@ -54,27 +55,6 @@ const Button = styled(buttonFilter(["isLoading"]))`
         background-color: var(--sc-color-button-disabled) !important;
       }
     `}
-`
-
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`
-
-const LoadingSpinner = styled.div`
-  width: 25px;
-  height: 25px;
-  border-color: var(--sc-color-white);
-  border-width: 3px;
-  border-left-color: var(--sc-color-button-text-disabled);
-  border-radius: 40px;
-  border-style: solid;
-  font-size: 0;
-  animation: ${rotate} 2s 0.25s linear infinite;
 `
 
 export default function AddToWishlistButton({ productId }) {

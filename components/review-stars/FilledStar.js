@@ -1,7 +1,5 @@
-// FilledStar.js
-
 import React from "react"
-import StarSymbol from "./StarSymbol"
+import StarSymbol from "../../assets/images/icons/star.svg"
 
 function FilledStar() {
   return (

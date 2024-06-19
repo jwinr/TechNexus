@@ -5,10 +5,10 @@ import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
 import { useMobileView } from "../../utils/MobileViewDetector"
 import { FiMenu } from "react-icons/fi"
 import Link from "next/link"
-import Backdrop from "../common/Backdrop"
-import { filter } from "../../utils/helpers.js"
+import Backdrop from "./Backdrop"
+import PropFilter from "../../utils/PropFilter"
 import { useRouter } from "next/router.js"
-import categoriesConfig from "../../utils/categoriesConfig"
+import CategoriesConfig from "../../utils/CategoriesConfig"
 
 const Dropdown = styled.div`
   position: absolute;
@@ -45,7 +45,7 @@ const Dropdown = styled.div`
   }
 `
 
-const buttonFilter = filter("button")
+const buttonFilter = PropFilter("button")
 
 const CategoryButton = buttonFilter(["isOpen"])
 
@@ -166,7 +166,7 @@ const CategoryDropdown = ({ isOpen: parentIsOpen, onToggle }) => {
     <NavItem isOpen={isMounted && parentIsOpen} onToggle={onToggle}>
       <DropdownMenu
         isOpen={isMounted && parentIsOpen}
-        categories={categoriesConfig}
+        categories={CategoriesConfig}
       />
     </NavItem>
   )
@@ -371,7 +371,7 @@ function DropdownMenu({
   }
 
   const getSubCategories = (parentId) => {
-    const category = categoriesConfig.find(
+    const category = CategoriesConfig.find(
       (category) => category.id === parentId
     )
     return category ? category.subCategories || [] : []
@@ -394,7 +394,7 @@ function DropdownMenu({
       >
         <Menu>
           <ListHeader>All Categories</ListHeader>
-          {categoriesConfig.map((category) => (
+          {CategoriesConfig.map((category) => (
             <DropdownItem
               key={category.id}
               goToMenu={
@@ -419,7 +419,7 @@ function DropdownMenu({
         </Menu>
       </CSSTransition>
 
-      {categoriesConfig.map((category) => (
+      {CategoriesConfig.map((category) => (
         <CSSTransition
           key={category.id}
           in={activeMenu === category.id}

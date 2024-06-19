@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react"
-import CartIcon from "../../public/src/images/cart.svg"
+import CartIcon from "../../assets/images/icons/cart.svg"
 import Link from "next/link"
 import styled from "styled-components"
 import { CartContext } from "../../context/CartContext"

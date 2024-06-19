@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import Head from "next/head"
 import Breadcrumb from "../components/common/Breadcrumb"
-import CategoryTitle from "../components/categories/CategoryTitle"
 import ListItem from "../components/items/ListItem"
 import LoaderDots from "../components/common/LoaderDots"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -59,6 +58,11 @@ const TitleWrapper = styled.div`
   display: flex;
   padding: 0px 30px;
   grid-area: title;
+
+  h1 {
+    font-size: 34px;
+    font-weight: 600;
+  }
 `
 
 const SearchResultsPage = ({ productQuery }) => {
@@ -209,7 +213,7 @@ const SearchResultsPage = ({ productQuery }) => {
       <Breadcrumb title={capitalizedQuery} />
       <SearchGridContainer>
         <TitleWrapper>
-          <CategoryTitle title="Search Results" />
+          <h1>Search Results</h1>
         </TitleWrapper>
         <SearchSortPanel>
           <TotalItems>

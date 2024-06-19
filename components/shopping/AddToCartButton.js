@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react"
 import { CartContext } from "../../context/CartContext"
 import styled from "styled-components"
-import LoaderBtnSpin from "../common/LoaderBtnSpin"
-import { filter } from "../../utils/helpers.js"
+import LoaderBtnSpin from "../loaders/LoaderBtnSpin"
+import PropFilter from "../../utils/PropFilter"
 
-const spanFilter = filter("span")
+const spanFilter = PropFilter("span")
 
 const Button = styled.button`
   position: relative; // Allow the loader to be positioned absolutely within the button

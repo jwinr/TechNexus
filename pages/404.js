@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import Head from "next/head"
 import Image from "next/image"
-import LogoSymbol from "../public/logo_n.png"
+import LogoSymbol from "../assets/images/logos/logo_n.png"
 import { useRouter } from "next/router"
 
 const NotFoundWrapper = styled.div`

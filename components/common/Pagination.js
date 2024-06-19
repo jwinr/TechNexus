@@ -1,9 +1,9 @@
 import React, { useEffect } from "react"
 import styled, { css } from "styled-components"
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
-import { filter } from "../../utils/helpers.js"
+import PropFilter from "../../utils/helpers/PropFilter"
 
-const buttonFilter = filter("button")
+const buttonFilter = PropFilter("button")
 
 const PaginationWrapper = styled.div`
   display: flex;

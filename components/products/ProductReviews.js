@@ -1,7 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import VoteButton from "./VoteButton"
-import StarRating from "../shopping/StarRatings"
+import StarRating from "../review-stars/StarRatings"
 
 const Container = styled.div`
   grid-area: reviews;

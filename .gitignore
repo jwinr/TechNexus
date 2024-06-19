@@ -46,14 +46,14 @@ yarn-error.log*
 .serverless_nextjs
 
 # local content
-public/src/images/
+/assets/images/
 /pages/api/categories/*.js
 /pages/api/products/*.js
 /pages/api/search.js
 src/amplifyconfiguration.json
 src/aws-exports.js
 amplify/
-utils/categoriesConfig.js
+utils/CategoriesConfig.js
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend

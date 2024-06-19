@@ -2,17 +2,16 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { useContext } from "react"
-import SaveItem from "../../components/shopping/SaveItem"
-import Image from "../../components/common/Image"
+import Image from "next/image"
 import Breadcrumb from "../../components/common/Breadcrumb"
-import StarRating from "../../components/shopping/StarRatings"
+import StarRating from "../../components/review-stars/StarRatings"
 import ProductSpecifications from "../../components/products/ProductSpecifications"
 import ProductReviews from "../../components/products/ProductReviews"
 import ProductHighlights from "../../components/products/ProductHighlights"
 import styled, { keyframes } from "styled-components"
 import { Accordion, AccordionItem as Item } from "@szhsin/react-accordion"
-import ChevronDown from "../../public/chevron-down.svg"
-import LoaderDots from "../../components/common/LoaderDots"
+import ChevronDown from "../../assets/images/icons/chevron-down.svg"
+import LoaderDots from "../../components/loaders/LoaderDots"
 import ProductInclusions from "../../components/products/ProductInclusions"
 import QuantityPicker from "../../components/shopping/QuantityPicker"
 import ShippingInfo from "../../components/shopping/ShippingInfo"
@@ -626,7 +625,7 @@ function ProductDetails() {
                     setHoveredImage(image.image_url)
                   }}
                 >
-                  <Image
+                  <img
                     src={image.image_url}
                     alt={`Product Thumbnail ${index} - ${product.name}`}
                   />

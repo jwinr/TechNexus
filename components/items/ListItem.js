@@ -3,10 +3,7 @@ import Link from "next/link"
 import Image from "../common/Image"
 import AddToCartButton from "../shopping/AddToCartButton"
 import styled from "styled-components"
-import ItemTitle from "../items/ItemTitle"
-import ItemPrice from "../items/ItemPrice"
-import ItemBrand from "../items/ItemBrand"
-import ItemRating from "../items/ItemRating"
+import StarRatings from "../shopping/StarRatings"
 import { LiaTruckMovingSolid } from "react-icons/lia"
 import { LiaBookmark } from "react-icons/lia"
 import { UserContext } from "../../context/UserContext"
@@ -148,15 +145,15 @@ const ListItem = ({
         </Container>
       </Link>
       <Link href={`${link}`}>
-        <ItemTitle title={title} />
+        <h1>{title}</h1>
       </Link>
       <Details>
-        <ItemBrand brand={brand} />
+        <h1>{brand}</h1>
         <RatingWrapper>
-          <ItemRating reviews={rating} />
+          <StarRatings reviews={rating} />
         </RatingWrapper>
         <PriceWrapper>
-          <ItemPrice price={`$${price}`} />
+          <h1>{`$${price}`}</h1>
         </PriceWrapper>
         <Bookmark onClick={handleAddToWishlist}>
           <LiaBookmark />
