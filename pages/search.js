@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import Head from "next/head"
 import Breadcrumb from "../components/common/Breadcrumb"
-import ListItem from "../components/items/ListItem"
+import ProductCard from "../components/products/ProductCard"
 import LoaderDots from "../components/common/LoaderDots"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons"
@@ -15,7 +15,9 @@ import PropFilter from "../utils/PropFilter"
 const divFilter = PropFilter("div")
 
 // Lazy-loaded components
-const ItemFilter = React.lazy(() => import("../components/items/ItemFilter"))
+const ProductFilters = React.lazy(() =>
+  import("../components/products/ProductFilters")
+)
 const Pagination = React.lazy(() => import("../components/common/Pagination"))
 
 const SearchGridContainer = styled.div`
@@ -249,7 +251,7 @@ const SearchResultsPage = ({ productQuery }) => {
             </SortDropdown>
           </SortText>
         </SearchSortPanel>
-        <ItemFilter
+        <ProductFilters
           inventoryItems={productQuery.products}
           onFilterChange={handleFilterChange}
           attributes={productQuery.attributes || []} // Provide a default empty array
@@ -257,7 +259,7 @@ const SearchResultsPage = ({ productQuery }) => {
         <CategorizedItemsContainer isVisible={showFilteredItems}>
           {isFilterActive
             ? currentProducts.map((item) => (
-                <ListItem
+                <ProductCard
                   key={item.product_id}
                   link={`/products/${item.slug}`}
                   title={item.name}
@@ -269,7 +271,7 @@ const SearchResultsPage = ({ productQuery }) => {
                 />
               ))
             : productQuery.products.map((item) => (
-                <ListItem
+                <ProductCard
                   key={item.product_id}
                   link={`/products/${item.slug}`}
                   title={item.name}

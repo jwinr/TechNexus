@@ -3,9 +3,9 @@ import { useRouter } from "next/router"
 import styled from "styled-components"
 import Head from "next/head"
 import Breadcrumb from "../../components/common/Breadcrumb"
-import ListItem from "../../components/items/ListItem"
+import ProductCard from "../../components/products/ProductCard"
 import LoaderDots from "../../components/loaders/LoaderDots"
-import { useMobileView } from "../../utils/MobileViewDetector"
+import { useMobileView } from "../../context/MobileViewContext"
 import ErrorBoundary from "../../components/common/ErrorBoundary"
 import { useFilters } from "../../context/FilterContext"
 import PropFilter from "../../utils/PropFilter"
@@ -13,7 +13,9 @@ import PropFilter from "../../utils/PropFilter"
 const divFilter = PropFilter("div")
 
 // Lazy-loaded components
-const ItemFilter = lazy(() => import("../../components/items/ItemFilter"))
+const ProductFilters = lazy(() =>
+  import("../../components/products/ProductFilters")
+)
 const Pagination = lazy(() => import("../../components/common/Pagination"))
 
 const CategoryGridContainer = styled.div`
@@ -182,7 +184,7 @@ export default function CategoryPage() {
         </TitleWrapper>
         <Suspense fallback={<LoaderDots />}>
           <ErrorBoundary>
-            <ItemFilter
+            <ProductFilters
               inventoryItems={categoryData.products}
               onFilterChange={handleFilterChange}
               attributes={categoryData.attributes}
@@ -194,7 +196,7 @@ export default function CategoryPage() {
             <CategorizedItemsContainer isVisible={true}>
               {(isFilterActive ? filteredItems : categoryData.products).map(
                 (item) => (
-                  <ListItem
+                  <ProductCard
                     key={item.product_id}
                     link={`/products/${item.slug}`}
                     title={item.name}

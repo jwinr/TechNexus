@@ -5,23 +5,11 @@ import { resetPassword, confirmResetPassword } from "aws-amplify/auth"
 import { useRouter } from "next/router"
 import LogoSymbol from "../assets/images/logos/logo_n.png"
 import Image from "next/image"
-import PasswordToggle from "../components/common/PasswordToggle.js"
+import PasswordReveal from "../components/auth/PasswordReveal.js"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 import { IoCheckmarkCircleSharp } from "react-icons/io5"
 import LoaderDots from "../components/common/LoaderDots"
-
-// Custom error messages based on Cognito error codes
-const cognitoErrorMessages = {
-  UserNotFoundException:
-    "User does not exist. Please check your email address.",
-  NotAuthorizedException: "Incorrect email address or password.",
-  UserNotConfirmedException: "User has not been confirmed yet.",
-  CodeMismatchException: "Invalid verification code. Please try again.",
-  ExpiredCodeException:
-    "The verification code has expired. Please request a new one.",
-  LimitExceededException:
-    "You have exceeded the allowed number of login attempts. Please try again later.",
-}
+import CognitoErrorMessages from "../utils/CognitoErrorMessages"
 
 const EntryWrapper = styled.div`
   position: relative;
@@ -378,7 +366,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
       }
     } catch (error) {
       setErrorMessage(
-        cognitoErrorMessages[error.name] ||
+        CognitoErrorMessages[error.name] ||
           "An unexpected error occurred. Please try again later."
       )
     }
@@ -404,7 +392,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
       setErrorMessage("")
     } catch (error) {
       setErrorMessage(
-        cognitoErrorMessages[error.name] ||
+        CognitoErrorMessages[error.name] ||
           "An unexpected error occurred. Please try again later."
       )
     }
@@ -434,7 +422,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
       setCurrentStep("success")
     } catch (error) {
       setErrorMessage(
-        cognitoErrorMessages[error.name] ||
+        CognitoErrorMessages[error.name] ||
           "An unexpected error occurred. Please try again later."
       )
     }
@@ -630,7 +618,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
               >
                 Create password
               </Label>
-              <PasswordToggle
+              <PasswordReveal
                 onClick={() => setShowPassword(!showPassword)}
                 clicked={showPassword}
                 aria-label={showPassword ? "Hide password" : "Show password"}

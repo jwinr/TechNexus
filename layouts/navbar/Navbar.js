@@ -4,7 +4,7 @@ import styled from "styled-components"
 import BannerLogo from "../../public/images/logo.svg"
 import CategoryDropdown from "../navbar/CategoryDropdown"
 import SearchBar from "./SearchBar"
-import CartLink from "../../components/shopping/CartLink"
+import CartIcon from "./CartIcon"
 import UserDropdown from "../navbar/UserDropdown"
 
 const NavbarContainer = styled.div`
@@ -92,7 +92,7 @@ const Navbar = ({ openDropdown, handleToggle }) => {
             onToggle={() => handleToggle("user")}
             aria-label="User Menu"
           />
-          <CartLink aria-label="Shopping Cart" />
+          <CartIcon aria-label="Shopping Cart" />
         </NavbarGrid>
       </NavbarWrapper>
     </NavbarContainer>

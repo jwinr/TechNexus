@@ -2,19 +2,12 @@ import React, { useState, useEffect } from "react"
 import { signUp } from "aws-amplify/auth"
 import styled from "styled-components"
 import { useRouter } from "next/router"
-import PasswordToggle from "../components/common/PasswordToggle.js"
+import PasswordReveal from "../components/auth/PasswordReveal.js"
 import LogoSymbol from "../assets/images/logos/logo_n.png"
 import Image from "next/image"
 import Head from "next/head"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
-
-// Custom error messages based on Cognito error codes
-const cognitoErrorMessages = {
-  UsernameExistsException:
-    "An account with the given email already exists. Please use a different email.",
-  LimitExceededException:
-    "You have exceeded the allowed number of registration attempts. Please try again later.",
-}
+import CognitoErrorMessages from "../utils/CognitoErrorMessages.js"
 
 const HeaderText = styled.h1`
   font-weight: 800;
@@ -342,8 +335,8 @@ const SignUpPage = ({ toggleSignUp }) => {
       console.log("Sign-up response:", signUpResponse)
       // Navigate to another page or handle the sign-up logic
     } catch (error) {
-      if (error.name && cognitoErrorMessages[error.name]) {
-        setErrorMessage(cognitoErrorMessages[error.name])
+      if (error.name && CognitoErrorMessages[error.name]) {
+        setErrorMessage(CognitoErrorMessages[error.name])
       } else {
         setErrorMessage("An unexpected error occurred. Please try again later.")
       }
@@ -450,7 +443,7 @@ const SignUpPage = ({ toggleSignUp }) => {
                   style={!passwordValid ? invalidStyle : {}}
                   onBlur={handlePasswordBlur}
                 />
-                <PasswordToggle
+                <PasswordReveal
                   onClick={() => setShowPassword(!showPassword)}
                   clicked={showPassword}
                   aria-label={showPassword ? "Hide password" : "Show password"}

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import FilledStar from "./FilledStar"
 import HalfFilledStar from "./HalfFilledStar"
 import EmptyStar from "./EmptyStar"

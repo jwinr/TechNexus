@@ -3,7 +3,7 @@ import Head from "next/head"
 import About from "../components/hero/About"
 import BrandGrid from "../components/common/BrandGrid"
 import HeroBanner from "../components/hero/HeroBanner"
-import CategoryNavigation from "../components/common/CategoryNavigation"
+import FeaturedCategories from "../components/common/FeaturedCategories"
 import TopDeals from "../components/shopping/TopDeals"
 import NewsletterSignup from "../components/common/NewsletterSignup"
 import styled from "styled-components"
@@ -154,7 +154,7 @@ const Home = () => {
           >
             Featured categories
           </AnimatedCatTitle>
-          <CategoryNavigation
+          <FeaturedCategories
             ref={catNavRef}
             className={`${initialLoad ? "initial-hidden" : ""} ${
               catNavInView ? "in-view" : ""

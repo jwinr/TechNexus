@@ -5,7 +5,7 @@ import { fetchAuthSession } from "aws-amplify/auth"
 import { useRouter } from "next/router"
 import styled, { keyframes } from "styled-components"
 import Checkbox from "../components/common/Checkbox"
-import PasswordToggle from "../components/common/PasswordToggle.js"
+import PasswordReveal from "../components/auth/PasswordReveal.js"
 import SignUpPage from "./signup"
 import ForgotPassword from "./forgot-password.js"
 import LogoSymbol from "../assets/images/logos/logo_n.png"
@@ -13,20 +13,7 @@ import Image from "next/image"
 import Link from "next/link.js"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 import { UserContext } from "../context/UserContext"
-
-// Custom error messages based on Cognito error codes
-const cognitoErrorMessages = {
-  UserNotFoundException:
-    "User does not exist. Please check your email address.",
-  NotAuthorizedException: "Incorrect email address or password.",
-  UserNotConfirmedException: "User has not been confirmed yet.",
-  CodeMismatchException: "Invalid verification code. Please try again.",
-  ExpiredCodeException:
-    "The verification code has expired. Please request a new one.",
-  LimitExceededException:
-    "You have exceeded the allowed number of login attempts. Please try again later.",
-  UserAlreadyAuthenticatedException: "There is already a signed in user.",
-}
+import CognitoErrorMessages from "../utils/CognitoErrorMessages"
 
 const fadeIn = keyframes`
   from {
@@ -513,8 +500,8 @@ const Login = () => {
         setErrorMessage("Sign-in failed. Please try again.")
       }
     } catch (error) {
-      if (error.name && cognitoErrorMessages[error.name]) {
-        setErrorMessage(cognitoErrorMessages[error.name])
+      if (error.name && CognitoErrorMessages[error.name]) {
+        setErrorMessage(CognitoErrorMessages[error.name])
       } else {
         setErrorMessage("An unexpected error occurred. Please try again later.")
       }
@@ -611,7 +598,7 @@ const Login = () => {
               >
                 Password
               </Label>
-              <PasswordToggle
+              <PasswordReveal
                 onClick={() => setShowPassword(!showPassword)}
                 clicked={showPassword}
                 aria-label={showPassword ? "Hide password" : "Show password"}

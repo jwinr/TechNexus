@@ -1,7 +1,7 @@
 import React from "react"
 import Layout from "../layouts/Layout"
 import localFont from "next/font/local"
-import "../assets/globals.css"
+import "../assets/main.css"
 import { Amplify } from "aws-amplify"
 import amplifyconfig from "../src/amplifyconfiguration.json"
 Amplify.configure(amplifyconfig)
@@ -11,12 +11,12 @@ import { CartProvider } from "../context/CartContext"
 import { FilterProvider } from "../context/FilterContext"
 import ErrorBoundary from "../components/common/ErrorBoundary"
 
-const SFPro = localFont({ src: "../assets/fonts/SF-Pro.ttf" })
+const HelveticaNow = localFont({ src: "../assets/fonts/Helvetica-Now.ttf" })
 
 function TechNexus({ Component, pageProps, categories }) {
   return (
     <>
-      <main className={SFPro.className}>
+      <main className={HelveticaNow.className}>
         <React.StrictMode>
           <MobileViewProvider>
             <UserProvider>
