@@ -2,10 +2,10 @@ import { useState } from "react"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 import BannerLogo from "../../public/images/logo.svg"
-import CategoryDropdown from "../navbar/CategoryDropdown"
+import CategoryDropdown from "./CategoryDropdown"
 import SearchBar from "./SearchBar"
 import CartIcon from "./CartIcon"
-import UserDropdown from "../navbar/UserDropdown"
+import UserDropdown from "./UserDropdown"
 
 const NavbarContainer = styled.div`
   font-size: 16px;

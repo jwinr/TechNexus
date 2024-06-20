@@ -12,7 +12,7 @@ import styled, { keyframes } from "styled-components"
 import { Accordion, AccordionItem as Item } from "@szhsin/react-accordion"
 import ChevronDown from "../../public/images/icons/chevron-down.svg"
 import LoaderDots from "../../components/loaders/LoaderDots"
-import ProductInclusions from "../../components/products/ProductInclusions"
+import ProductIncludes from "../../components/products/ProductIncludes"
 import QuantityPicker from "../../components/shopping/QuantityPicker"
 import ShippingInfo from "../../components/shopping/ShippingInfo"
 import { IoLocationOutline } from "react-icons/io5"
@@ -840,7 +840,7 @@ function ProductDetails() {
                 <p>{product.description}</p>
               </ProductDescription>
               <ProductHighlights highlights={product.highlights} />
-              <ProductInclusions inclusions={product.inclusions} />
+              <ProductIncludes inclusions={product.inclusions} />
             </AccordionItem>
             <AccordionItem header="Specifications">
               <ProductSpecifications attributes={product.attributes} />

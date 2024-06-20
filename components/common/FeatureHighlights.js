@@ -60,7 +60,7 @@ const HeaderText = styled.div`
   font-weight: 600;
 `
 
-const About = () => {
+const FeatureHighlights = () => {
   return (
     <Container>
       <Wrapper>
@@ -114,4 +114,4 @@ const About = () => {
   )
 }
 
-export default About
+export default FeatureHighlights

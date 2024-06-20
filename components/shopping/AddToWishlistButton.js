@@ -2,7 +2,7 @@ import React, { useContext } from "react"
 import styled, { keyframes, css } from "styled-components"
 import { GoBookmarkFill } from "react-icons/go"
 import { UserContext } from "../../context/UserContext"
-import LoaderBtnSpin from "../loaders/LoaderBtnSpin"
+import LoaderSpin from "../loaders/LoaderSpin"
 import PropFilter from "../../utils/PropFilter"
 
 const Container = styled.div`

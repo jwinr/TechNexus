@@ -22,7 +22,7 @@ const spinner = keyframes`
     }
 `
 
-const LoaderSpin = styled(divFilter(["loading"]))`
+const LoaderSpinner = styled(divFilter(["loading"]))`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -49,8 +49,8 @@ const LoaderSpin = styled(divFilter(["loading"]))`
   }
 `
 
-const LoaderBtnSpin = ({ loading }) => (
-  <LoaderSpin loading={loading}>
+const LoaderSpin = ({ loading }) => (
+  <LoaderSpinner loading={loading}>
     <div
       style={{
         "--offset": "138.23007675795088",
@@ -71,7 +71,7 @@ const LoaderBtnSpin = ({ loading }) => (
       </svg>
       <slot></slot>
     </div>
-  </LoaderSpin>
+  </LoaderSpinner>
 )
 
-export default LoaderBtnSpin
+export default LoaderSpin

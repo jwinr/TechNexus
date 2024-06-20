@@ -42,7 +42,7 @@ const Divider = styled.div`
   grid-column: 2;
 `
 
-const ProductInclusions = ({ inclusions }) => {
+const ProductIncludes = ({ inclusions }) => {
   return (
     <ProductInclusionsWrapper>
       <>
@@ -65,4 +65,4 @@ const ProductInclusions = ({ inclusions }) => {
   )
 }
 
-export default ProductInclusions
+export default ProductIncludes

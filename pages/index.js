@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import Head from "next/head"
-import About from "../components/hero/About"
+import FeatureHighlights from "../components/common/FeatureHighlights"
 import BrandGrid from "../components/common/BrandGrid"
 import HeroBanner from "../components/hero/HeroBanner"
 import FeaturedCategories from "../components/common/FeaturedCategories"
@@ -139,7 +139,7 @@ const Home = () => {
           />
         </Section>
         <Section>
-          <About />
+          <FeatureHighlights />
         </Section>
         <Section>
           <Title>Deals You'll Love</Title>

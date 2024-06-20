@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react"
 import { CartContext } from "../../context/CartContext"
 import styled from "styled-components"
-import LoaderBtnSpin from "../loaders/LoaderBtnSpin"
+import LoaderSpin from "../loaders/LoaderSpin"
 import PropFilter from "../../utils/PropFilter"
 
 const spanFilter = PropFilter("span")
@@ -57,7 +57,7 @@ const AddToCartButton = ({ productId, quantity = 1 }) => {
   return (
     <Button onClick={handleAddToCart} disabled={loading}>
       <ButtonText loading={loading}>Add to Cart</ButtonText>
-      <LoaderBtnSpin loading={loading} />
+      <LoaderSpin loading={loading} />
     </Button>
   )
 }
