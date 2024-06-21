@@ -8,57 +8,97 @@ import { LiaTruckMovingSolid } from "react-icons/lia"
 import { LiaBookmark } from "react-icons/lia"
 import { UserContext } from "../../context/UserContext"
 
-const ListItemWrapper = styled.div`
-  display: grid;
-  grid-template-rows: auto 1fr auto auto auto; /* Set fixed height for each row */
-  align-content: space-between;
+const CardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   padding: 15px;
   margin-top: 10px;
   margin-bottom: 10px;
   background-color: var(--sc-color-white);
   border-radius: 8px;
   box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
-`
+  height: 100%;
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px; /* Fix the white bg overlap */
-  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
-  padding: 8px;
-  height: 218px;
-
-  &:hover {
-    background-color: var(--sc-color-white);
-    border-color: var(--sc-color-border-gray);
+  @media (max-width: 768px) {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 `
 
-const ItemWrapper = styled.div`
+const ImageWrapper = styled.div`
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 6px;
-  cursor: pointer;
+  border-radius: 8px;
+  padding: 8px;
+  height: 218px;
+
+  @media (max-width: 768px) {
+    order: 2;
+    width: 45%; /* Leaving some room for the add cart button on small displays */
+    height: auto;
+  }
 `
 
 const Title = styled.h1`
   font-size: 16px;
-  font-weight: 800;
-  color: rgb(51, 51, 51);
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: hidden;
+
+  @media (max-width: 768px) {
+    order: 1;
+    width: 100%;
+  }
 `
 
-const Price = styled.h1`
-  font-size: 28px;
-  font-weight: 500;
-`
-
-const Brand = styled.h1`
+const Brand = styled.span`
   font-size: 14px;
-  grid-area: brand;
-  display: grid;
+`
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+
+  button {
+    font-size: 12px;
+    min-height: auto;
+  }
+`
+
+const BookmarkWrapper = styled.div`
+  position: relative; // Keep the button inside of the product card
+  order: 2;
+
+  button {
+    font-size: 16px;
+  }
+`
+
+const Bookmark = styled.button`
+  padding: 10px;
+  border-radius: 50%;
+  color: var(--sc-color-text);
+  display: flex;
+  border: 1px solid var(--sc-color-border-gray);
+`
+
+const Details = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+
+  @media (max-width: 768px) {
+    order: 3;
+    width: 55%; /* Leaving some room for the add cart button on small displays */
+  }
 `
 
 const Rating = styled.h1`
@@ -66,43 +106,23 @@ const Rating = styled.h1`
   color: rgb(102, 102, 102);
 `
 
-const Bookmark = styled.button`
-  padding: 10px;
-  height: 44px;
-  font-size: 22px;
-  border-radius: 50%;
-  color: var(--sc-color-text);
-  display: flex;
-  grid-area: bookmark;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid var(--sc-color-border-gray);
-`
+const Price = styled.h1`
+  font-size: 28px;
+  font-weight: 500;
 
-const Details = styled.div`
-  display: grid;
-  grid-template-areas:
-    "brand bookmark"
-    "ratings bookmark"
-    "price price";
-  grid-template-columns: 1fr 0.1fr;
-`
-
-const RatingWrapper = styled.div`
-  display: grid;
-  grid-area: ratings;
-`
-
-const PriceWrapper = styled.div`
-  display: grid;
-  grid-area: price;
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `
 
 const ShippingContainer = styled.div`
   display: flex;
-  padding: 10px 0;
   font-size: 14px;
   align-items: center;
+
+  @media (max-width: 768px) {
+    padding: 5px 0;
+  }
 `
 
 const IconContainer = styled.div`
@@ -158,39 +178,43 @@ const ProductCard = ({
     : "/images/products/placeholder.jpg"
 
   return (
-    <ListItemWrapper>
-      <Link href={`${link}`}>
-        <Container>
-          <ItemWrapper>
-            <img alt={title} src={imageUrl} className="item-image-shrink" />
-          </ItemWrapper>
-        </Container>
-      </Link>
-      <Link href={`${link}`}>
-        <Title>{title}</Title>
-      </Link>
+    <CardContainer>
+      <ImageWrapper>
+        <Link href={`${link}`}>
+          <Image
+            alt={title}
+            src={imageUrl}
+            width={500}
+            height={500}
+            className="item-image-shrink"
+          />
+        </Link>
+      </ImageWrapper>
+      <Title>
+        <Link href={`${link}`}>{title}</Link>
+      </Title>
       <Details>
         <Brand>{brand}</Brand>
-        <RatingWrapper>
-          <Rating>
-            <StarRatings reviews={rating} />
-          </Rating>
-        </RatingWrapper>
-        <PriceWrapper>
-          <Price>{`$${price}`}</Price>
-        </PriceWrapper>
-        <Bookmark onClick={handleAddToWishlist}>
-          <LiaBookmark />
-        </Bookmark>
+        <Rating>
+          <StarRatings reviews={rating} />
+        </Rating>
+        <Price>{`$${price}`}</Price>
+        <ShippingContainer>
+          <IconContainer>
+            <LiaTruckMovingSolid />
+          </IconContainer>
+          <p>Free Shipping</p>
+        </ShippingContainer>
+        <ButtonWrapper>
+          <BookmarkWrapper>
+            <Bookmark onClick={handleAddToWishlist}>
+              <LiaBookmark />
+            </Bookmark>
+          </BookmarkWrapper>
+          <AddToCartButton productId={id} quantity={1} />
+        </ButtonWrapper>
       </Details>
-      <ShippingContainer>
-        <IconContainer>
-          <LiaTruckMovingSolid />
-        </IconContainer>
-        <p>Free Shipping</p>
-      </ShippingContainer>
-      <AddToCartButton productId={id} quantity={1} />
-    </ListItemWrapper>
+    </CardContainer>
   )
 }
 

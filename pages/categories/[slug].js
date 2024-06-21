@@ -1,4 +1,11 @@
-import React, { useEffect, useState, lazy, Suspense } from "react"
+import React, {
+  useEffect,
+  useState,
+  lazy,
+  Suspense,
+  useCallback,
+  useMemo,
+} from "react"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 import Head from "next/head"
@@ -42,6 +49,10 @@ const CategorizedItemsContainer = styled(divFilter(["isVisible"]))`
 
   @media (max-width: 768px) {
     max-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 5px;
   }
 `
 
@@ -55,6 +66,8 @@ const TitleWrapper = styled.div`
     font-weight: 600;
   }
 `
+
+const MemoizedProductCard = React.memo(ProductCard)
 
 export default function CategoryPage() {
   const router = useRouter()
@@ -70,102 +83,111 @@ export default function CategoryPage() {
   const isMobileView = useMobileView()
 
   // Fetch category data with pagination
-  const fetchCategoryData = (page) => {
-    setLoading(true)
-    fetch(`/api/categories/${slug}?page=${page}&limit=${productsPerPage}`, {
-      headers: {
-        "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json()
-        } else if (response.status === 429) {
-          throw new Error(
-            "You've made too many requests in a short period. Please try again later."
-          )
-        } else if (response.status === 404) {
-          throw new Error("Category not found")
-        } else {
-          throw new Error("An unexpected error occurred.")
-        }
+  const fetchCategoryData = useCallback(
+    (page) => {
+      setLoading(true)
+      fetch(`/api/categories/${slug}?page=${page}&limit=${productsPerPage}`, {
+        headers: {
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+        },
       })
-      .then((data) => {
-        setCategoryData(data)
-        setFilteredItems(data.products)
-        setLoading(false)
-      })
-      .catch((error) => {
-        console.error("Error fetching category data:", error)
-        setLoading(false)
-      })
-  }
+        .then((response) => {
+          if (response.ok) {
+            return response.json()
+          } else if (response.status === 429) {
+            throw new Error(
+              "You've made too many requests in a short period. Please try again later."
+            )
+          } else if (response.status === 404) {
+            throw new Error("Category not found")
+          } else {
+            throw new Error("An unexpected error occurred.")
+          }
+        })
+        .then((data) => {
+          setCategoryData(data)
+          setFilteredItems(data.products)
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.error("Error fetching category data:", error)
+          setLoading(false)
+        })
+    },
+    [slug]
+  )
 
   useEffect(() => {
     if (slug) {
       fetchCategoryData(currentPage)
     }
-  }, [slug, currentPage])
+  }, [slug, currentPage, fetchCategoryData])
+
+  const handleRouteChange = useCallback((url) => {
+    const newPage =
+      parseInt(new URL(url, window.location.origin).searchParams.get("page")) ||
+      1
+    setCurrentPage(newPage)
+  }, [])
 
   useEffect(() => {
-    // Handle browser back and forward navigation
-    const handleRouteChange = (url) => {
-      const newPage =
-        parseInt(
-          new URL(url, window.location.origin).searchParams.get("page")
-        ) || 1
-      setCurrentPage(newPage)
-    }
-
     router.events.on("routeChangeComplete", handleRouteChange)
 
     // Clean up the event listener
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange)
     }
-  }, [router.events])
+  }, [router.events, handleRouteChange])
+
+  // Callback function to update filtered items
+  const handleFilterChange = useCallback(
+    (filteredItems) => {
+      // console.log("Filter change, filtered items:", filteredItems)
+      setShowFilteredItems(false) // Hide items to trigger the fade-out animation
+
+      setTimeout(() => {
+        if (filteredItems.length === 0) {
+          // If there are no filtered items, reset the filters locally
+          setFilteredItems(categoryData.products)
+          setIsFilterActive(false)
+        } else {
+          // Update the filtered items locally
+          setFilteredItems(filteredItems)
+          setIsFilterActive(true)
+        }
+
+        setShowFilteredItems(true) // Show items to trigger the fade-in animation
+      }, 300)
+    },
+    [categoryData]
+  )
+
+  // Function to handle pagination
+  const handlePageChange = useCallback(
+    (newPage) => {
+      setCurrentPage(newPage)
+      router.push(
+        {
+          pathname: router.pathname,
+          query: { ...router.query, page: newPage },
+        },
+        undefined,
+        { shallow: true }
+      )
+    },
+    [router]
+  )
+
+  // Calculate the total number of pages
+  const totalPages = useMemo(
+    () =>
+      categoryData ? Math.ceil(categoryData.totalCount / productsPerPage) : 1,
+    [categoryData, productsPerPage]
+  )
 
   if (loading) {
     return <LoaderDots />
   }
-
-  // Callback function to update filtered items
-  const handleFilterChange = (filteredItems) => {
-    console.log("Filter change, filtered items:", filteredItems)
-    setShowFilteredItems(false) // Hide items to trigger the fade-out animation
-
-    setTimeout(() => {
-      if (filteredItems.length === 0) {
-        // If there are no filtered items, reset the filters locally
-        setFilteredItems(categoryData.products)
-        setIsFilterActive(false)
-      } else {
-        // Update the filtered items locally
-        setFilteredItems(filteredItems)
-        setIsFilterActive(true)
-      }
-
-      setShowFilteredItems(true) // Show items to trigger the fade-in animation
-    }, 300)
-  }
-
-  // Function to handle pagination
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage)
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...router.query, page: newPage },
-      },
-      undefined,
-      { shallow: true }
-    )
-  }
-
-  // Calculate the total number of pages
-  const totalPages = categoryData
-    ? Math.ceil(categoryData.totalCount / productsPerPage)
-    : 1
 
   return (
     <>
@@ -196,7 +218,7 @@ export default function CategoryPage() {
             <CategorizedItemsContainer isVisible={true}>
               {(isFilterActive ? filteredItems : categoryData.products).map(
                 (item) => (
-                  <ProductCard
+                  <MemoizedProductCard
                     key={item.product_id}
                     link={`/products/${item.slug}`}
                     title={item.name}
