@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
 import { RiArrowDownSLine } from "react-icons/ri"
-import styled from "styled-components"
+import styled, { keyframes } from "styled-components"
 import Checkbox from "../common/Checkbox"
 import { useFilters } from "../../context/FilterContext"
 import toast from "react-hot-toast"
@@ -10,39 +10,36 @@ import { useMobileView } from "../../context/MobileViewContext"
 
 const Container = styled.div`
   position: relative;
-  display: inline-block;
-  margin-right: 10px;
 `
 
 const DropdownButton = styled.button`
   font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  color: var(--sc-color-white);
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  border-radius: 10px;
+  color: var(--sc-color-text);
+  padding: 8px 12px;
+  border-radius: 4px;
   position: relative;
   align-items: center;
   display: flex;
   width: 100%;
-  background-color: var(--sc-color-blue);
+  border: 1px solid var(--sc-color-border-gray);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-white-highlight);
   }
 
   &:active {
-    background-color: var(--color-main-dark-blue);
+    background-color: var(--sc-color-white-highlight);
+  }
+
+  &:focus-visible {
+    background-color: var(--sc-color-white-highlight);
   }
 `
 
 const ArrowIcon = styled.div`
   font-size: 18px;
-  color: #ededed;
+  color: var(--sc-color-text);
   transition: transform 0.3s ease;
 `
 
@@ -125,13 +122,6 @@ function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
     setPriceRanges(uniquePriceRanges)
   }, [inventoryItems])
 
-  useEffect(() => {
-    console.log(
-      "Attribute dropdown states:",
-      filterState.isAttributeDropdownOpen
-    ) // Check state updates
-  }, [filterState.isAttributeDropdownOpen])
-
   const predefinedPriceRanges = [
     "$25 - $49.99",
     "$50 - $74.99",
@@ -146,7 +136,13 @@ function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
     "$1250 - $1499.99",
     "$1500 - $1749.99",
   ]
+
   const togglePriceRangeSelection = (priceRange) => {
+    setSelectedPriceRanges((prev) =>
+      prev.includes(priceRange)
+        ? prev.filter((pr) => pr !== priceRange)
+        : [...prev, priceRange]
+    )
     setFilterState((prev) => ({
       ...prev,
       selectedPriceRanges: prev.selectedPriceRanges.includes(priceRange)
@@ -279,6 +275,45 @@ function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
 
   // Prevent the filter container from disappearing when the user scrolls down
   const containerClass = `brand-filter-container ${isSticky ? "sticky" : ""}`
+
+  useEffect(() => {
+    // Close dropdowns when tabbing out of the last checkbox
+    const handleTabKey = (event) => {
+      if (event.key === "Tab") {
+        const allDropdownRefs = [
+          dropdownPriceRef,
+          ...attributeDropdownRefs,
+        ].map((ref) => ref.current)
+
+        allDropdownRefs.forEach((dropdownRef, index) => {
+          if (dropdownRef) {
+            const focusableElements = dropdownRef.querySelectorAll(
+              'input[type="checkbox"], button'
+            )
+            const lastFocusableElement =
+              focusableElements[focusableElements.length - 1]
+
+            if (document.activeElement === lastFocusableElement) {
+              if (index === 0) {
+                setIsPriceDropdownOpen(false)
+              } else {
+                const attributeType = attributes[index - 1].attribute_type
+                setIsAttributeDropdownOpen((prevState) => ({
+                  ...prevState,
+                  [attributeType]: false,
+                }))
+              }
+            }
+          }
+        })
+      }
+    }
+
+    document.addEventListener("keydown", handleTabKey)
+    return () => {
+      document.removeEventListener("keydown", handleTabKey)
+    }
+  }, [attributeDropdownRefs, dropdownPriceRef, attributes])
 
   return (
     <div className={containerClass}>

@@ -40,7 +40,7 @@ const ImageWrapper = styled.div`
   }
 `
 
-const Title = styled.h1`
+const Title = styled(Link)`
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 8px;
@@ -48,7 +48,6 @@ const Title = styled.h1`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: hidden;
 
   @media (max-width: 768px) {
     order: 1;
@@ -180,7 +179,7 @@ const ProductCard = ({
   return (
     <CardContainer>
       <ImageWrapper>
-        <Link href={`${link}`}>
+        <Link href={`${link}`} aria-label={`View details of ${title}`}>
           <Image
             alt={title}
             src={imageUrl}
@@ -190,8 +189,8 @@ const ProductCard = ({
           />
         </Link>
       </ImageWrapper>
-      <Title>
-        <Link href={`${link}`}>{title}</Link>
+      <Title href={`${link}`} aria-label={`View details of ${title}`}>
+        {title}
       </Title>
       <Details>
         <Brand>{brand}</Brand>
@@ -201,17 +200,20 @@ const ProductCard = ({
         <Price>{`$${price}`}</Price>
         <ShippingContainer>
           <IconContainer>
-            <LiaTruckMovingSolid />
+            <LiaTruckMovingSolid aria-hidden="true" />
           </IconContainer>
           <p>Free Shipping</p>
         </ShippingContainer>
         <ButtonWrapper>
+          <AddToCartButton productId={id} quantity={1} />
           <BookmarkWrapper>
-            <Bookmark onClick={handleAddToWishlist}>
-              <LiaBookmark />
+            <Bookmark
+              onClick={handleAddToWishlist}
+              aria-label={`Add ${title} to wishlist`}
+            >
+              <LiaBookmark aria-hidden="true" />
             </Bookmark>
           </BookmarkWrapper>
-          <AddToCartButton productId={id} quantity={1} />
         </ButtonWrapper>
       </Details>
     </CardContainer>

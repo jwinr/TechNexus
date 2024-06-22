@@ -14,10 +14,8 @@ const StarRating = ({ reviews }) => {
   const hasHalfStar = averageRating - filledStars >= 0.5
 
   return (
-    <div
-      className="star-rating"
-      aria-label={`Average Rating: ${averageRating} stars out of 5`}
-    >
+    <div className="star-rating">
+      <span>{`Average Rating: ${averageRating} stars out of 5`}</span>
       {[...Array(totalStars)].map((_, i) => {
         if (i < filledStars) {
           // Filled star
