@@ -10,204 +10,16 @@ import ForgotPassword from "./forgot-password.js"
 import LogoSymbol from "../public/images/logo_n.png"
 import Image from "next/image"
 import Link from "next/link.js"
-import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 import { UserContext } from "../context/UserContext"
 import CognitoErrorMessages from "../utils/CognitoErrorMessages"
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateX(40%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(45%);
-  }
-`
-
-const FormContainer = styled.form`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  width: 100%;
-`
-
-const EntryWrapper = styled.div`
-  position: relative;
-  display: flex;
-  width: 100%;
-  align-items: center;
-  margin: 15px 0;
-`
-
-const EntryContainer = styled.input`
-  border: 1px solid var(--sc-color-border-gray);
-  border-radius: 0.25rem;
-  width: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 10px;
-  color: var(--sc-color-text);
-  padding-right: 40px;
-  transition: border-color 0.3s;
-
-  &:focus + label,
-  &:not(:placeholder-shown) + label {
-    top: 0px;
-    left: 10px;
-    font-size: 12px;
-    color: var(--sc-color-text);
-  }
-`
-
-const Label = styled.label`
-  position: absolute;
-  top: 50%;
-  left: 10px;
-  transform: translateY(-50%);
-  color: var(--sc-color-text);
-  background-color: var(--sc-color-white);
-  font-size: 16px;
-  pointer-events: none;
-  transition: all 0.3s ease;
-`
-
-const HeaderText = styled.h1`
-  font-weight: 800;
-  font-size: 23px;
-  padding: 5px;
-`
-
-const InfoButton = styled.button`
-  appearance: none;
-  border: 0;
-  background-color: transparent;
-  margin: 5px;
-  padding: 5px;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  &:focus .info-icon,
-  &:hover .info-icon {
-    color: var(--sc-color-white);
-    background-color: var(--sc-color-blue);
-    transition: all 0.3s;
-  }
-
-  .info-icon {
-    appearance: none;
-    background-color: transparent;
-    border: 2px solid var(--sc-color-blue);
-    border-radius: 50%;
-    width: 17px;
-    height: 17px;
-    color: var(--sc-color-blue);
-    background-color: var(--sc-color-white);
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s;
-  }
-`
-
-const InfoTooltip = styled.div`
-  position: absolute;
-  transform: translateX(45%);
-  left: 50%;
-  background-color: var(--sc-color-white);
-  color: var(--sc-color-text);
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: normal;
-  max-width: 250px;
-  min-width: 0;
-  text-align: left;
-  box-shadow: rgba(156, 156, 156, 0.7) 0px 0px 6px;
-  animation: ${fadeIn} 0.3s ease;
-  border: 1px solid transparent;
-
-  &:after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border: 1px solid transparent;
-    background-color: var(--sc-color-white);
-    z-index: -2;
-    left: -6px;
-    top: 50%;
-    margin-top: -6px;
-    transform: rotate(135deg);
-    filter: drop-shadow(rgba(0, 0, 0, 0.2) 2px 0px 1px);
-  }
-
-  &:before {
-    content: "";
-    display: block;
-    background-color: inherit;
-    position: absolute;
-    z-index: -1;
-    width: 10px;
-    height: 18px;
-    left: 0;
-    top: 50%;
-    margin-top: -9px;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-  }
-
-  @media (max-width: 768px) {
-    left: 0;
-  }
-`
-
-const ResetText = styled.button`
-  display: inline-block;
-  margin-top: 5px;
-  padding: 5px;
-  align-content: baseline;
-  font-weight: 500;
-  font-size: 13px;
-
-  &:hover {
-    text-decoration: underline;
-  }
-
-  &:focus-visible {
-    text-decoration: underline;
-  }
-`
-
-const SignInBtn = styled.button`
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  color: var(--sc-color-white);
-  border: medium;
-  font-weight: bold;
-  min-height: 44px;
-  padding: 0px 16px;
-  width: 100%;
-  text-align: center;
-  background-color: var(--sc-color-blue);
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: var(--sc-color-dark-blue);
-  }
-
-  &:active {
-    background-color: var(--sc-color-dark-blue);
-  }
-
-  &:focus-visible {
-    background-color: var(--sc-color-dark-blue);
-  }
-`
+import * as AuthStyles from "../components/auth/AuthStyles"
+import {
+  validateEmailDomain,
+  validatePassword,
+  handleBlur,
+  handleKeyDown,
+} from "../utils/AuthHelpers"
+import useTooltip from "../components/hooks/useTooltip.js"
 
 const CreateAccBtn = styled.button`
   align-items: center;
@@ -234,73 +46,6 @@ const CreateAccBtn = styled.button`
   }
 `
 
-const KeepSignInWrapper = styled.div`
-  display: flex;
-  padding: 5px 0;
-`
-
-const TooltipContainer = styled.div`
-  display: inline-flex;
-  align-items: center;
-  margin-right: 10px;
-`
-
-const ErrorMessage = styled.div`
-  display: flex;
-  color: #d32f2f;
-  font-size: 14px;
-  padding: 10px 0;
-`
-
-const EntryBtnWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: column;
-  width: 100%;
-`
-
-const ValidationMessage = styled.div`
-  position: absolute;
-  color: #d32f2f;
-  font-size: 14px;
-  bottom: -20px;
-`
-
-const PolicyContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  font-size: 12px;
-  color: var(--sc-color-text-light-gray);
-  margin: 10px 0px 0px;
-  align-items: center;
-
-  a {
-    color: var(--sc-color-link-blue);
-    width: fit-content;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  a:focus-visible {
-    text-decoration: underline;
-  }
-`
-
-const LogoBox = styled.div`
-  display: flex;
-  align-items: center;
-  width: 140px;
-
-  @media (max-width: 768px) {
-    max-width: 75px;
-    width: auto;
-  }
-`
-
 const Divider = styled.div`
   border-bottom: 1px solid var(--sc-color-divider);
   width: 100%;
@@ -323,6 +68,7 @@ const Login = () => {
   const [resetPasswordStep, setResetPasswordStep] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
   const { fetchUserAttributes } = useContext(UserContext)
+  const { invalidStyle } = AuthStyles
 
   // Check if there's already an active sign-in
   useEffect(() => {
@@ -349,8 +95,9 @@ const Login = () => {
     setShowTooltip(!showTooltip)
   }
 
-  const toggleSignUp = () => {
+  const forwardSignUp = () => {
     router.push("/signup")
+    setEmailValid(validateEmailDomain(username))
   }
 
   const togglePasswordReset = () => {
@@ -366,24 +113,17 @@ const Login = () => {
     }
   }, [])
 
-  const validateEmailDomain = (email) => {
-    // Simplified regex to catch some invalid formats
-    const regex = /.+@\S+\.\S+$/
-    return regex.test(email)
-  }
-
   const handlePasswordReset = () => {
-    setShowResetPassword(true)
+    router.push("/forgot-password")
     setEmailValid(validateEmailDomain(username))
   }
 
   const handleEmailBlur = () => {
-    if (username.trim().length === 0) {
-      // Reset email validity only if the field is empty when blurred
-      setEmailValid(true)
-    } else {
-      setEmailValid(validateEmailDomain(username))
-    }
+    handleBlur(username, validateEmailDomain, setEmailValid)
+  }
+
+  const handlePasswordBlur = () => {
+    handleBlur(password, validatePassword, setPasswordValid)
   }
 
   const onChange = (e) => {
@@ -398,26 +138,6 @@ const Login = () => {
       setPasswordValid(true)
     }
   }
-
-  const handlePasswordBlur = () => {
-    if (password.trim().length === 0) {
-      // Reset password validity only if the field is empty when blurred
-      setPasswordValid(true)
-    } else {
-      // Validate password if field is not empty
-      setPasswordValid(validatePassword(password))
-    }
-  }
-
-  const validatePassword = (password) => {
-    // Regular expression pattern to validate the password
-    const pattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\^$*.[\]{}()?"!@#%&/\\,><':;|_~`=+\-])[A-Za-z\d\^$*.[\]{}()?"!@#%&/\\,><':;|_~`=+\-]{8,20}$/
-    return pattern.test(password)
-  }
-
-  // Apply red border/text if information is invalid
-  const invalidStyle = { borderColor: "#D32F2F", color: "#D32F2F" }
 
   /* Mock reset function for development environment
   const resetMock = async ({ username, password }) => {
@@ -529,41 +249,7 @@ const Login = () => {
     setKeepSignedIn(e.target.checked)
   }
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      const activeElement = document.activeElement
-      const isPasswordRevealButton =
-        activeElement &&
-        activeElement.classList.contains("password-reveal-button")
-
-      if (!isPasswordRevealButton) {
-        event.preventDefault() // Prevent default form submission
-        handleSignIn(event) // Call the sign-in handler
-      }
-    }
-  }
-
-  useEffect(() => {
-    // Handler to call when clicking outside of the tooltip container or scrolling
-    const handleActionOutside = (event) => {
-      if (
-        infoButtonRef.current &&
-        !infoButtonRef.current.contains(event.target)
-      ) {
-        setShowTooltip(false)
-      }
-    }
-
-    // Add event listener when the component mounts
-    document.addEventListener("click", handleActionOutside, true)
-    window.addEventListener("scroll", handleActionOutside, true)
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      document.removeEventListener("click", handleActionOutside, true)
-      window.removeEventListener("scroll", handleActionOutside, true)
-    }
-  }, []) // Using an empty dependency array to run once on mount and cleanup on unmount
+  useTooltip(infoButtonRef, setShowTooltip)
 
   return (
     <>
@@ -584,20 +270,22 @@ const Login = () => {
               content="Get the most out of TechNexus by signing in to your account."
             />
           </Head>
-          <AuthContainerWrapper>
-            <LogoBox>
+          <AuthStyles.AuthContainerWrapper>
+            <AuthStyles.LogoBox>
               <Image src={LogoSymbol} alt="TechNexus Logo" priority />
-            </LogoBox>
-            <HeaderText>Sign in to TechNexus</HeaderText>
-            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-            <FormContainer
+            </AuthStyles.LogoBox>
+            <AuthStyles.HeaderText>Sign in to TechNexus</AuthStyles.HeaderText>
+            {errorMessage && (
+              <AuthStyles.ErrorMessage>{errorMessage}</AuthStyles.ErrorMessage>
+            )}
+            <AuthStyles.FormContainer
               onSubmit={handleSignIn}
               noValidate
               data-form-type="login"
               onKeyDown={handleKeyDown}
             >
-              <EntryWrapper>
-                <EntryContainer
+              <AuthStyles.EntryWrapper>
+                <AuthStyles.EntryContainer
                   onChange={onChange}
                   name="username"
                   id="username"
@@ -610,20 +298,20 @@ const Login = () => {
                   onBlur={handleEmailBlur}
                   value={username}
                 />
-                <Label
+                <AuthStyles.Label
                   htmlFor="username"
                   style={!emailValid ? invalidStyle : {}}
                 >
                   Email address
-                </Label>
+                </AuthStyles.Label>
                 {!emailValid && (
-                  <ValidationMessage>
+                  <AuthStyles.ValidationMessage>
                     Please enter a valid email address.
-                  </ValidationMessage>
+                  </AuthStyles.ValidationMessage>
                 )}
-              </EntryWrapper>
-              <EntryWrapper>
-                <EntryContainer
+              </AuthStyles.EntryWrapper>
+              <AuthStyles.EntryWrapper>
+                <AuthStyles.EntryContainer
                   onChange={onChange}
                   name="password"
                   id="password"
@@ -636,12 +324,12 @@ const Login = () => {
                   onBlur={handlePasswordBlur}
                   value={password}
                 />
-                <Label
+                <AuthStyles.Label
                   htmlFor="password"
                   style={!passwordValid ? invalidStyle : {}}
                 >
                   Password
-                </Label>
+                </AuthStyles.Label>
                 <PasswordReveal
                   onClick={() => setShowPassword(!showPassword)}
                   clicked={showPassword}
@@ -650,15 +338,15 @@ const Login = () => {
                   className="password-reveal-button"
                 />
                 {!passwordValid && (
-                  <ValidationMessage>
+                  <AuthStyles.ValidationMessage>
                     Please enter a valid password.
-                  </ValidationMessage>
+                  </AuthStyles.ValidationMessage>
                 )}
-              </EntryWrapper>
-              <ResetText onClick={handlePasswordReset}>
+              </AuthStyles.EntryWrapper>
+              <AuthStyles.ResetText onClick={handlePasswordReset}>
                 Forgot Password?
-              </ResetText>
-              <KeepSignInWrapper>
+              </AuthStyles.ResetText>
+              <AuthStyles.KeepSignInWrapper>
                 <Checkbox
                   id={"keepMeSignedIn"}
                   tabIndex
@@ -666,40 +354,43 @@ const Login = () => {
                   checked={keepSignedIn}
                   onChange={handleKeepSignedInChange}
                 />
-                <TooltipContainer ref={infoButtonRef}>
-                  <InfoButton
+                <AuthStyles.TooltipContainer ref={infoButtonRef}>
+                  <AuthStyles.InfoButton
                     onClick={handleClick}
                     aria-label="Information about keeping signed in"
                   >
                     <span className="info-icon">i</span>
-                  </InfoButton>
+                  </AuthStyles.InfoButton>
                   {showTooltip && (
-                    <InfoTooltip>
+                    <AuthStyles.InfoTooltip>
                       By checking this box, you will stay signed in even after
                       closing the browser. Only use this feature on your
                       personal device.
-                    </InfoTooltip>
+                    </AuthStyles.InfoTooltip>
                   )}
-                </TooltipContainer>
-              </KeepSignInWrapper>
-              <EntryBtnWrapper>
-                <SignInBtn type="submit" data-form-type="action,login">
+                </AuthStyles.TooltipContainer>
+              </AuthStyles.KeepSignInWrapper>
+              <AuthStyles.EntryBtnWrapper>
+                <AuthStyles.SignInBtn
+                  type="submit"
+                  data-form-type="action,login"
+                >
                   Sign in
-                </SignInBtn>
-              </EntryBtnWrapper>
+                </AuthStyles.SignInBtn>
+              </AuthStyles.EntryBtnWrapper>
               <Divider />
-              <EntryBtnWrapper>
-                <CreateAccBtn onClick={toggleSignUp} type="button">
+              <AuthStyles.EntryBtnWrapper>
+                <CreateAccBtn onClick={forwardSignUp} type="button">
                   Create account
                 </CreateAccBtn>
-              </EntryBtnWrapper>
-            </FormContainer>
-            <PolicyContainer>
+              </AuthStyles.EntryBtnWrapper>
+            </AuthStyles.FormContainer>
+            <AuthStyles.PolicyContainer>
               By signing in, you agree to the following:
               <Link href="/terms">TechNexus terms and conditions</Link>
               <Link href="/privacy">TechNexus privacy policy</Link>
-            </PolicyContainer>
-          </AuthContainerWrapper>
+            </AuthStyles.PolicyContainer>
+          </AuthStyles.AuthContainerWrapper>
         </>
       )}
     </>

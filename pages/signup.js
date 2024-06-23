@@ -8,236 +8,17 @@ import Image from "next/image"
 import Head from "next/head"
 import Link from "next/link.js"
 import Checkbox from "../components/common/Checkbox.js"
-import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 import CognitoErrorMessages from "../utils/CognitoErrorMessages.js"
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateX(40%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(45%);
-  }
-`
-
-const FormContainer = styled.form`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  width: 100%;
-`
-
-const EntryWrapper = styled.div`
-  position: relative;
-  display: flex;
-  width: 100%;
-  align-items: center;
-  margin: 15px 0;
-`
-
-const EntryContainer = styled.input`
-  border: 1px solid var(--sc-color-border-gray);
-  border-radius: 0.25rem;
-  width: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 10px;
-  color: var(--sc-color-text);
-  padding-right: 40px;
-  transition: border-color 0.3s;
-
-  &:focus + label,
-  &:not(:placeholder-shown) + label {
-    top: 0px;
-    left: 10px;
-    font-size: 12px;
-    color: var(--sc-color-text);
-  }
-`
-
-const Label = styled.label`
-  position: absolute;
-  top: 50%;
-  left: 10px;
-  transform: translateY(-50%);
-  color: var(--sc-color-text);
-  background-color: var(--sc-color-white);
-  font-size: 16px;
-  pointer-events: none;
-  transition: all 0.3s ease;
-`
-
-const HeaderText = styled.h1`
-  font-weight: 800;
-  font-size: 23px;
-  padding: 5px;
-`
-
-const InfoButton = styled.button`
-  appearance: none;
-  border: 0;
-  background-color: transparent;
-  margin: 5px;
-  padding: 5px;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  &:focus .info-icon,
-  &:hover .info-icon {
-    color: var(--sc-color-white);
-    background-color: var(--sc-color-blue);
-    transition: all 0.3s;
-  }
-
-  .info-icon {
-    appearance: none;
-    background-color: transparent;
-    border: 2px solid var(--sc-color-blue);
-    border-radius: 50%;
-    width: 17px;
-    height: 17px;
-    color: var(--sc-color-blue);
-    background-color: var(--sc-color-white);
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s;
-  }
-`
-
-const InfoTooltip = styled.div`
-  position: absolute;
-  transform: translateX(45%);
-  left: 50%;
-  background-color: var(--sc-color-white);
-  color: var(--sc-color-text);
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: normal;
-  max-width: 250px;
-  min-width: 0;
-  text-align: left;
-  box-shadow: rgba(156, 156, 156, 0.7) 0px 0px 6px;
-  animation: ${fadeIn} 0.3s ease;
-  border: 1px solid transparent;
-
-  &:after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border: 1px solid transparent;
-    background-color: var(--sc-color-white);
-    z-index: -2;
-    left: -6px;
-    top: 50%;
-    margin-top: -6px;
-    transform: rotate(135deg);
-    filter: drop-shadow(rgba(0, 0, 0, 0.2) 2px 0px 1px);
-  }
-
-  &:before {
-    content: "";
-    display: block;
-    background-color: inherit;
-    position: absolute;
-    z-index: -1;
-    width: 10px;
-    height: 18px;
-    left: 0;
-    top: 50%;
-    margin-top: -9px;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-  }
-
-  @media (max-width: 768px) {
-    left: 0;
-  }
-`
-
-const ResetText = styled.button`
-  display: inline-block;
-  margin-top: 5px;
-  padding: 5px;
-  align-content: baseline;
-  font-weight: 500;
-  font-size: 13px;
-
-  &:hover {
-    text-decoration: underline;
-  }
-
-  &:focus-visible {
-    text-decoration: underline;
-  }
-`
-
-const SignInBtn = styled.button`
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  color: var(--sc-color-white);
-  border: medium;
-  font-weight: bold;
-  min-height: 44px;
-  padding: 0px 16px;
-  width: 100%;
-  text-align: center;
-  background-color: var(--sc-color-blue);
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: var(--sc-color-dark-blue);
-  }
-
-  &:active {
-    background-color: var(--sc-color-dark-blue);
-  }
-
-  &:focus-visible {
-    background-color: var(--sc-color-dark-blue);
-  }
-`
-
-const KeepSignInWrapper = styled.div`
-  display: flex;
-  padding: 5px 0;
-`
-
-const TooltipContainer = styled.div`
-  display: inline-flex;
-  align-items: center;
-  margin-right: 10px;
-`
-
-const ErrorMessage = styled.div`
-  display: flex;
-  color: #d32f2f;
-  font-size: 14px;
-  padding: 10px 0;
-`
-
-const EntryBtnWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: column;
-  width: 100%;
-`
-
-const ValidationMessage = styled.div`
-  position: absolute;
-  color: #d32f2f;
-  font-size: 14px;
-  bottom: -20px;
-`
+import * as AuthStyles from "../components/auth/AuthStyles"
+import {
+  validateEmailDomain,
+  validatePassword,
+  validateFirstName,
+  validateLastName,
+  handleBlur,
+  handleKeyDown,
+} from "../utils/AuthHelpers"
+import useTooltip from "../components/hooks/useTooltip.js"
 
 const CtaShopBtn = styled.button`
   align-items: center;
@@ -272,41 +53,7 @@ const SubheaderText = styled.h1`
   padding: 5px;
 `
 
-const PolicyContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  font-size: 12px;
-  color: var(--sc-color-text-light-gray);
-  margin: 10px 0px 0px;
-  align-items: center;
-
-  a {
-    color: var(--sc-color-link-blue);
-    width: fit-content;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  a:focus-visible {
-    text-decoration: underline;
-  }
-`
-
-const LogoBox = styled.div`
-  display: flex;
-  align-items: center;
-  width: 140px;
-
-  @media (max-width: 768px) {
-    max-width: 75px;
-    width: auto;
-  }
-`
-
-const SignUpPage = ({ toggleSignUp }) => {
+const SignUp = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [given_name, setFirstName] = useState("")
@@ -323,6 +70,7 @@ const SignUpPage = ({ toggleSignUp }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const infoButtonRef = useRef(null)
   const [errorMessage, setErrorMessage] = useState("")
+  const { invalidStyle } = AuthStyles
 
   const router = useRouter()
 
@@ -330,47 +78,30 @@ const SignUpPage = ({ toggleSignUp }) => {
     router.push("/")
   }
 
-  const validateEmailDomain = (email) => {
-    // Simplified regex to catch some invalid formats
-    const regex = /.+@\S+\.\S+$/
-    return regex.test(email)
-  }
-
-  const validateFirstName = (given_name) => {
-    // Regular expression pattern to validate the first name (accepts Unicode)
-    const pattern = /^[\p{L}'][ \p{L}'-]*[\p{L}]$/u
-    return pattern.test(given_name)
-  }
-
-  const validateLastName = (family_name) => {
-    // Regular expression pattern to validate the first name (accepts Unicode)
-    const pattern = /^[\p{L}'][ \p{L}'-]*[\p{L}]$/u
-    return pattern.test(family_name)
-  }
-
   const handleEmailBlur = () => {
-    if (username.trim().length === 0) {
-      // Reset email validity only if the field is empty when blurred
-      setEmailValid(true)
-    } else {
-      setEmailValid(validateEmailDomain(username))
-    }
+    handleBlur(username, validateEmailDomain, setEmailValid)
   }
 
   const handleFirstNameBlur = () => {
-    if (given_name.trim().length === 0) {
-      // Reset name validity only if the field is empty when blurred
-      setFirstNameValid(true)
-    } else {
-      setFirstNameValid(validateFirstName(given_name))
-    }
+    handleBlur(given_name, validateFirstName, setFirstNameValid)
   }
 
   const handleLastNameBlur = () => {
-    if (family_name.trim().length === 0) {
-      setLastNameValid(true)
-    } else {
-      setLastNameValid(validateLastName(family_name))
+    handleBlur(family_name, validateLastName, setLastNameValid)
+  }
+
+  const handlePasswordBlur = () => {
+    handleBlur(password, validatePassword, setPasswordValid)
+  }
+
+  const handleConfirmPasswordBlur = () => {
+    // Validate only if the password field has been touched
+    if (confirmPasswordValue.trim() !== "") {
+      if (password !== confirmPasswordValue) {
+        setConfirmPasswordValid(false)
+      } else {
+        setConfirmPasswordValid(true)
+      }
     }
   }
 
@@ -394,37 +125,6 @@ const SignUpPage = ({ toggleSignUp }) => {
       setLastNameValid(true) // Reset last name validity when last name changes
     }
   }
-
-  const handlePasswordBlur = () => {
-    if (password.trim().length === 0) {
-      // Reset password validity only if the field is empty when blurred
-      setPasswordValid(true)
-    } else {
-      // Validate password if field is not empty
-      setPasswordValid(validatePassword(password))
-    }
-  }
-
-  const validatePassword = (password) => {
-    // Regular expression pattern to validate the password
-    const pattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\^$*.[\]{}()?"!@#%&/\\,><':;|_~`=+\-])[A-Za-z\d\^$*.[\]{}()?"!@#%&/\\,><':;|_~`=+\-]{8,20}$/
-    return pattern.test(password)
-  }
-
-  const handleConfirmPasswordBlur = () => {
-    // Validate only if the password field has been touched
-    if (confirmPasswordValue.trim() !== "") {
-      if (password !== confirmPasswordValue) {
-        setConfirmPasswordValid(false)
-      } else {
-        setConfirmPasswordValid(true)
-      }
-    }
-  }
-
-  // Apply red border/text if information is invalid
-  const invalidStyle = { borderColor: "#D32F2F", color: "#D32F2F" }
 
   const handleSignUp = async (event) => {
     event.preventDefault() // Prevent default form submission behavior
@@ -469,45 +169,15 @@ const SignUpPage = ({ toggleSignUp }) => {
     setShowTooltip(!showTooltip)
   }
 
+  const forwardLogin = () => {
+    router.push("/login")
+  }
+
   const handleKeepSignedInChange = (e) => {
     setKeepSignedIn(e.target.checked)
   }
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      const activeElement = document.activeElement
-      const isPasswordRevealButton =
-        activeElement &&
-        activeElement.classList.contains("password-reveal-button")
-
-      if (!isPasswordRevealButton) {
-        event.preventDefault() // Prevent default form submission
-        handleSignIn(event) // Call the sign-in handler
-      }
-    }
-  }
-
-  useEffect(() => {
-    // Handler to call when clicking outside of the tooltip container or scrolling
-    const handleActionOutside = (event) => {
-      if (
-        infoButtonRef.current &&
-        !infoButtonRef.current.contains(event.target)
-      ) {
-        setShowTooltip(false)
-      }
-    }
-
-    // Add event listener when the component mounts
-    document.addEventListener("click", handleActionOutside, true)
-    window.addEventListener("scroll", handleActionOutside, true)
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      document.removeEventListener("click", handleActionOutside, true)
-      window.removeEventListener("scroll", handleActionOutside, true)
-    }
-  }, []) // Using an empty dependency array to run once on mount and cleanup on unmount
+  useTooltip(infoButtonRef, setShowTooltip)
 
   return (
     <>
@@ -519,17 +189,19 @@ const SignUpPage = ({ toggleSignUp }) => {
           content="Get the most out of TechNexus by creating an account."
         />
       </Head>
-      <AuthContainerWrapper>
-        <LogoBox>
+      <AuthStyles.AuthContainerWrapper>
+        <AuthStyles.LogoBox>
           <Image src={LogoSymbol} alt="TechNexus Logo" priority />
-        </LogoBox>
+        </AuthStyles.LogoBox>
         {/* Conditional rendering based on signUpResponse */}
         {signUpResponse &&
         signUpResponse.nextStep &&
         signUpResponse.nextStep.signUpStep === "CONFIRM_SIGN_UP" ? (
           // Display confirmation message when signUpStep is CONFIRM_SIGN_UP
           <>
-            <HeaderText>Your TechNexus acccount has been created.</HeaderText>
+            <AuthStyles.HeaderText>
+              Your TechNexus acccount has been created.
+            </AuthStyles.HeaderText>
             <SubheaderText>You're ready to start shopping!</SubheaderText>
             <CtaShopBtn onClick={handleRedirect} type="button">
               Shop now
@@ -538,16 +210,20 @@ const SignUpPage = ({ toggleSignUp }) => {
         ) : (
           // Display sign-up form when signUpResponse does not exist or signUpStep is not CONFIRM_SIGN_UP
           <>
-            <HeaderText>Create your TechNexus account</HeaderText>
-            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-            <FormContainer
+            <AuthStyles.HeaderText>
+              Create your TechNexus account
+            </AuthStyles.HeaderText>
+            {errorMessage && (
+              <AuthStyles.ErrorMessage>{errorMessage}</AuthStyles.ErrorMessage>
+            )}
+            <AuthStyles.FormContainer
               onSubmit={handleSignUp}
               noValidate
               data-form-type="register"
               onKeyDown={handleKeyDown}
             >
-              <EntryWrapper>
-                <EntryContainer
+              <AuthStyles.EntryWrapper>
+                <AuthStyles.EntryContainer
                   onChange={onChange}
                   name="username"
                   id="username"
@@ -560,20 +236,20 @@ const SignUpPage = ({ toggleSignUp }) => {
                   onBlur={handleEmailBlur}
                   value={username}
                 />
-                <Label
+                <AuthStyles.Label
                   htmlFor="username"
                   style={!emailValid ? invalidStyle : {}}
                 >
                   Email address
-                </Label>
-              </EntryWrapper>
+                </AuthStyles.Label>
+              </AuthStyles.EntryWrapper>
               {!emailValid && (
-                <ValidationMessage>
+                <AuthStyles.ValidationMessage>
                   Please enter a valid email address.
-                </ValidationMessage>
+                </AuthStyles.ValidationMessage>
               )}
-              <EntryWrapper>
-                <EntryContainer
+              <AuthStyles.EntryWrapper>
+                <AuthStyles.EntryContainer
                   onChange={onChange}
                   type="text"
                   id="given_name"
@@ -586,20 +262,20 @@ const SignUpPage = ({ toggleSignUp }) => {
                   style={!firstNameValid ? invalidStyle : {}}
                   onBlur={handleFirstNameBlur}
                 />
-                <Label
+                <AuthStyles.Label
                   htmlFor="given_name"
                   style={!firstNameValid ? invalidStyle : {}}
                 >
                   First Name
-                </Label>
+                </AuthStyles.Label>
                 {!firstNameValid && (
-                  <ValidationMessage>
+                  <AuthStyles.ValidationMessage>
                     Please enter a valid first name.
-                  </ValidationMessage>
+                  </AuthStyles.ValidationMessage>
                 )}
-              </EntryWrapper>
-              <EntryWrapper>
-                <EntryContainer
+              </AuthStyles.EntryWrapper>
+              <AuthStyles.EntryWrapper>
+                <AuthStyles.EntryContainer
                   onChange={onChange}
                   type="text"
                   id="family_name"
@@ -612,20 +288,20 @@ const SignUpPage = ({ toggleSignUp }) => {
                   style={!lastNameValid ? invalidStyle : {}}
                   onBlur={handleLastNameBlur}
                 />
-                <Label
+                <AuthStyles.Label
                   htmlFor="family_name"
                   style={!lastNameValid ? invalidStyle : {}}
                 >
                   Last Name
-                </Label>
+                </AuthStyles.Label>
                 {!lastNameValid && (
-                  <ValidationMessage>
+                  <AuthStyles.ValidationMessage>
                     Please enter a valid last name.
-                  </ValidationMessage>
+                  </AuthStyles.ValidationMessage>
                 )}
-              </EntryWrapper>
-              <EntryWrapper>
-                <EntryContainer
+              </AuthStyles.EntryWrapper>
+              <AuthStyles.EntryWrapper>
+                <AuthStyles.EntryContainer
                   onChange={onChange}
                   name="password"
                   id="password"
@@ -637,25 +313,25 @@ const SignUpPage = ({ toggleSignUp }) => {
                   style={!passwordValid ? invalidStyle : {}}
                   onBlur={handlePasswordBlur}
                 />
-                <Label
+                <AuthStyles.Label
                   htmlFor="password"
                   style={!passwordValid ? invalidStyle : {}}
                 >
                   Password
-                </Label>
+                </AuthStyles.Label>
                 <PasswordReveal
                   onClick={() => setShowPassword(!showPassword)}
                   clicked={showPassword}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 />
                 {!passwordValid && (
-                  <ValidationMessage>
+                  <AuthStyles.ValidationMessage>
                     Please enter a valid password.
-                  </ValidationMessage>
+                  </AuthStyles.ValidationMessage>
                 )}
-              </EntryWrapper>
-              <EntryWrapper>
-                <EntryContainer
+              </AuthStyles.EntryWrapper>
+              <AuthStyles.EntryWrapper>
+                <AuthStyles.EntryContainer
                   onChange={onChange}
                   name="confirmPassword"
                   id="confirmPassword"
@@ -667,22 +343,24 @@ const SignUpPage = ({ toggleSignUp }) => {
                   style={!confirmPasswordValid ? invalidStyle : {}}
                   onBlur={handleConfirmPasswordBlur}
                 />
-                <Label
+                <AuthStyles.Label
                   htmlFor="password"
                   style={!confirmPasswordValid ? invalidStyle : {}}
                 >
                   Confirm Password
-                </Label>
+                </AuthStyles.Label>
                 <PasswordReveal
                   onClick={() => setShowPassword(!showPassword)}
                   clicked={showPassword}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 />
                 {!confirmPasswordValid && (
-                  <ValidationMessage>Passwords do not match.</ValidationMessage>
+                  <AuthStyles.ValidationMessage>
+                    Passwords do not match.
+                  </AuthStyles.ValidationMessage>
                 )}
-              </EntryWrapper>
-              <KeepSignInWrapper>
+              </AuthStyles.EntryWrapper>
+              <AuthStyles.KeepSignInWrapper>
                 <Checkbox
                   id={"keepMeSignedIn"}
                   tabIndex
@@ -690,39 +368,44 @@ const SignUpPage = ({ toggleSignUp }) => {
                   checked={keepSignedIn}
                   onChange={handleKeepSignedInChange}
                 />
-                <TooltipContainer ref={infoButtonRef}>
-                  <InfoButton
+                <AuthStyles.TooltipContainer ref={infoButtonRef}>
+                  <AuthStyles.InfoButton
                     onClick={handleClick}
                     aria-label="Information about keeping signed in"
                   >
                     <span className="info-icon">i</span>
-                  </InfoButton>
+                  </AuthStyles.InfoButton>
                   {showTooltip && (
-                    <InfoTooltip>
+                    <AuthStyles.InfoTooltip>
                       By checking this box, you will stay signed in even after
                       closing the browser. Only use this feature on your
                       personal device.
-                    </InfoTooltip>
+                    </AuthStyles.InfoTooltip>
                   )}
-                </TooltipContainer>
-              </KeepSignInWrapper>
-            </FormContainer>
-            <PolicyContainer>
+                </AuthStyles.TooltipContainer>
+              </AuthStyles.KeepSignInWrapper>
+            </AuthStyles.FormContainer>
+            <AuthStyles.PolicyContainer>
               By creating an account, you agree to the following:
               <Link href="/terms">TechNexus terms and conditions</Link>
               <Link href="/privacy">TechNexus privacy policy</Link>
-            </PolicyContainer>
-            <EntryBtnWrapper>
-              <SignInBtn type="submit" data-form-type="action,register">
+            </AuthStyles.PolicyContainer>
+            <AuthStyles.EntryBtnWrapper>
+              <AuthStyles.SignInBtn
+                type="submit"
+                data-form-type="action,register"
+              >
                 Create account
-              </SignInBtn>
-            </EntryBtnWrapper>
-            <ResetText onClick={toggleSignUp}>Existing user?</ResetText>
+              </AuthStyles.SignInBtn>
+            </AuthStyles.EntryBtnWrapper>
+            <AuthStyles.ResetText onClick={forwardLogin}>
+              Existing user?
+            </AuthStyles.ResetText>
           </>
         )}
-      </AuthContainerWrapper>
+      </AuthStyles.AuthContainerWrapper>
     </>
   )
 }
 
-export default SignUpPage
+export default SignUp

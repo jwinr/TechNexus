@@ -6,70 +6,16 @@ import { useRouter } from "next/router"
 import LogoSymbol from "../public/images/logo_n.png"
 import Image from "next/image"
 import PasswordReveal from "../components/auth/PasswordReveal.js"
-import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 import { IoCheckmarkCircleSharp } from "react-icons/io5"
 import LoaderDots from "../components/loaders/LoaderDots"
 import CognitoErrorMessages from "../utils/CognitoErrorMessages"
-
-const EntryWrapper = styled.div`
-  position: relative;
-  display: flex;
-  width: 100%;
-  align-items: center;
-  margin: 10px 0;
-`
-
-const EntryContainer = styled.input`
-  border: 1px solid var(--sc-color-border-gray);
-  border-radius: 0.25rem;
-  width: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 10px;
-  color: var(--sc-color-text);
-  padding-right: 40px;
-  transition: border-color 0.3s;
-
-  &:focus + label,
-  &:not(:placeholder-shown) + label {
-    top: 0px;
-    left: 10px;
-    font-size: 12px;
-    color: var(--sc-color-text);
-  }
-`
-
-const Label = styled.label`
-  position: absolute;
-  top: 50%;
-  left: 10px;
-  transform: translateY(-50%);
-  color: var(--sc-color-text);
-  background-color: var(--sc-color-white);
-  font-size: 16px;
-  pointer-events: none;
-  transition: all 0.3s ease;
-`
-
-const ValidationMessage = styled.div`
-  position: absolute;
-  color: #d32f2f;
-  font-size: 14px;
-  bottom: -20px;
-`
-
-const HeaderText = styled.h1`
-  font-weight: 800;
-  font-size: 23px;
-  padding: 5px;
-`
-
-const ErrorMessage = styled.div`
-  display: flex;
-  color: #d32f2f;
-  font-size: 14px;
-  padding: 10px 0;
-`
+import * as AuthStyles from "../components/auth/AuthStyles"
+import {
+  validateEmailDomain,
+  validatePassword,
+  handleBlur,
+  handleKeyDown,
+} from "../utils/AuthHelpers"
 
 const SuccessMessage = styled.div`
   font-size: 16px;
@@ -120,17 +66,6 @@ const SubheaderText = styled.div`
   font-size: 19px;
   margin-bottom: 24px;
   text-align: center;
-`
-
-const LogoBox = styled.div`
-  display: flex;
-  align-items: center;
-  width: 140px;
-
-  @media (max-width: 768px) {
-    max-width: 75px;
-    width: auto;
-  }
 `
 
 const VerificationInput = styled.input`
@@ -299,11 +234,6 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
     }
   }, [username, isEmailValid])
 
-  const validateEmailDomain = (email) => {
-    const regex = /.+@\S+\.\S+$/
-    return regex.test(email)
-  }
-
   const obfuscateEmail = (email) => {
     const [localPart] = email.split("@")
     if (localPart.length <= 3) {
@@ -429,12 +359,11 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
   }
 
   const handleEmailBlur = () => {
-    if (email.trim().length === 0) {
-      // Reset email validity only if the field is empty when blurred
-      setEmailValid(true)
-    } else {
-      setEmailValid(validateEmailDomain(email))
-    }
+    handleBlur(username, validateEmailDomain, setEmailValid)
+  }
+
+  const handlePasswordBlur = () => {
+    handleBlur(newPassword, validatePassword, setPasswordValid)
   }
 
   const onChange = (e) => {
@@ -478,26 +407,6 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
     }
   }
 
-  const handlePasswordBlur = () => {
-    if (newPassword.trim().length === 0) {
-      // Reset password validity only if the field is empty when blurred
-      setPasswordValid(true)
-    } else {
-      // Validate password if field is not empty
-      setPasswordValid(validatePassword(newPassword))
-    }
-  }
-
-  const validatePassword = (password) => {
-    // Regular expression pattern to validate the password
-    const pattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\^$*.[\]{}()?"!@#%&/\\,><':;|_~`=+\-])[A-Za-z\d\^$*.[\]{}()?"!@#%&/\\,><':;|_~`=+\-]{8,20}$/
-    return pattern.test(password)
-  }
-
-  // Apply red border/text if information is invalid
-  const invalidStyle = { borderColor: "#D32F2F", color: "#D32F2F" }
-
   if (loading) {
     return <LoaderDots />
   }
@@ -509,13 +418,13 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
         <meta property="og:title" content="Login: TechNexus" key="title" />
         <meta name="description" content="Reset your password." />
       </Head>
-      <AuthContainerWrapper>
-        <LogoBox>
+      <AuthStyles.AuthContainerWrapper>
+        <AuthStyles.LogoBox>
           <Image src={LogoSymbol} alt="TechNexus Logo" priority={true} />
-        </LogoBox>
+        </AuthStyles.LogoBox>
         {currentStep === "initial" && (
           <>
-            <HeaderText>Forgot Password</HeaderText>
+            <AuthStyles.HeaderText>Forgot Password</AuthStyles.HeaderText>
             <SubheaderText>
               <span>
                 In order to change your password, we need to verify your
@@ -523,8 +432,8 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
                 account.
               </span>
             </SubheaderText>
-            <EntryWrapper>
-              <EntryContainer
+            <AuthStyles.EntryWrapper>
+              <AuthStyles.EntryContainer
                 onChange={onChange}
                 name="username"
                 id="username"
@@ -535,22 +444,29 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
                 onBlur={handleEmailBlur}
                 value={email}
               />
-              <Label htmlFor="username" style={!emailValid ? invalidStyle : {}}>
+              <AuthStyles.Label
+                htmlFor="username"
+                style={!emailValid ? invalidStyle : {}}
+              >
                 Email address
-              </Label>
+              </AuthStyles.Label>
               {!emailValid && (
-                <ValidationMessage>
+                <AuthStyles.ValidationMessage>
                   Please enter a valid email address.
-                </ValidationMessage>
+                </AuthStyles.ValidationMessage>
               )}
-            </EntryWrapper>
+            </AuthStyles.EntryWrapper>
             <ResetBtn onClick={handleSendCode}>Continue</ResetBtn>
           </>
         )}
         {currentStep === "verifyCode" && (
           <>
-            <HeaderText>Verification code sent</HeaderText>
-            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            <AuthStyles.HeaderText>
+              Verification code sent
+            </AuthStyles.HeaderText>
+            {errorMessage && (
+              <AuthStyles.ErrorMessage>{errorMessage}</AuthStyles.ErrorMessage>
+            )}
             <SuccessMessage>
               <span>
                 We’ve sent your code to <strong>{obfuscateEmail(email)}</strong>
@@ -592,8 +508,10 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
         )}
         {currentStep === "resetPassword" && (
           <>
-            <HeaderText>Password Reset</HeaderText>
-            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            <AuthStyles.HeaderText>Password Reset</AuthStyles.HeaderText>
+            {errorMessage && (
+              <AuthStyles.ErrorMessage>{errorMessage}</AuthStyles.ErrorMessage>
+            )}
             <SuccessMessage>
               <span>Almost done!</span>
               <br />
@@ -602,8 +520,8 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
                 haven’t used before.
               </span>
             </SuccessMessage>
-            <EntryWrapper>
-              <EntryContainer
+            <AuthStyles.EntryWrapper>
+              <AuthStyles.EntryContainer
                 type={showPassword ? "text" : "password"}
                 placeholder=""
                 value={newPassword}
@@ -612,21 +530,21 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
                 style={!passwordValid ? invalidStyle : {}}
                 onBlur={handlePasswordBlur}
               />
-              <Label
+              <AuthStyles.Label
                 htmlFor="password"
                 style={!passwordValid ? invalidStyle : {}}
               >
                 Create password
-              </Label>
+              </AuthStyles.Label>
               <PasswordReveal
                 onClick={() => setShowPassword(!showPassword)}
                 clicked={showPassword}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               />
               {!passwordValid && (
-                <ValidationMessage>
+                <AuthStyles.ValidationMessage>
                   Please enter a valid password.
-                </ValidationMessage>
+                </AuthStyles.ValidationMessage>
               )}
               {reqsMet && (
                 <RequirementListItemDone>
@@ -634,7 +552,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
                   Your password is ready to go!
                 </RequirementListItemDone>
               )}
-            </EntryWrapper>
+            </AuthStyles.EntryWrapper>
             {!reqsMet && (
               <>
                 <RequirementTitle>Must contain:</RequirementTitle>
@@ -693,11 +611,13 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
         )}
         {currentStep === "success" && (
           <>
-            <HeaderText>Password Reset Successful</HeaderText>
+            <AuthStyles.HeaderText>
+              Password Reset Successful
+            </AuthStyles.HeaderText>
             <SuccessMessage>{successMessage}</SuccessMessage>
           </>
         )}
-      </AuthContainerWrapper>
+      </AuthStyles.AuthContainerWrapper>
     </>
   )
 }
