@@ -7,7 +7,7 @@ const AuthContainerWrapper = styled.div`
   flex-direction: column;
   gap: 15px;
   width: 500px;
-  margin: 15px auto;
+  margin: 24px auto;
   align-items: center;
   background-color: var(--sc-color-white);
   box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;

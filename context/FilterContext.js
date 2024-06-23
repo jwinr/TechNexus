@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from "react"
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react"
+import { useRouter } from "next/router"
 
 const FilterContext = createContext()
 
@@ -11,23 +18,35 @@ const initialState = {
 }
 
 // Load state from sessionStorage
-const loadState = () => {
+const loadState = (slug) => {
   if (typeof window !== "undefined") {
-    const sessionData = sessionStorage.getItem("filterState")
+    const sessionData = sessionStorage.getItem(`filterState_${slug}`)
     return sessionData ? JSON.parse(sessionData) : initialState
   }
   return initialState // Default initial state if not in browser
 }
 
 export const FilterProvider = ({ children }) => {
-  const [filterState, setFilterState] = useState(loadState) // Load state during initial render
+  const router = useRouter()
+  const { slug } = router.query
+  const prevSlugRef = useRef(slug)
 
-  // Store filterState in session storage whenever it changes
+  // Load initial state from session storage
+  const [filterState, setFilterState] = useState(() => loadState(slug))
+
+  // Update state and session storage whenever filterState or slug changes
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("filterState", JSON.stringify(filterState))
+    if (slug) {
+      const savedState = loadState(slug)
+      setFilterState(savedState)
     }
-  }, [filterState])
+  }, [slug])
+
+  useEffect(() => {
+    if (slug) {
+      sessionStorage.setItem(`filterState_${slug}`, JSON.stringify(filterState))
+    }
+  }, [filterState, slug])
 
   const handleFilterChange = (filteredResults) => {
     setFilterState((prev) => ({ ...prev, filteredItems: filteredResults }))

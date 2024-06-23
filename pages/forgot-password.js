@@ -3,12 +3,12 @@ import Head from "next/head"
 import styled from "styled-components"
 import { resetPassword, confirmResetPassword } from "aws-amplify/auth"
 import { useRouter } from "next/router"
-import LogoSymbol from "../assets/images/logos/logo_n.png"
+import LogoSymbol from "../public/images/logo_n.png"
 import Image from "next/image"
 import PasswordReveal from "../components/auth/PasswordReveal.js"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
 import { IoCheckmarkCircleSharp } from "react-icons/io5"
-import LoaderDots from "../components/common/LoaderDots"
+import LoaderDots from "../components/loaders/LoaderDots"
 import CognitoErrorMessages from "../utils/CognitoErrorMessages"
 
 const EntryWrapper = styled.div`
@@ -491,7 +491,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
   const validatePassword = (password) => {
     // Regular expression pattern to validate the password
     const pattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-])[a-zA-Z\d\^$*.$begin:math:display$$end:math:display${}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]{8,20}$/
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\^$*.[\]{}()?"!@#%&/\\,><':;|_~`=+\-])[A-Za-z\d\^$*.[\]{}()?"!@#%&/\\,><':;|_~`=+\-]{8,20}$/
     return pattern.test(password)
   }
 

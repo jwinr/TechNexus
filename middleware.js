@@ -45,7 +45,7 @@ export async function middleware(req) {
 
   // Use a higher limit for development
   const isLocalhost = ip === "::1"
-  const limit = isLocalhost ? 5000 : 10
+  const limit = isLocalhost ? 50000 : 10
 
   try {
     const rateLimiterResponse = await rateLimiter.check(limit, ip)

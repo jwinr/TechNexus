@@ -6,9 +6,8 @@ import { useRouter } from "next/router"
 import styled, { keyframes } from "styled-components"
 import Checkbox from "../components/common/Checkbox"
 import PasswordReveal from "../components/auth/PasswordReveal.js"
-import SignUpPage from "./signup"
 import ForgotPassword from "./forgot-password.js"
-import LogoSymbol from "../assets/images/logos/logo_n.png"
+import LogoSymbol from "../public/images/logo_n.png"
 import Image from "next/image"
 import Link from "next/link.js"
 import AuthContainerWrapper from "../components/auth/AuthContainerWrapper"
@@ -26,12 +25,19 @@ const fadeIn = keyframes`
   }
 `
 
+const FormContainer = styled.form`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+`
+
 const EntryWrapper = styled.div`
   position: relative;
   display: flex;
   width: 100%;
   align-items: center;
-  margin: 10px 0;
+  margin: 15px 0;
 `
 
 const EntryContainer = styled.input`
@@ -203,9 +209,34 @@ const SignInBtn = styled.button`
   }
 `
 
+const CreateAccBtn = styled.button`
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--sc-color-border-gray);
+  border-radius: 6px;
+  min-height: 44px;
+  padding: 0px 16px;
+  width: 100%;
+  text-align: center;
+  background-color: var(--sc-color-white);
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: var(--sc-color-white-highlight);
+  }
+
+  &:active {
+    background-color: var(--sc-color-white-highlight);
+  }
+
+  &:focus-visible {
+    background-color: var(--sc-color-white-highlight);
+  }
+`
+
 const KeepSignInWrapper = styled.div`
   display: flex;
-  padding-top: 5px;
+  padding: 5px 0;
 `
 
 const TooltipContainer = styled.div`
@@ -226,8 +257,6 @@ const EntryBtnWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 5px;
   width: 100%;
 `
 
@@ -272,6 +301,12 @@ const LogoBox = styled.div`
   }
 `
 
+const Divider = styled.div`
+  border-bottom: 1px solid var(--sc-color-divider);
+  width: 100%;
+  margin: 15px 0;
+`
+
 const Login = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -285,7 +320,6 @@ const Login = () => {
   const [passwordValid, setPasswordValid] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const [emailValid, setEmailValid] = useState(true)
-  const [showSignUp, setShowSignUp] = useState(false)
   const [resetPasswordStep, setResetPasswordStep] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
   const { fetchUserAttributes } = useContext(UserContext)
@@ -316,7 +350,7 @@ const Login = () => {
   }
 
   const toggleSignUp = () => {
-    setShowSignUp(!showSignUp)
+    router.push("/signup")
   }
 
   const togglePasswordReset = () => {
@@ -378,7 +412,7 @@ const Login = () => {
   const validatePassword = (password) => {
     // Regular expression pattern to validate the password
     const pattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\^$*.\[\]{}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-])[a-zA-Z\d\^$*.$begin:math:display$$end:math:display${}\(\)?\"!@#%&\/\\,><\':;|_~`=+\-]{8,20}$/
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\^$*.[\]{}()?"!@#%&/\\,><':;|_~`=+\-])[A-Za-z\d\^$*.[\]{}()?"!@#%&/\\,><':;|_~`=+\-]{8,20}$/
     return pattern.test(password)
   }
 
@@ -404,42 +438,25 @@ const Login = () => {
     }
   }
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (event) => {
+    event.preventDefault() // Prevent default form submission behavior
+
+    // Validate the email before making the API call
+    const isEmailValid = validateEmailDomain(username)
+    setEmailValid(isEmailValid)
+    if (!isEmailValid) {
+      return
+    }
+
+    // Validate the password before making the API call
+    const isPasswordValid = validatePassword(password)
+    setPasswordValid(isPasswordValid)
+    if (!isPasswordValid) {
+      return
+    }
+
+    // Call signIn with username and password
     try {
-      let formValid = true // Flag to track overall form validity
-
-      // Loop through the input fields
-      ;[username, password].forEach((field, index) => {
-        if (field.trim() === "") {
-          // If the field is empty, set the corresponding validity state to false and update the error message
-          formValid = false
-          if (index === 0) {
-            setEmailValid(false)
-          } else {
-            setPasswordValid(false)
-          }
-        }
-      })
-
-      if (!formValid) {
-        return // Exit the function early if any field is empty so we don't send a query to Cognito
-      }
-
-      // Validate the email before making the API call
-      const isEmailValid = validateEmailDomain(username)
-      if (!isEmailValid) {
-        setEmailValid(false)
-        return
-      }
-
-      // Validate the password before making the API call
-      const isPasswordValid = validatePassword(password)
-      if (!isPasswordValid) {
-        setPasswordValid(false)
-        return
-      }
-
-      // Call signIn with username and password
       const response = await signIn({ username, password })
 
       if (response.nextStep) {
@@ -512,6 +529,20 @@ const Login = () => {
     setKeepSignedIn(e.target.checked)
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      const activeElement = document.activeElement
+      const isPasswordRevealButton =
+        activeElement &&
+        activeElement.classList.contains("password-reveal-button")
+
+      if (!isPasswordRevealButton) {
+        event.preventDefault() // Prevent default form submission
+        handleSignIn(event) // Call the sign-in handler
+      }
+    }
+  }
+
   useEffect(() => {
     // Handler to call when clicking outside of the tooltip container or scrolling
     const handleActionOutside = (event) => {
@@ -536,9 +567,7 @@ const Login = () => {
 
   return (
     <>
-      {showSignUp ? ( // Conditionally render the sign-up form
-        <SignUpPage toggleSignUp={toggleSignUp} /> // Pass toggleSignUp function as prop
-      ) : showResetPassword ? ( // Conditionally render the reset password form
+      {showResetPassword ? ( // Conditionally render the reset password form
         <ForgotPassword
           username={username}
           isEmailValid={validateEmailDomain(username)}
@@ -557,92 +586,114 @@ const Login = () => {
           </Head>
           <AuthContainerWrapper>
             <LogoBox>
-              <Image src={LogoSymbol} alt="TechNexus Logo" priority={true} />
+              <Image src={LogoSymbol} alt="TechNexus Logo" priority />
             </LogoBox>
             <HeaderText>Sign in to TechNexus</HeaderText>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-            <EntryWrapper>
-              <EntryContainer
-                onChange={onChange}
-                name="username"
-                id="username"
-                type="username"
-                placeholder=""
-                autoComplete="username"
-                style={!emailValid ? invalidStyle : {}}
-                onBlur={handleEmailBlur}
-              />
-              <Label htmlFor="username" style={!emailValid ? invalidStyle : {}}>
-                Email address
-              </Label>
-              {!emailValid && (
-                <ValidationMessage>
-                  Please enter a valid email address.
-                </ValidationMessage>
-              )}
-            </EntryWrapper>
-            <EntryWrapper>
-              <EntryContainer
-                onChange={onChange}
-                name="password"
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder=""
-                autoComplete="current-password"
-                style={!passwordValid ? invalidStyle : {}}
-                onBlur={handlePasswordBlur}
-              />
-              <Label
-                htmlFor="password"
-                style={!passwordValid ? invalidStyle : {}}
-              >
-                Password
-              </Label>
-              <PasswordReveal
-                onClick={() => setShowPassword(!showPassword)}
-                clicked={showPassword}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              />
-              {!passwordValid && (
-                <ValidationMessage>
-                  Please enter a valid password.
-                </ValidationMessage>
-              )}
-            </EntryWrapper>
-            <ResetText onClick={handlePasswordReset}>
-              Forgot Password?
-            </ResetText>
-            <KeepSignInWrapper>
-              <Checkbox
-                id={"id"}
-                tabIndex
-                label={"Keep me signed in"}
-                checked={keepSignedIn}
-                onChange={handleKeepSignedInChange}
-              />
-              <TooltipContainer ref={infoButtonRef}>
-                <InfoButton onClick={handleClick}>
-                  <span className="info-icon">i</span>
-                </InfoButton>
-                {showTooltip && (
-                  <InfoTooltip>
-                    By checking this box, you will stay signed in even after
-                    closing the browser. Only use this feature on your personal
-                    device.
-                  </InfoTooltip>
+            <FormContainer
+              onSubmit={handleSignIn}
+              noValidate
+              data-form-type="login"
+              onKeyDown={handleKeyDown}
+            >
+              <EntryWrapper>
+                <EntryContainer
+                  onChange={onChange}
+                  name="username"
+                  id="username"
+                  required
+                  type="email"
+                  placeholder=""
+                  autoComplete="off"
+                  aria-label="Email address"
+                  style={!emailValid ? invalidStyle : {}}
+                  onBlur={handleEmailBlur}
+                  value={username}
+                />
+                <Label
+                  htmlFor="username"
+                  style={!emailValid ? invalidStyle : {}}
+                >
+                  Email address
+                </Label>
+                {!emailValid && (
+                  <ValidationMessage>
+                    Please enter a valid email address.
+                  </ValidationMessage>
                 )}
-              </TooltipContainer>
-            </KeepSignInWrapper>
-            <EntryBtnWrapper>
-              <SignInBtn onClick={handleSignIn} type="button">
-                Sign in
-              </SignInBtn>
-            </EntryBtnWrapper>
-            <EntryBtnWrapper>
-              <SignInBtn onClick={toggleSignUp} type="button">
-                Create account
-              </SignInBtn>
-            </EntryBtnWrapper>
+              </EntryWrapper>
+              <EntryWrapper>
+                <EntryContainer
+                  onChange={onChange}
+                  name="password"
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder=""
+                  autoComplete="current-password"
+                  aria-label="Password"
+                  data-form-type="password"
+                  style={!passwordValid ? invalidStyle : {}}
+                  onBlur={handlePasswordBlur}
+                  value={password}
+                />
+                <Label
+                  htmlFor="password"
+                  style={!passwordValid ? invalidStyle : {}}
+                >
+                  Password
+                </Label>
+                <PasswordReveal
+                  onClick={() => setShowPassword(!showPassword)}
+                  clicked={showPassword}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  role="button"
+                  className="password-reveal-button"
+                />
+                {!passwordValid && (
+                  <ValidationMessage>
+                    Please enter a valid password.
+                  </ValidationMessage>
+                )}
+              </EntryWrapper>
+              <ResetText onClick={handlePasswordReset}>
+                Forgot Password?
+              </ResetText>
+              <KeepSignInWrapper>
+                <Checkbox
+                  id={"keepMeSignedIn"}
+                  tabIndex
+                  label={"Keep me signed in"}
+                  checked={keepSignedIn}
+                  onChange={handleKeepSignedInChange}
+                />
+                <TooltipContainer ref={infoButtonRef}>
+                  <InfoButton
+                    onClick={handleClick}
+                    aria-label="Information about keeping signed in"
+                  >
+                    <span className="info-icon">i</span>
+                  </InfoButton>
+                  {showTooltip && (
+                    <InfoTooltip>
+                      By checking this box, you will stay signed in even after
+                      closing the browser. Only use this feature on your
+                      personal device.
+                    </InfoTooltip>
+                  )}
+                </TooltipContainer>
+              </KeepSignInWrapper>
+              <EntryBtnWrapper>
+                <SignInBtn type="submit" data-form-type="action,login">
+                  Sign in
+                </SignInBtn>
+              </EntryBtnWrapper>
+              <Divider />
+              <EntryBtnWrapper>
+                <CreateAccBtn onClick={toggleSignUp} type="button">
+                  Create account
+                </CreateAccBtn>
+              </EntryBtnWrapper>
+            </FormContainer>
             <PolicyContainer>
               By signing in, you agree to the following:
               <Link href="/terms">TechNexus terms and conditions</Link>
