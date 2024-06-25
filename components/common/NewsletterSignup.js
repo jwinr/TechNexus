@@ -1,5 +1,8 @@
 import React, { useState } from "react"
 import styled, { keyframes } from "styled-components"
+import PropFilter from "../../utils/PropFilter"
+
+const formFilter = PropFilter("form")
 
 const NewsletterContainer = styled.div`
   text-align: center;
@@ -16,8 +19,7 @@ const NewsletterTitle = styled.h2`
 const NewsletterSubtitle = styled.p`
   margin-bottom: 25px;
 `
-
-const NewsletterForm = styled.form`
+const NewsletterForm = styled(formFilter(["isVisible"]))`
   display: flex;
   justify-content: center;
   gap: 10px;

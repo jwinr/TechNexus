@@ -19,43 +19,49 @@ const PageWrapper = styled.div`
 
 const ProductCard = styled.li`
   display: flex;
-  flex: 0 1 auto;
-  flex-flow: row;
-  padding: 16px;
-  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: var(--sc-color-white);
+  border-radius: 8px;
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
+  height: 100%;
 `
 
 const ImageWrapper = styled.div`
-  width: 80px;
-  flex: 0 0 auto;
-  padding-right: 0px;
-  padding-left: 0px;
-
-  img {
-    height: auto;
-  }
-`
-
-const PriceWrapper = styled.div`
   display: flex;
-  -webkit-box-align: baseline;
-  align-items: baseline;
-
-  p {
-    font-weight: bold;
-    font-size: 19px;
-  }
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  padding: 8px;
+  order: 2;
 `
 
-const DetailsWrapper = styled.div`
+const Title = styled(Link)`
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  order: 1;
   width: 100%;
-  flex: 0 0 auto;
-  min-width: 0px;
-  padding-left: 12px;
+`
 
-  @media (min-width: 0) {
-    flex-shrink: 1;
-  }
+const Price = styled.h1`
+  font-size: 28px;
+  font-weight: 500;
+`
+
+const Details = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  order: 3;
 `
 
 const QuantityWrapper = styled.div`
@@ -401,22 +407,26 @@ const Cart = () => {
               </RemoveButtonWrapper>
               <ProductCard key={item.product_id}>
                 <ImageWrapper>
-                  <Link href={`/products/${item.product_slug}`}>
+                  <Link
+                    href={`/products/${item.product_slug}`}
+                    aria-label={`View details of ${item.product_name}`}
+                  >
                     <Image
                       src={item.product_image_url}
                       alt={item.product_name}
-                      width="80"
-                      height="80"
+                      width={150}
+                      height={150}
                     />
                   </Link>
                 </ImageWrapper>
-                <DetailsWrapper>
-                  <PriceWrapper>
-                    <p>${item.product_price}</p>
-                  </PriceWrapper>
-                  <Link href={`/products/${item.product_slug}`}>
-                    {item.product_name}
-                  </Link>
+                <Title
+                  href={`/products/${item.product_slug}`}
+                  aria-label={`View details of ${item.product_name}`}
+                >
+                  {item.product_name}
+                </Title>
+                <Details>
+                  <Price>${item.product_price}</Price>
                   <QuantityWrapper>
                     <QuantityPicker
                       quantity={item.quantity}
@@ -425,7 +435,7 @@ const Cart = () => {
                       }
                     />
                   </QuantityWrapper>
-                </DetailsWrapper>
+                </Details>
               </ProductCard>
             </React.Fragment>
           ))}

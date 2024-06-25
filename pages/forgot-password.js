@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import Head from "next/head"
 import styled from "styled-components"
-import { resetPassword, confirmResetPassword } from "aws-amplify/auth"
+import { resetPassword, confirmResetPassword, signIn } from "aws-amplify/auth"
 import { useRouter } from "next/router"
 import LogoSymbol from "../public/images/logo_n.png"
 import Image from "next/image"
@@ -10,6 +10,7 @@ import { IoCheckmarkCircleSharp } from "react-icons/io5"
 import LoaderDots from "../components/loaders/LoaderDots"
 import CognitoErrorMessages from "../utils/CognitoErrorMessages"
 import ErrorRedirect from "../components/auth/ErrorRedirect"
+import PropFilter from "../utils/PropFilter.js"
 import * as AuthStyles from "../components/auth/AuthStyles"
 import {
   validateEmailDomain,
@@ -31,8 +32,9 @@ const SubheaderText = styled.div`
   margin-bottom: 15px;
   text-align: center;
 `
+const inputFilter = PropFilter("input")
 
-const VerificationInput = styled.input`
+const StyledInput = styled(inputFilter(["hasValue"]))`
   border-width: 0px 0px 4px;
   border-bottom-style: solid;
   border-bottom-color: var(--sc-color-button-disabled);
@@ -118,7 +120,9 @@ const RequirementList = styled.ul`
   align-self: flex-start;
 `
 
-const RequirementListItem = styled.li`
+const liFilter = PropFilter("li")
+
+const RequirementListItem = styled(liFilter(["met"]))`
   margin-bottom: 4px;
   color: var(--sc-color-green);
   list-style: none;
@@ -150,7 +154,6 @@ const ForgotPassword = () => {
   const [newPassword, setNewPassword] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const [showError, setShowError] = useState(false)
-  const [successMessage, setSuccessMessage] = useState("")
   const [username, setUsername] = useState("")
   const [emailValid, setEmailValid] = useState(true)
   const [passwordValid, setPasswordValid] = useState(true)
@@ -170,7 +173,7 @@ const ForgotPassword = () => {
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
 
-  // Receive the validated username from another page
+  // Receive the validated username from the login page
   useEffect(() => {
     const { query } = router
     if (query.username) {
@@ -182,21 +185,10 @@ const ForgotPassword = () => {
     }, 500)
   }, [router.query])
 
-  const handleRedirect = () => {
-    router.push("/")
-  }
-
   useEffect(() => {
     if (currentStep === "verifyCode" && codeInputRef.current) {
       codeInputRef.current.focus()
       setCaretToEnd(codeInputRef.current)
-    }
-  }, [currentStep])
-
-  useEffect(() => {
-    if (currentStep === "success") {
-      setLoading(true)
-      handleRedirect()
     }
   }, [currentStep])
 
@@ -308,16 +300,21 @@ const ForgotPassword = () => {
     }
 
     try {
-      // Complete the password reset process
+      setLoading(true)
+
       await confirmResetPassword({
         username: username,
         confirmationCode: code,
         newPassword: newPassword,
       })
-      setSuccessMessage("Password has been successfully reset.")
+
+      await signIn({ username, password: newPassword })
+
+      router.push("/")
+
       setErrorMessage("")
-      setCurrentStep("success")
     } catch (error) {
+      setLoading(false) // Hide loader if there's an error
       if (error.name === "CodeMismatchException") {
         setErrorMessage(CognitoErrorMessages[error.name])
         setCurrentStep("verifyCode")
@@ -465,7 +462,7 @@ const ForgotPassword = () => {
                 autoComplete="off"
                 style={{ width: "100%", textAlign: "center" }}
               >
-                <VerificationInput
+                <StyledInput
                   placeholder="Enter your code"
                   type="tel"
                   name="code"
@@ -597,16 +594,8 @@ const ForgotPassword = () => {
                 onClick={handleResetPassword}
                 disabled={!passwordValid || !reqsMet} // Just to be safe
               >
-                Create Password
+                Create password
               </VerifyBtn>
-            </>
-          )}
-          {currentStep === "success" && (
-            <>
-              <AuthStyles.HeaderText>
-                Password Reset Successful
-              </AuthStyles.HeaderText>
-              <SuccessMessage>{successMessage}</SuccessMessage>
             </>
           )}
         </AuthStyles.AuthContainerWrapper>
