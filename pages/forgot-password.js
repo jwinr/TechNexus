@@ -17,6 +17,10 @@ import {
   handleBlur,
 } from "../utils/AuthHelpers"
 
+const ContinueBtn = styled(AuthStyles.AuthBtn)`
+  margin-top: 15px;
+`
+
 const SuccessMessage = styled.div`
   font-size: 16px;
   text-align: center;
@@ -24,7 +28,7 @@ const SuccessMessage = styled.div`
 
 const SubheaderText = styled.div`
   font-size: 19px;
-  margin-bottom: 24px;
+  margin-bottom: 15px;
   text-align: center;
 `
 
@@ -163,6 +167,9 @@ const ForgotPassword = () => {
   const codeInputRef = useRef(null)
   const router = useRouter()
 
+  const emailRef = useRef(null)
+  const passwordRef = useRef(null)
+
   // Receive the validated username from another page
   useEffect(() => {
     const { query } = router
@@ -233,6 +240,7 @@ const ForgotPassword = () => {
     const isEmailValid = validateEmailDomain(username)
     if (!isEmailValid) {
       setEmailValid(false)
+      emailRef.current.focus()
       return
     }
 
@@ -407,6 +415,7 @@ const ForgotPassword = () => {
               </SubheaderText>
               <AuthStyles.EntryWrapper>
                 <AuthStyles.EntryContainer
+                  ref={emailRef}
                   onChange={onChange}
                   name="username"
                   id="username"
@@ -423,15 +432,13 @@ const ForgotPassword = () => {
                 >
                   Email address
                 </AuthStyles.Label>
-                {!emailValid && (
-                  <AuthStyles.ValidationMessage>
-                    Please enter a valid email address.
-                  </AuthStyles.ValidationMessage>
-                )}
               </AuthStyles.EntryWrapper>
-              <AuthStyles.AuthBtn onClick={handleSendCode}>
-                Continue
-              </AuthStyles.AuthBtn>
+              {!emailValid && (
+                <AuthStyles.ValidationMessage>
+                  Please enter a valid email address.
+                </AuthStyles.ValidationMessage>
+              )}
+              <ContinueBtn onClick={handleSendCode}>Continue</ContinueBtn>
             </>
           )}
           {currentStep === "verifyCode" && (
@@ -504,6 +511,7 @@ const ForgotPassword = () => {
               </SuccessMessage>
               <AuthStyles.EntryWrapper>
                 <AuthStyles.EntryContainer
+                  ref={passwordRef}
                   type={showPassword ? "text" : "password"}
                   placeholder=""
                   value={newPassword}

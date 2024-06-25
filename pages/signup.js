@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useRef } from "react"
 import { signUp } from "aws-amplify/auth"
-import styled, { keyframes } from "styled-components"
+import styled from "styled-components"
 import { useRouter } from "next/router"
 import PasswordReveal from "../components/auth/PasswordReveal.js"
 import LogoSymbol from "../public/images/logo_n.png"
@@ -19,6 +19,10 @@ import {
   handleKeyDown,
 } from "../utils/AuthHelpers"
 import useTooltip from "../components/hooks/useTooltip.js"
+
+const CreateAccBtn = styled(AuthStyles.AuthBtn)`
+  margin-top: 15px;
+`
 
 const CtaShopBtn = styled.button`
   align-items: center;
@@ -56,11 +60,12 @@ const SubheaderText = styled.h1`
 const SignUp = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [given_name, setFirstName] = useState("")
   const [family_name, setLastName] = useState("")
   const [passwordValid, setPasswordValid] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
-  const [confirmPasswordValue, setConfirmPasswordValue] = useState("")
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [confirmPasswordValid, setConfirmPasswordValid] = useState(true)
   const [emailValid, setEmailValid] = useState(true)
   const [firstNameValid, setFirstNameValid] = useState(true)
@@ -71,6 +76,12 @@ const SignUp = () => {
   const infoButtonRef = useRef(null)
   const [errorMessage, setErrorMessage] = useState("")
   const { invalidStyle } = AuthStyles
+
+  const emailRef = useRef(null)
+  const passwordRef = useRef(null)
+  const firstNameRef = useRef(null)
+  const lastNameRef = useRef(null)
+  const confirmPasswordRef = useRef(null)
 
   const router = useRouter()
 
@@ -96,9 +107,10 @@ const SignUp = () => {
 
   const handleConfirmPasswordBlur = () => {
     // Validate only if the password field has been touched
-    if (confirmPasswordValue.trim() !== "") {
-      if (password !== confirmPasswordValue) {
+    if (confirmPassword.trim().length === 0) {
+      if (password !== confirmPassword) {
         setConfirmPasswordValid(false)
+        confirmPasswordRef.current.focus()
       } else {
         setConfirmPasswordValid(true)
       }
@@ -115,7 +127,7 @@ const SignUp = () => {
       setPasswordValid(true) // Reset password validity when password changes
     } else if (name === "confirmPassword") {
       // Handle changes in confirm password field
-      setConfirmPasswordValue(value)
+      setConfirmPassword(value)
       setConfirmPasswordValid(true)
     } else if (name === "given_name") {
       setFirstName(value)
@@ -127,19 +139,39 @@ const SignUp = () => {
   }
 
   const handleSignUp = async (event) => {
-    event.preventDefault() // Prevent default form submission behavior
+    event.preventDefault()
 
-    // Validate the email before making the API call
     const isEmailValid = validateEmailDomain(username)
+    const isPasswordValid = validatePassword(password)
+    const isFirstNameValid = validateFirstName(given_name)
+    const isLastNameValid = validateLastName(family_name)
+    const isConfirmPasswordValid = password === confirmPassword
+
+    setEmailValid(isEmailValid)
+    setPasswordValid(isPasswordValid)
+    setFirstNameValid(isFirstNameValid)
+    setLastNameValid(isLastNameValid)
+    setConfirmPasswordValid(isConfirmPasswordValid)
+
     if (!isEmailValid) {
-      setEmailValid(false)
-      return
+      emailRef.current.focus()
+    } else if (!isFirstNameValid) {
+      firstNameRef.current.focus()
+    } else if (!isLastNameValid) {
+      lastNameRef.current.focus()
+    } else if (!isPasswordValid) {
+      passwordRef.current.focus()
+    } else if (!isConfirmPasswordValid) {
+      confirmPasswordRef.current.focus()
     }
 
-    // Validate the password before making the API call
-    const isPasswordValid = validatePassword(password)
-    if (!isPasswordValid) {
-      setPasswordValid(false)
+    if (
+      !isEmailValid ||
+      !isPasswordValid ||
+      !isFirstNameValid ||
+      !isLastNameValid ||
+      !isConfirmPasswordValid
+    ) {
       return
     }
 
@@ -154,8 +186,8 @@ const SignUp = () => {
           },
         },
       })
+      // console.log("Sign up response:", signUpResponse)
       setSignUpResponse(signUpResponse)
-      // console.log("Sign-up response:", signUpResponse)
     } catch (error) {
       if (error.name && CognitoErrorMessages[error.name]) {
         setErrorMessage(CognitoErrorMessages[error.name])
@@ -224,6 +256,7 @@ const SignUp = () => {
             >
               <AuthStyles.EntryWrapper>
                 <AuthStyles.EntryContainer
+                  ref={emailRef}
                   onChange={onChange}
                   name="username"
                   id="username"
@@ -250,14 +283,15 @@ const SignUp = () => {
               </AuthStyles.EntryWrapper>
               <AuthStyles.EntryWrapper>
                 <AuthStyles.EntryContainer
+                  ref={firstNameRef}
                   onChange={onChange}
                   type="text"
                   id="given_name"
                   name="given_name"
                   placeholder=""
-                  required=""
+                  required
                   aria-required="true"
-                  value=""
+                  value={given_name}
                   data-form-type="name,first"
                   style={!firstNameValid ? invalidStyle : {}}
                   onBlur={handleFirstNameBlur}
@@ -268,22 +302,23 @@ const SignUp = () => {
                 >
                   First Name
                 </AuthStyles.Label>
-                {!firstNameValid && (
-                  <AuthStyles.ValidationMessage>
-                    Please enter a valid first name.
-                  </AuthStyles.ValidationMessage>
-                )}
               </AuthStyles.EntryWrapper>
+              {!firstNameValid && (
+                <AuthStyles.ValidationMessage>
+                  Please enter a valid first name.
+                </AuthStyles.ValidationMessage>
+              )}
               <AuthStyles.EntryWrapper>
                 <AuthStyles.EntryContainer
+                  ref={lastNameRef}
                   onChange={onChange}
                   type="text"
                   id="family_name"
                   name="family_name"
                   placeholder=""
-                  required=""
+                  required
                   aria-required="true"
-                  value=""
+                  value={family_name}
                   data-form-type="name,last"
                   style={!lastNameValid ? invalidStyle : {}}
                   onBlur={handleLastNameBlur}
@@ -294,19 +329,21 @@ const SignUp = () => {
                 >
                   Last Name
                 </AuthStyles.Label>
-                {!lastNameValid && (
-                  <AuthStyles.ValidationMessage>
-                    Please enter a valid last name.
-                  </AuthStyles.ValidationMessage>
-                )}
               </AuthStyles.EntryWrapper>
+              {!lastNameValid && (
+                <AuthStyles.ValidationMessage>
+                  Please enter a valid last name.
+                </AuthStyles.ValidationMessage>
+              )}
               <AuthStyles.EntryWrapper>
                 <AuthStyles.EntryContainer
+                  ref={passwordRef}
                   onChange={onChange}
                   name="password"
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder=""
+                  value={password}
                   autoComplete="new-password"
                   aria-label="Password"
                   data-form-type="password,new"
@@ -324,19 +361,21 @@ const SignUp = () => {
                   clicked={showPassword}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 />
-                {!passwordValid && (
-                  <AuthStyles.ValidationMessage>
-                    Please enter a valid password.
-                  </AuthStyles.ValidationMessage>
-                )}
               </AuthStyles.EntryWrapper>
+              {!passwordValid && (
+                <AuthStyles.ValidationMessage>
+                  Please enter a valid password.
+                </AuthStyles.ValidationMessage>
+              )}
               <AuthStyles.EntryWrapper>
                 <AuthStyles.EntryContainer
+                  ref={confirmPasswordRef}
                   onChange={onChange}
                   name="confirmPassword"
                   id="confirmPassword"
-                  type={showPassword ? "text" : "password"}
+                  type={showConfirmPassword ? "text" : "password"}
                   placeholder=""
+                  value={confirmPassword}
                   autoComplete="new-password"
                   aria-label="Confirm Password"
                   data-form-type="password,confirmation"
@@ -344,22 +383,23 @@ const SignUp = () => {
                   onBlur={handleConfirmPasswordBlur}
                 />
                 <AuthStyles.Label
-                  htmlFor="password"
                   style={!confirmPasswordValid ? invalidStyle : {}}
                 >
                   Confirm Password
                 </AuthStyles.Label>
                 <PasswordReveal
-                  onClick={() => setShowPassword(!showPassword)}
-                  clicked={showPassword}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  clicked={showConfirmPassword}
+                  aria-label={
+                    showConfirmPassword ? "Hide password" : "Show password"
+                  }
                 />
-                {!confirmPasswordValid && (
-                  <AuthStyles.ValidationMessage>
-                    Passwords do not match.
-                  </AuthStyles.ValidationMessage>
-                )}
               </AuthStyles.EntryWrapper>
+              {!confirmPasswordValid && (
+                <AuthStyles.ValidationMessage>
+                  Passwords do not match.
+                </AuthStyles.ValidationMessage>
+              )}
               <AuthStyles.KeepSignInWrapper>
                 <Checkbox
                   id={"keepMeSignedIn"}
@@ -384,20 +424,17 @@ const SignUp = () => {
                   )}
                 </AuthStyles.TooltipContainer>
               </AuthStyles.KeepSignInWrapper>
+              <AuthStyles.PolicyContainer>
+                By creating an account, you agree to the following:
+                <Link href="/terms">TechNexus terms and conditions</Link>
+                <Link href="/privacy">TechNexus privacy policy</Link>
+              </AuthStyles.PolicyContainer>
+              <AuthStyles.EntryBtnWrapper>
+                <CreateAccBtn type="submit" data-form-type="action,register">
+                  Create account
+                </CreateAccBtn>
+              </AuthStyles.EntryBtnWrapper>
             </AuthStyles.FormContainer>
-            <AuthStyles.PolicyContainer>
-              By creating an account, you agree to the following:
-              <Link href="/terms">TechNexus terms and conditions</Link>
-              <Link href="/privacy">TechNexus privacy policy</Link>
-            </AuthStyles.PolicyContainer>
-            <AuthStyles.EntryBtnWrapper>
-              <AuthStyles.AuthBtn
-                type="submit"
-                data-form-type="action,register"
-              >
-                Create account
-              </AuthStyles.AuthBtn>
-            </AuthStyles.EntryBtnWrapper>
             <AuthStyles.ResetText onClick={forwardLogin}>
               Existing user?
             </AuthStyles.ResetText>

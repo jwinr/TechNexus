@@ -17,7 +17,6 @@ export const AuthContainerWrapper = styled.div`
   justify-content: center;
   padding: 50px;
   flex-direction: column;
-  gap: 15px;
   width: 500px;
   margin: 24px auto;
   align-items: center;
@@ -93,7 +92,7 @@ export const Label = styled.label`
 export const HeaderText = styled.h1`
   font-weight: 800;
   font-size: 23px;
-  padding: 5px;
+  margin: 15px 0;
 `
 
 export const InfoButton = styled.button`
@@ -255,6 +254,7 @@ export const EntryBtnWrapper = styled.div`
 export const ValidationMessage = styled.div`
   color: #d32f2f;
   font-size: 12px;
+  align-self: flex-start;
 `
 
 export const PolicyContainer = styled.div`

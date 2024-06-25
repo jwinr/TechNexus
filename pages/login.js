@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useContext } from "react"
 import Head from "next/head"
-import { signIn, confirmSignUp, signOut, resetPassword } from "aws-amplify/auth"
+import { signIn, confirmSignUp } from "aws-amplify/auth"
 import { fetchAuthSession } from "aws-amplify/auth"
 import { useRouter } from "next/router"
-import styled, { keyframes } from "styled-components"
+import styled from "styled-components"
 import Checkbox from "../components/common/Checkbox"
 import PasswordReveal from "../components/auth/PasswordReveal.js"
 import LogoSymbol from "../public/images/logo_n.png"
@@ -66,6 +66,9 @@ const Login = () => {
   const [authChecked, setAuthChecked] = useState(false)
   const { fetchUserAttributes } = useContext(UserContext)
   const { invalidStyle } = AuthStyles
+
+  const emailRef = useRef(null)
+  const passwordRef = useRef(null)
 
   // Check if there's already an active sign-in
   useEffect(() => {
@@ -142,16 +145,6 @@ const Login = () => {
     }
   }
 
-  /* Mock reset function for development environment
-  const resetMock = async ({ username, password }) => {
-    // Simulate a response that always triggers the RESET_PASSWORD step
-    return {
-      isSignedIn: false,
-      nextStep: { signInStep: "RESET_PASSWORD" },
-    }
-  }
-  */
-
   // Confirm the user automatically since we don't want to force that step
   const confirmUser = async (username) => {
     try {
@@ -168,6 +161,7 @@ const Login = () => {
     const isEmailValid = validateEmailDomain(username)
     setEmailValid(isEmailValid)
     if (!isEmailValid) {
+      emailRef.current.focus()
       return
     }
 
@@ -175,6 +169,7 @@ const Login = () => {
     const isPasswordValid = validatePassword(password)
     setPasswordValid(isPasswordValid)
     if (!isPasswordValid) {
+      passwordRef.current.focus()
       return
     }
 
@@ -276,6 +271,7 @@ const Login = () => {
         >
           <AuthStyles.EntryWrapper>
             <AuthStyles.EntryContainer
+              ref={emailRef}
               onChange={onChange}
               name="username"
               id="username"
@@ -294,14 +290,15 @@ const Login = () => {
             >
               Email address
             </AuthStyles.Label>
-            {!emailValid && (
-              <AuthStyles.ValidationMessage>
-                Please enter a valid email address.
-              </AuthStyles.ValidationMessage>
-            )}
           </AuthStyles.EntryWrapper>
+          {!emailValid && (
+            <AuthStyles.ValidationMessage>
+              Please enter a valid email address.
+            </AuthStyles.ValidationMessage>
+          )}
           <AuthStyles.EntryWrapper>
             <AuthStyles.EntryContainer
+              ref={passwordRef}
               onChange={onChange}
               name="password"
               id="password"
@@ -327,12 +324,12 @@ const Login = () => {
               role="button"
               className="password-reveal-button"
             />
-            {!passwordValid && (
-              <AuthStyles.ValidationMessage>
-                Please enter a valid password.
-              </AuthStyles.ValidationMessage>
-            )}
           </AuthStyles.EntryWrapper>
+          {!passwordValid && (
+            <AuthStyles.ValidationMessage>
+              Please enter a valid password.
+            </AuthStyles.ValidationMessage>
+          )}
           <AuthStyles.ResetText onClick={handlePasswordReset}>
             Forgot Password?
           </AuthStyles.ResetText>

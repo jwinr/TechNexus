@@ -28,13 +28,20 @@ const EyeIcon = styled.svg`
   }
 `
 
-const PasswordReveal = ({ onClick, clicked, ariaLabel, className }) => (
+const PasswordReveal = ({
+  onClick,
+  clicked,
+  ariaLabel,
+  className,
+  ...rest
+}) => (
   <Container
     onClick={onClick}
     type="button"
     aria-label={ariaLabel}
     className={className}
     data-form-type="other"
+    {...rest}
   >
     <EyeIcon
       data-clicked={clicked}
@@ -46,7 +53,10 @@ const PasswordReveal = ({ onClick, clicked, ariaLabel, className }) => (
       y="0px"
       viewBox="2 2 16 12"
       xmlSpace="preserve"
+      aria-hidden="true"
+      role="img"
     >
+      <title>{clicked ? "Hide password" : "Show password"}</title>
       <g>
         <path
           className="eye-line"
