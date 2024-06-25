@@ -242,12 +242,12 @@ const SignUp = () => {
                 >
                   Email address
                 </AuthStyles.Label>
+                {!emailValid && (
+                  <AuthStyles.ValidationMessage>
+                    Please enter a valid email address.
+                  </AuthStyles.ValidationMessage>
+                )}
               </AuthStyles.EntryWrapper>
-              {!emailValid && (
-                <AuthStyles.ValidationMessage>
-                  Please enter a valid email address.
-                </AuthStyles.ValidationMessage>
-              )}
               <AuthStyles.EntryWrapper>
                 <AuthStyles.EntryContainer
                   onChange={onChange}
@@ -391,12 +391,12 @@ const SignUp = () => {
               <Link href="/privacy">TechNexus privacy policy</Link>
             </AuthStyles.PolicyContainer>
             <AuthStyles.EntryBtnWrapper>
-              <AuthStyles.SignInBtn
+              <AuthStyles.AuthBtn
                 type="submit"
                 data-form-type="action,register"
               >
                 Create account
-              </AuthStyles.SignInBtn>
+              </AuthStyles.AuthBtn>
             </AuthStyles.EntryBtnWrapper>
             <AuthStyles.ResetText onClick={forwardLogin}>
               Existing user?

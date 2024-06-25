@@ -21,13 +21,12 @@ const NotFoundWrapper = styled.div`
 
 const LogoBox = styled.div`
   display: flex;
-  justify-content: center;
+  align-self: center;
+  width: 80px;
 
   @media (max-width: 768px) {
-    img {
-      width: 100px;
-      height: 100px;
-    }
+    max-width: 75px;
+    width: auto;
   }
 `
 
@@ -52,7 +51,7 @@ const HomeButton = styled.button`
   font-weight: bold;
   min-height: 44px;
   padding: 0px 16px;
-  width: 100%;
+  width: fit-content;
   text-align: center;
   background-color: var(--sc-color-blue);
   transition: background-color 0.2s;
@@ -71,7 +70,6 @@ const HomeButton = styled.button`
   }
 
   @media (min-width: 768px) {
-    width: 50%;
     align-self: center;
   }
 `
@@ -103,9 +101,8 @@ const Custom404 = () => {
             <Image
               src={LogoSymbol}
               alt="TechNexus Logo"
-              layout="intrinsic"
-              width={140}
-              height={140}
+              width="500"
+              height="500"
             />
           </a>
         </LogoBox>

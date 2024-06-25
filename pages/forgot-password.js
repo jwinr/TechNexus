@@ -9,57 +9,17 @@ import PasswordReveal from "../components/auth/PasswordReveal.js"
 import { IoCheckmarkCircleSharp } from "react-icons/io5"
 import LoaderDots from "../components/loaders/LoaderDots"
 import CognitoErrorMessages from "../utils/CognitoErrorMessages"
+import ErrorRedirect from "../components/auth/ErrorRedirect"
 import * as AuthStyles from "../components/auth/AuthStyles"
 import {
   validateEmailDomain,
   validatePassword,
   handleBlur,
-  handleKeyDown,
 } from "../utils/AuthHelpers"
 
 const SuccessMessage = styled.div`
   font-size: 16px;
   text-align: center;
-`
-
-const ResetBtn = styled.button`
-  font-weight: bold;
-  align-self: center;
-  border-radius: 6px;
-  color: ${(props) =>
-    props.disabled
-      ? "var(--sc-color-button-text-disabled)"
-      : "var(--sc-color-white)"};
-  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
-  min-height: 44px;
-  padding: 0px 16px;
-  width: 100%;
-  background-color: ${(props) =>
-    props.disabled
-      ? "var(--sc-color-button-disabled)"
-      : "var(--sc-color-blue)"};
-  transition: background-color 0.3s;
-  margin-top: 24px;
-
-  &:disabled {
-    cursor: not-allowed;
-    color: var(
-      --sc-color-button-text-disabled
-    ) !important; // Override the hover & active styles when the button is disabled
-    background-color: var(--sc-color-button-disabled) !important;
-  }
-
-  &:hover {
-    background-color: var(--color-main-dark-blue);
-  }
-
-  &:active {
-    background-color: var(--color-main-dark-blue);
-  }
-
-  &:focus-visible {
-    background-color: var(--color-main-dark-blue);
-  }
 `
 
 const SubheaderText = styled.div`
@@ -119,22 +79,20 @@ const VerifyBtn = styled.button`
 
   &:disabled {
     cursor: not-allowed;
-    color: var(
-      --sc-color-button-text-disabled
-    ) !important; // Override the hover & active styles when the button is disabled
+    color: var(--sc-color-button-text-disabled) !important;
     background-color: var(--sc-color-button-disabled) !important;
   }
 
-  &:hover {
-    background-color: var(--color-main-dark-blue);
+  &:not(:disabled):hover {
+    background-color: var(--sc-color-dark-blue);
   }
 
-  &:active {
-    background-color: var(--color-main-dark-blue);
+  &:not(:disabled):active {
+    background-color: var(--sc-color-dark-blue);
   }
 
-  &:focus-visible {
-    background-color: var(--color-main-dark-blue);
+  &:not(:disabled):focus-visible {
+    background-color: var(--sc-color-dark-blue);
   }
 `
 
@@ -173,10 +131,9 @@ const RequirementListItem = styled.li`
 `
 
 const RequirementListItemDone = styled.div`
-  position: absolute;
+  position: relative;
   color: var(--sc-color-green);
-  font-size: 14px;
-  bottom: -20px;
+  font-size: 12px;
 
   svg {
     display: inline-block;
@@ -184,30 +141,39 @@ const RequirementListItemDone = styled.div`
   }
 `
 
-const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
+const ForgotPassword = () => {
   const [code, setCode] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
+  const [showError, setShowError] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
-  const [email, setEmail] = useState(username || "")
+  const [username, setUsername] = useState("")
   const [emailValid, setEmailValid] = useState(true)
-  const [isCodeSent, setIsCodeSent] = useState(false)
   const [passwordValid, setPasswordValid] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
-  const [formSubmitted, setFormSubmitted] = useState(false)
   const [currentStep, setCurrentStep] = useState("initial")
-  const [loading, setLoading] = useState(false)
-
+  const [loading, setLoading] = useState(true)
   const [lengthMet, setLengthMet] = useState(false)
   const [lowerCaseMet, setLowerCaseMet] = useState(false)
   const [upperCaseMet, setUpperCaseMet] = useState(false)
   const [numberMet, setNumberMet] = useState(false)
   const [specialCharMet, setSpecialCharMet] = useState(false)
   const [reqsMet, setReqsMet] = useState(false)
-
+  const { invalidStyle } = AuthStyles
   const codeInputRef = useRef(null)
-
   const router = useRouter()
+
+  // Receive the validated username from another page
+  useEffect(() => {
+    const { query } = router
+    if (query.username) {
+      setUsername(query.username)
+      setEmailValid(validateEmailDomain(query.username))
+    }
+    setTimeout(() => {
+      setLoading(false)
+    }, 500)
+  }, [router.query])
 
   const handleRedirect = () => {
     router.push("/")
@@ -227,15 +193,8 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
     }
   }, [currentStep])
 
-  useEffect(() => {
-    if (username) {
-      setEmail(username)
-      setEmailValid(isEmailValid)
-    }
-  }, [username, isEmailValid])
-
-  const obfuscateEmail = (email) => {
-    const [localPart] = email.split("@")
+  const obfuscateEmail = (username) => {
+    const [localPart] = username.split("@")
     if (localPart.length <= 3) {
       return `${localPart}@***`
     }
@@ -243,62 +202,61 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
     return `${obfuscatedLocalPart}@***`
   }
 
-  // Mock resetPassword function
-  const resetPasswordMock = async ({ username }) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          nextStep: {
-            resetPasswordStep: "CONFIRM_RESET_PASSWORD_WITH_CODE",
-            codeDeliveryDetails: {
-              deliveryMedium: "email",
-            },
-          },
-        })
-      }, 1000) // simulate async call with 1-second delay
-    })
+  const resetPasswordHandler = async (username) => {
+    try {
+      await resetPassword({ username })
+    } catch (error) {
+      console.error("Error resetting password:", error)
+    }
   }
 
-  // Mock confirmResetPassword function
-  const confirmResetPasswordMock = async ({
+  const confirmResetPasswordHandler = async ({
     username,
     confirmationCode,
     newPassword,
   }) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true })
-      }, 1000) // simulate async call with 1-second delay
-    })
+    try {
+      await confirmResetPassword({
+        username,
+        confirmationCode,
+        newPassword,
+      })
+    } catch (error) {
+      console.error("Error completing password reset:", error)
+    }
   }
 
   const handleSendCode = async (e) => {
     e.preventDefault()
 
     // Validate the email before submitting the initial reset form
-    const isEmailValid = validateEmailDomain(email)
+    const isEmailValid = validateEmailDomain(username)
     if (!isEmailValid) {
       setEmailValid(false)
       return
     }
 
     try {
-      setFormSubmitted(true)
-      const output = await resetPasswordMock({ username: email }) // Use mock function in development
+      const output = await resetPassword({ username: username })
       const { nextStep } = output
       if (nextStep.resetPasswordStep === "CONFIRM_RESET_PASSWORD_WITH_CODE") {
-        const codeDeliveryDetails = nextStep.codeDeliveryDetails
-        console.log(
-          `Confirmation code was sent to ${codeDeliveryDetails.deliveryMedium}`
-        )
-        setIsCodeSent(true)
         setCurrentStep("verifyCode")
       }
     } catch (error) {
-      setErrorMessage(
-        CognitoErrorMessages[error.name] ||
-          "An unexpected error occurred. Please try again later."
-      )
+      if (error.name === "UserNotFoundException") {
+        setErrorMessage(CognitoErrorMessages[error.name])
+      } else if (error.name === "InvalidParameterException") {
+        setErrorMessage(CognitoErrorMessages[error.name])
+      } else if (error.name === "LimitExceededException") {
+        setErrorMessage(CognitoErrorMessages[error.name])
+        setShowError(true)
+      } else {
+        setErrorMessage(
+          CognitoErrorMessages[error.name] ||
+            "An unexpected error occurred. Please try again later.",
+          setShowError(true)
+        )
+      }
     }
   }
 
@@ -317,7 +275,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
     }
 
     try {
-      // Assume code is valid if not mock validate code
+      // Assume code is valid since there's no API function to verify it before collecting the new password
       setCurrentStep("resetPassword")
       setErrorMessage("")
     } catch (error) {
@@ -342,8 +300,9 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
     }
 
     try {
-      await confirmResetPasswordMock({
-        username: email,
+      // Complete the password reset process
+      await confirmResetPassword({
+        username: username,
         confirmationCode: code,
         newPassword: newPassword,
       })
@@ -351,10 +310,17 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
       setErrorMessage("")
       setCurrentStep("success")
     } catch (error) {
-      setErrorMessage(
-        CognitoErrorMessages[error.name] ||
-          "An unexpected error occurred. Please try again later."
-      )
+      if (error.name === "CodeMismatchException") {
+        setErrorMessage(CognitoErrorMessages[error.name])
+        setCurrentStep("verifyCode")
+      } else if (error.name === "LimitExceededException") {
+        setErrorMessage(CognitoErrorMessages[error.name])
+      } else {
+        setErrorMessage(
+          CognitoErrorMessages[error.name] ||
+            "An unexpected error occurred. Please try again later."
+        )
+      }
     }
   }
 
@@ -369,7 +335,7 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
   const onChange = (e) => {
     const { name, value } = e.target
     if (name === "username") {
-      setEmail(value)
+      setUsername(value)
       // Reset the email validity state to true when user starts editing
       setEmailValid(true)
     } else if (name === "code") {
@@ -407,10 +373,6 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
     }
   }
 
-  if (loading) {
-    return <LoaderDots />
-  }
-
   return (
     <>
       <Head>
@@ -418,206 +380,229 @@ const ForgotPassword = ({ username, isEmailValid, resetPasswordStep }) => {
         <meta property="og:title" content="Login: TechNexus" key="title" />
         <meta name="description" content="Reset your password." />
       </Head>
-      <AuthStyles.AuthContainerWrapper>
-        <AuthStyles.LogoBox>
-          <Image src={LogoSymbol} alt="TechNexus Logo" priority={true} />
-        </AuthStyles.LogoBox>
-        {currentStep === "initial" && (
-          <>
-            <AuthStyles.HeaderText>Forgot Password</AuthStyles.HeaderText>
-            <SubheaderText>
-              <span>
-                In order to change your password, we need to verify your
-                identity. Enter the email address associated with your TechNexus
-                account.
-              </span>
-            </SubheaderText>
-            <AuthStyles.EntryWrapper>
-              <AuthStyles.EntryContainer
-                onChange={onChange}
-                name="username"
-                id="username"
-                type="username"
-                placeholder=""
-                autoComplete="username"
-                style={!emailValid ? invalidStyle : {}}
-                onBlur={handleEmailBlur}
-                value={email}
-              />
-              <AuthStyles.Label
-                htmlFor="username"
-                style={!emailValid ? invalidStyle : {}}
-              >
-                Email address
-              </AuthStyles.Label>
-              {!emailValid && (
-                <AuthStyles.ValidationMessage>
-                  Please enter a valid email address.
-                </AuthStyles.ValidationMessage>
+
+      {loading ? (
+        <LoaderDots />
+      ) : showError ? (
+        <ErrorRedirect message={errorMessage} />
+      ) : (
+        <AuthStyles.AuthContainerWrapper>
+          <AuthStyles.LogoBox>
+            <Image src={LogoSymbol} alt="TechNexus Logo" priority={true} />
+          </AuthStyles.LogoBox>
+          {currentStep === "initial" && (
+            <>
+              <AuthStyles.HeaderText>Forgot Password</AuthStyles.HeaderText>
+              {errorMessage && (
+                <AuthStyles.ErrorMessage>
+                  {errorMessage}
+                </AuthStyles.ErrorMessage>
               )}
-            </AuthStyles.EntryWrapper>
-            <ResetBtn onClick={handleSendCode}>Continue</ResetBtn>
-          </>
-        )}
-        {currentStep === "verifyCode" && (
-          <>
-            <AuthStyles.HeaderText>
-              Verification code sent
-            </AuthStyles.HeaderText>
-            {errorMessage && (
-              <AuthStyles.ErrorMessage>{errorMessage}</AuthStyles.ErrorMessage>
-            )}
-            <SuccessMessage>
-              <span>
-                We’ve sent your code to <strong>{obfuscateEmail(email)}</strong>
-              </span>
-              <br />
-              <span>Keep this browser tab open to enter your code below.</span>
-            </SuccessMessage>
-            <form
-              autoComplete="off"
-              style={{ width: "100%", textAlign: "center" }}
-            >
-              <VerificationInput
-                placeholder="Enter your code"
-                type="tel"
-                name="code"
-                value={code}
-                pattern="\d*"
-                onChange={onChange}
-                hasValue={code.length > 0}
-                onFocus={(e) => setCaretToEnd(e.target)}
-                onKeyDown={(e) => {
-                  if (
-                    e.key !== "Backspace" &&
-                    e.key !== "Tab" &&
-                    !/^[0-9]$/.test(e.key)
-                  ) {
-                    e.preventDefault()
-                  }
-                }}
-              />
+              <SubheaderText>
+                <span>
+                  In order to change your password, we need to verify your
+                  identity. Enter the email address associated with your
+                  TechNexus account.
+                </span>
+              </SubheaderText>
+              <AuthStyles.EntryWrapper>
+                <AuthStyles.EntryContainer
+                  onChange={onChange}
+                  name="username"
+                  id="username"
+                  type="username"
+                  placeholder=""
+                  autoComplete="username"
+                  style={!emailValid ? invalidStyle : {}}
+                  onBlur={handleEmailBlur}
+                  value={username}
+                />
+                <AuthStyles.Label
+                  htmlFor="username"
+                  style={!emailValid ? invalidStyle : {}}
+                >
+                  Email address
+                </AuthStyles.Label>
+                {!emailValid && (
+                  <AuthStyles.ValidationMessage>
+                    Please enter a valid email address.
+                  </AuthStyles.ValidationMessage>
+                )}
+              </AuthStyles.EntryWrapper>
+              <AuthStyles.AuthBtn onClick={handleSendCode}>
+                Continue
+              </AuthStyles.AuthBtn>
+            </>
+          )}
+          {currentStep === "verifyCode" && (
+            <>
+              <AuthStyles.HeaderText>
+                Verification code sent
+              </AuthStyles.HeaderText>
+              {errorMessage && (
+                <AuthStyles.ErrorMessage>
+                  {errorMessage}
+                </AuthStyles.ErrorMessage>
+              )}
+              <SuccessMessage>
+                <span>
+                  We’ve sent your code to{" "}
+                  <strong>{obfuscateEmail(username)}</strong>
+                </span>
+                <br />
+                <span>
+                  Keep this browser tab open to enter your code below.
+                </span>
+              </SuccessMessage>
+              <form
+                autoComplete="off"
+                style={{ width: "100%", textAlign: "center" }}
+              >
+                <VerificationInput
+                  placeholder="Enter your code"
+                  type="tel"
+                  name="code"
+                  value={code}
+                  pattern="\d*"
+                  onChange={onChange}
+                  hasValue={code.length > 0}
+                  onFocus={(e) => setCaretToEnd(e.target)}
+                  onKeyDown={(e) => {
+                    if (
+                      e.key !== "Backspace" &&
+                      e.key !== "Tab" &&
+                      !/^[0-9]$/.test(e.key)
+                    ) {
+                      e.preventDefault()
+                    }
+                  }}
+                />
+                <VerifyBtn
+                  onClick={handleVerifyCode}
+                  disabled={code.length !== 6}
+                >
+                  Verify
+                </VerifyBtn>
+              </form>
+            </>
+          )}
+          {currentStep === "resetPassword" && (
+            <>
+              <AuthStyles.HeaderText>Password Reset</AuthStyles.HeaderText>
+              {errorMessage && (
+                <AuthStyles.ErrorMessage>
+                  {errorMessage}
+                </AuthStyles.ErrorMessage>
+              )}
+              <SuccessMessage>
+                <span>Almost done!</span>
+                <br />
+                <span>
+                  For your security, please change your password to something
+                  you haven’t used before.
+                </span>
+              </SuccessMessage>
+              <AuthStyles.EntryWrapper>
+                <AuthStyles.EntryContainer
+                  type={showPassword ? "text" : "password"}
+                  placeholder=""
+                  value={newPassword}
+                  name="newPassword"
+                  onChange={onChange}
+                  style={!passwordValid ? invalidStyle : {}}
+                  onBlur={handlePasswordBlur}
+                />
+                <AuthStyles.Label
+                  htmlFor="password"
+                  style={!passwordValid ? invalidStyle : {}}
+                >
+                  Create password
+                </AuthStyles.Label>
+                <PasswordReveal
+                  onClick={() => setShowPassword(!showPassword)}
+                  clicked={showPassword}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  role="button"
+                  className="password-reveal-button"
+                />
+                {!passwordValid && (
+                  <AuthStyles.ValidationMessage>
+                    Please enter a valid password.
+                  </AuthStyles.ValidationMessage>
+                )}
+                {reqsMet && (
+                  <RequirementListItemDone>
+                    <IoCheckmarkCircleSharp size={16} />
+                    Your password is ready to go!
+                  </RequirementListItemDone>
+                )}
+              </AuthStyles.EntryWrapper>
+              {!reqsMet && (
+                <>
+                  <RequirementTitle>Must contain:</RequirementTitle>
+                  <RequirementList>
+                    <RequirementListItem
+                      data-test={lengthMet ? "lengthSuccess" : "lengthNotMet"}
+                      met={lengthMet}
+                    >
+                      <span>8-20 characters</span>
+                    </RequirementListItem>
+                  </RequirementList>
+                  <RequirementTitle>And 1 of the following:</RequirementTitle>
+                  <RequirementList>
+                    <RequirementListItem
+                      data-test={
+                        lowerCaseMet ? "lowerCaseSuccess" : "lowerCaseNotMet"
+                      }
+                      met={lowerCaseMet}
+                    >
+                      <span>Lowercase letters</span>
+                    </RequirementListItem>
+                    <RequirementListItem
+                      data-test={
+                        upperCaseMet ? "upperCaseSuccess" : "upperCaseNotMet"
+                      }
+                      met={upperCaseMet}
+                    >
+                      <span>Uppercase letters</span>
+                    </RequirementListItem>
+                    <RequirementListItem
+                      data-test={numberMet ? "numberSuccess" : "numberNotMet"}
+                      met={numberMet}
+                    >
+                      <span>Numbers</span>
+                    </RequirementListItem>
+                    <RequirementListItem
+                      data-test={
+                        specialCharMet
+                          ? "specialCharSuccess"
+                          : "specialCharNotMet"
+                      }
+                      met={specialCharMet}
+                    >
+                      <span>Special characters, except {"< >"}</span>
+                    </RequirementListItem>
+                  </RequirementList>
+                </>
+              )}
               <VerifyBtn
-                onClick={handleVerifyCode}
-                disabled={code.length !== 6}
+                onClick={handleResetPassword}
+                disabled={!passwordValid || !reqsMet} // Just to be safe
               >
-                Verify
+                Create Password
               </VerifyBtn>
-            </form>
-          </>
-        )}
-        {currentStep === "resetPassword" && (
-          <>
-            <AuthStyles.HeaderText>Password Reset</AuthStyles.HeaderText>
-            {errorMessage && (
-              <AuthStyles.ErrorMessage>{errorMessage}</AuthStyles.ErrorMessage>
-            )}
-            <SuccessMessage>
-              <span>Almost done!</span>
-              <br />
-              <span>
-                For your security, please change your password to something you
-                haven’t used before.
-              </span>
-            </SuccessMessage>
-            <AuthStyles.EntryWrapper>
-              <AuthStyles.EntryContainer
-                type={showPassword ? "text" : "password"}
-                placeholder=""
-                value={newPassword}
-                name="newPassword"
-                onChange={onChange}
-                style={!passwordValid ? invalidStyle : {}}
-                onBlur={handlePasswordBlur}
-              />
-              <AuthStyles.Label
-                htmlFor="password"
-                style={!passwordValid ? invalidStyle : {}}
-              >
-                Create password
-              </AuthStyles.Label>
-              <PasswordReveal
-                onClick={() => setShowPassword(!showPassword)}
-                clicked={showPassword}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              />
-              {!passwordValid && (
-                <AuthStyles.ValidationMessage>
-                  Please enter a valid password.
-                </AuthStyles.ValidationMessage>
-              )}
-              {reqsMet && (
-                <RequirementListItemDone>
-                  <IoCheckmarkCircleSharp size={16} />
-                  Your password is ready to go!
-                </RequirementListItemDone>
-              )}
-            </AuthStyles.EntryWrapper>
-            {!reqsMet && (
-              <>
-                <RequirementTitle>Must contain:</RequirementTitle>
-                <RequirementList>
-                  <RequirementListItem
-                    data-test={lengthMet ? "lengthSuccess" : "lengthNotMet"}
-                    met={lengthMet}
-                  >
-                    <span>8-20 characters</span>
-                  </RequirementListItem>
-                </RequirementList>
-                <RequirementTitle>And 1 of the following:</RequirementTitle>
-                <RequirementList>
-                  <RequirementListItem
-                    data-test={
-                      lowerCaseMet ? "lowerCaseSuccess" : "lowerCaseNotMet"
-                    }
-                    met={lowerCaseMet}
-                  >
-                    <span>Lowercase letters</span>
-                  </RequirementListItem>
-                  <RequirementListItem
-                    data-test={
-                      upperCaseMet ? "upperCaseSuccess" : "upperCaseNotMet"
-                    }
-                    met={upperCaseMet}
-                  >
-                    <span>Uppercase letters</span>
-                  </RequirementListItem>
-                  <RequirementListItem
-                    data-test={numberMet ? "numberSuccess" : "numberNotMet"}
-                    met={numberMet}
-                  >
-                    <span>Numbers</span>
-                  </RequirementListItem>
-                  <RequirementListItem
-                    data-test={
-                      specialCharMet
-                        ? "specialCharSuccess"
-                        : "specialCharNotMet"
-                    }
-                    met={specialCharMet}
-                  >
-                    <span>Special characters, except {"< >"}</span>
-                  </RequirementListItem>
-                </RequirementList>
-              </>
-            )}
-            <ResetBtn
-              onClick={handleResetPassword}
-              disabled={!passwordValid || !reqsMet} // Just to be safe
-            >
-              Create Password
-            </ResetBtn>
-          </>
-        )}
-        {currentStep === "success" && (
-          <>
-            <AuthStyles.HeaderText>
-              Password Reset Successful
-            </AuthStyles.HeaderText>
-            <SuccessMessage>{successMessage}</SuccessMessage>
-          </>
-        )}
-      </AuthStyles.AuthContainerWrapper>
+            </>
+          )}
+          {currentStep === "success" && (
+            <>
+              <AuthStyles.HeaderText>
+                Password Reset Successful
+              </AuthStyles.HeaderText>
+              <SuccessMessage>{successMessage}</SuccessMessage>
+            </>
+          )}
+        </AuthStyles.AuthContainerWrapper>
+      )}
     </>
   )
 }

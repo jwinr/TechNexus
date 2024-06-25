@@ -5,6 +5,7 @@ const Container = styled.button`
   position: absolute;
   right: 10px;
   padding: 5px;
+  top: 6px;
   border: none;
   background: transparent;
   cursor: pointer;

@@ -21,7 +21,7 @@ const securityHeaders = {
     style-src 'self' 'unsafe-inline';
     connect-src 'self' ${
       isDevelopment ? "ws://127.0.0.1:* ws://localhost:*" : ""
-    };
+    } https://cognito-idp.us-east-2.amazonaws.com/;
   `
     .replace(/\s{2,}/g, " ")
     .trim(),

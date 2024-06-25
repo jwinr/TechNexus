@@ -6,7 +6,6 @@ import { useRouter } from "next/router"
 import styled, { keyframes } from "styled-components"
 import Checkbox from "../components/common/Checkbox"
 import PasswordReveal from "../components/auth/PasswordReveal.js"
-import ForgotPassword from "./forgot-password.js"
 import LogoSymbol from "../public/images/logo_n.png"
 import Image from "next/image"
 import Link from "next/link.js"
@@ -57,7 +56,6 @@ const Login = () => {
   const [password, setPassword] = useState("")
   const [keepSignedIn, setKeepSignedIn] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
-  const [showResetPassword, setShowResetPassword] = useState(false)
   const router = useRouter()
   const [token, setToken] = useState("")
   const [showTooltip, setShowTooltip] = useState(false)
@@ -65,7 +63,6 @@ const Login = () => {
   const [passwordValid, setPasswordValid] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const [emailValid, setEmailValid] = useState(true)
-  const [resetPasswordStep, setResetPasswordStep] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
   const { fetchUserAttributes } = useContext(UserContext)
   const { invalidStyle } = AuthStyles
@@ -97,11 +94,6 @@ const Login = () => {
 
   const forwardSignUp = () => {
     router.push("/signup")
-    setEmailValid(validateEmailDomain(username))
-  }
-
-  const togglePasswordReset = () => {
-    setShowResetPassword(!showResetPassword)
   }
 
   useEffect(() => {
@@ -113,9 +105,20 @@ const Login = () => {
     }
   }, [])
 
-  const handlePasswordReset = () => {
-    router.push("/forgot-password")
-    setEmailValid(validateEmailDomain(username))
+  const handlePasswordReset = (e) => {
+    e.preventDefault() // Prevent any default form behavior
+
+    const isValidEmail = validateEmailDomain(username)
+
+    if (isValidEmail) {
+      router.push({
+        pathname: "/forgot-password",
+        query: { username },
+      })
+    } else {
+      // If the email isn't valid, just pass the user to the next page
+      router.push("/forgot-password")
+    }
   }
 
   const handleEmailBlur = () => {
@@ -211,13 +214,9 @@ const Login = () => {
             }
             break
           case "RESET_PASSWORD":
-            setShowResetPassword(true)
-            setResetPasswordStep(true)
             setErrorMessage("")
             break
           case "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED":
-            setShowResetPassword(true)
-            setResetPasswordStep(true)
             setErrorMessage("")
             break
           case "DONE":
@@ -253,146 +252,132 @@ const Login = () => {
 
   return (
     <>
-      {showResetPassword ? ( // Conditionally render the reset password form
-        <ForgotPassword
-          username={username}
-          isEmailValid={validateEmailDomain(username)}
-          resetPasswordStep={resetPasswordStep}
-          togglePasswordReset={togglePasswordReset}
+      <Head>
+        <title>Login: TechNexus</title>
+        <meta property="og:title" content="Login: TechNexus" key="title" />
+        <meta
+          name="description"
+          content="Get the most out of TechNexus by signing in to your account."
         />
-      ) : (
-        <>
-          <Head>
-            <title>Login: TechNexus</title>
-            <meta property="og:title" content="Login: TechNexus" key="title" />
-            <meta
-              name="description"
-              content="Get the most out of TechNexus by signing in to your account."
+      </Head>
+      <AuthStyles.AuthContainerWrapper>
+        <AuthStyles.LogoBox>
+          <Image src={LogoSymbol} alt="TechNexus Logo" priority />
+        </AuthStyles.LogoBox>
+        <AuthStyles.HeaderText>Sign in to TechNexus</AuthStyles.HeaderText>
+        {errorMessage && (
+          <AuthStyles.ErrorMessage>{errorMessage}</AuthStyles.ErrorMessage>
+        )}
+        <AuthStyles.FormContainer
+          onSubmit={handleSignIn}
+          noValidate
+          data-form-type="login"
+          onKeyDown={handleKeyDown}
+        >
+          <AuthStyles.EntryWrapper>
+            <AuthStyles.EntryContainer
+              onChange={onChange}
+              name="username"
+              id="username"
+              required
+              type="email"
+              placeholder=""
+              autoComplete="off"
+              aria-label="Email address"
+              style={!emailValid ? invalidStyle : {}}
+              onBlur={handleEmailBlur}
+              value={username}
             />
-          </Head>
-          <AuthStyles.AuthContainerWrapper>
-            <AuthStyles.LogoBox>
-              <Image src={LogoSymbol} alt="TechNexus Logo" priority />
-            </AuthStyles.LogoBox>
-            <AuthStyles.HeaderText>Sign in to TechNexus</AuthStyles.HeaderText>
-            {errorMessage && (
-              <AuthStyles.ErrorMessage>{errorMessage}</AuthStyles.ErrorMessage>
-            )}
-            <AuthStyles.FormContainer
-              onSubmit={handleSignIn}
-              noValidate
-              data-form-type="login"
-              onKeyDown={handleKeyDown}
+            <AuthStyles.Label
+              htmlFor="username"
+              style={!emailValid ? invalidStyle : {}}
             >
-              <AuthStyles.EntryWrapper>
-                <AuthStyles.EntryContainer
-                  onChange={onChange}
-                  name="username"
-                  id="username"
-                  required
-                  type="email"
-                  placeholder=""
-                  autoComplete="off"
-                  aria-label="Email address"
-                  style={!emailValid ? invalidStyle : {}}
-                  onBlur={handleEmailBlur}
-                  value={username}
-                />
-                <AuthStyles.Label
-                  htmlFor="username"
-                  style={!emailValid ? invalidStyle : {}}
-                >
-                  Email address
-                </AuthStyles.Label>
-                {!emailValid && (
-                  <AuthStyles.ValidationMessage>
-                    Please enter a valid email address.
-                  </AuthStyles.ValidationMessage>
-                )}
-              </AuthStyles.EntryWrapper>
-              <AuthStyles.EntryWrapper>
-                <AuthStyles.EntryContainer
-                  onChange={onChange}
-                  name="password"
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder=""
-                  autoComplete="current-password"
-                  aria-label="Password"
-                  data-form-type="password"
-                  style={!passwordValid ? invalidStyle : {}}
-                  onBlur={handlePasswordBlur}
-                  value={password}
-                />
-                <AuthStyles.Label
-                  htmlFor="password"
-                  style={!passwordValid ? invalidStyle : {}}
-                >
-                  Password
-                </AuthStyles.Label>
-                <PasswordReveal
-                  onClick={() => setShowPassword(!showPassword)}
-                  clicked={showPassword}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  role="button"
-                  className="password-reveal-button"
-                />
-                {!passwordValid && (
-                  <AuthStyles.ValidationMessage>
-                    Please enter a valid password.
-                  </AuthStyles.ValidationMessage>
-                )}
-              </AuthStyles.EntryWrapper>
-              <AuthStyles.ResetText onClick={handlePasswordReset}>
-                Forgot Password?
-              </AuthStyles.ResetText>
-              <AuthStyles.KeepSignInWrapper>
-                <Checkbox
-                  id={"keepMeSignedIn"}
-                  tabIndex
-                  label={"Keep me signed in"}
-                  checked={keepSignedIn}
-                  onChange={handleKeepSignedInChange}
-                />
-                <AuthStyles.TooltipContainer ref={infoButtonRef}>
-                  <AuthStyles.InfoButton
-                    onClick={handleClick}
-                    aria-label="Information about keeping signed in"
-                  >
-                    <span className="info-icon">i</span>
-                  </AuthStyles.InfoButton>
-                  {showTooltip && (
-                    <AuthStyles.InfoTooltip>
-                      By checking this box, you will stay signed in even after
-                      closing the browser. Only use this feature on your
-                      personal device.
-                    </AuthStyles.InfoTooltip>
-                  )}
-                </AuthStyles.TooltipContainer>
-              </AuthStyles.KeepSignInWrapper>
-              <AuthStyles.EntryBtnWrapper>
-                <AuthStyles.SignInBtn
-                  type="submit"
-                  data-form-type="action,login"
-                >
-                  Sign in
-                </AuthStyles.SignInBtn>
-              </AuthStyles.EntryBtnWrapper>
-              <Divider />
-              <AuthStyles.EntryBtnWrapper>
-                <CreateAccBtn onClick={forwardSignUp} type="button">
-                  Create account
-                </CreateAccBtn>
-              </AuthStyles.EntryBtnWrapper>
-            </AuthStyles.FormContainer>
-            <AuthStyles.PolicyContainer>
-              By signing in, you agree to the following:
-              <Link href="/terms">TechNexus terms and conditions</Link>
-              <Link href="/privacy">TechNexus privacy policy</Link>
-            </AuthStyles.PolicyContainer>
-          </AuthStyles.AuthContainerWrapper>
-        </>
-      )}
+              Email address
+            </AuthStyles.Label>
+            {!emailValid && (
+              <AuthStyles.ValidationMessage>
+                Please enter a valid email address.
+              </AuthStyles.ValidationMessage>
+            )}
+          </AuthStyles.EntryWrapper>
+          <AuthStyles.EntryWrapper>
+            <AuthStyles.EntryContainer
+              onChange={onChange}
+              name="password"
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder=""
+              autoComplete="current-password"
+              aria-label="Password"
+              data-form-type="password"
+              style={!passwordValid ? invalidStyle : {}}
+              onBlur={handlePasswordBlur}
+              value={password}
+            />
+            <AuthStyles.Label
+              htmlFor="password"
+              style={!passwordValid ? invalidStyle : {}}
+            >
+              Password
+            </AuthStyles.Label>
+            <PasswordReveal
+              onClick={() => setShowPassword(!showPassword)}
+              clicked={showPassword}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              role="button"
+              className="password-reveal-button"
+            />
+            {!passwordValid && (
+              <AuthStyles.ValidationMessage>
+                Please enter a valid password.
+              </AuthStyles.ValidationMessage>
+            )}
+          </AuthStyles.EntryWrapper>
+          <AuthStyles.ResetText onClick={handlePasswordReset}>
+            Forgot Password?
+          </AuthStyles.ResetText>
+          <AuthStyles.KeepSignInWrapper>
+            <Checkbox
+              id={"keepMeSignedIn"}
+              tabIndex
+              label={"Keep me signed in"}
+              checked={keepSignedIn}
+              onChange={handleKeepSignedInChange}
+            />
+            <AuthStyles.TooltipContainer ref={infoButtonRef}>
+              <AuthStyles.InfoButton
+                onClick={handleClick}
+                aria-label="Information about keeping signed in"
+              >
+                <span className="info-icon">i</span>
+              </AuthStyles.InfoButton>
+              {showTooltip && (
+                <AuthStyles.InfoTooltip>
+                  By checking this box, you will stay signed in even after
+                  closing the browser. Only use this feature on your personal
+                  device.
+                </AuthStyles.InfoTooltip>
+              )}
+            </AuthStyles.TooltipContainer>
+          </AuthStyles.KeepSignInWrapper>
+          <AuthStyles.EntryBtnWrapper>
+            <AuthStyles.AuthBtn type="submit" data-form-type="action,login">
+              Sign in
+            </AuthStyles.AuthBtn>
+          </AuthStyles.EntryBtnWrapper>
+          <Divider />
+          <AuthStyles.EntryBtnWrapper>
+            <CreateAccBtn onClick={forwardSignUp} type="button">
+              Create account
+            </CreateAccBtn>
+          </AuthStyles.EntryBtnWrapper>
+        </AuthStyles.FormContainer>
+        <AuthStyles.PolicyContainer>
+          By signing in, you agree to the following:
+          <Link href="/terms">TechNexus terms and conditions</Link>
+          <Link href="/privacy">TechNexus privacy policy</Link>
+        </AuthStyles.PolicyContainer>
+      </AuthStyles.AuthContainerWrapper>
     </>
   )
 }

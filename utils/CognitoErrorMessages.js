@@ -7,6 +7,8 @@ const CognitoErrorMessages = {
   NotAuthorizedException: "Incorrect email address or password.",
   UserNotConfirmedException: "User has not been confirmed yet.",
   CodeMismatchException: "Invalid verification code. Please try again.",
+  InvalidParameterException:
+    "This email hasn't been verified. Please contact support.",
   ExpiredCodeException:
     "The verification code has expired. Please request a new one.",
   LimitExceededException:

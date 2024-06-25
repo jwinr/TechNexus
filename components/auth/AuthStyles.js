@@ -54,7 +54,8 @@ export const EntryWrapper = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
-  margin: 15px 0;
+  flex-wrap: wrap;
+  margin: 5px 0;
 `
 
 export const EntryContainer = styled.input`
@@ -199,7 +200,7 @@ export const ResetText = styled.button`
   }
 `
 
-export const SignInBtn = styled.button`
+export const AuthBtn = styled.button`
   align-items: center;
   justify-content: center;
   border-radius: 6px;
@@ -252,10 +253,8 @@ export const EntryBtnWrapper = styled.div`
 `
 
 export const ValidationMessage = styled.div`
-  position: absolute;
   color: #d32f2f;
-  font-size: 14px;
-  bottom: -20px;
+  font-size: 12px;
 `
 
 export const PolicyContainer = styled.div`
@@ -284,7 +283,7 @@ export const PolicyContainer = styled.div`
 export const LogoBox = styled.div`
   display: flex;
   align-items: center;
-  width: 140px;
+  width: 80px;
 
   @media (max-width: 768px) {
     max-width: 75px;
