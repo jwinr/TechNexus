@@ -301,18 +301,18 @@ const MainImageContainer = styled.div`
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 
+  img {
+    height: min-content;
+    width: auto;
+    align-self: center;
+  }
+
   @media (max-width: 768px) {
     padding: 25px 0; // We don't need side padding, or else there will be white space during the carousel transitions
     height: 350px;
     width: 100%;
     order: 2; // Make sure main image is below the product details in mobile view
   }
-`
-
-const ProductImage = styled.img`
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
 `
 
 const ZipWrapper = styled.div`
@@ -624,8 +624,10 @@ function ProductDetails() {
                     setHoveredImage(image.image_url)
                   }}
                 >
-                  <img
+                  <Image
                     src={image.image_url}
+                    width="500"
+                    height="500"
                     alt={`Product Thumbnail ${index} - ${product.name}`}
                   />
                 </AdditionalImageThumbnail>
@@ -643,8 +645,10 @@ function ProductDetails() {
               >
                 {product.images.map((image, index) => (
                   <SwiperSlide key={index}>
-                    <img
+                    <Image
                       src={image.image_url}
+                      width="500"
+                      height="500"
                       alt={`Product Image ${index} - ${product.name}`}
                     />
                   </SwiperSlide>
@@ -653,7 +657,13 @@ function ProductDetails() {
             </CarouselContainer>
           ) : (
             <MainImageContainer>
-              <ProductImage src={hoveredImage} alt="Inventory item" />
+              <Image
+                src={hoveredImage}
+                width="500"
+                height="500"
+                alt="Inventory item"
+                priority="true"
+              />
             </MainImageContainer>
           )}
           {isMobileView ? (
