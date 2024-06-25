@@ -223,7 +223,7 @@ const SignUp = () => {
       </Head>
       <AuthStyles.AuthContainerWrapper>
         <AuthStyles.LogoBox>
-          <Image src={LogoSymbol} alt="TechNexus Logo" priority />
+          <Image src={LogoSymbol} alt="TechNexus Logo" priority={false} />
         </AuthStyles.LogoBox>
         {/* Conditional rendering based on signUpResponse */}
         {signUpResponse &&
@@ -290,6 +290,7 @@ const SignUp = () => {
                   name="given_name"
                   placeholder=""
                   required
+                  autoComplete="off"
                   aria-required="true"
                   value={given_name}
                   data-form-type="name,first"
@@ -317,6 +318,7 @@ const SignUp = () => {
                   name="family_name"
                   placeholder=""
                   required
+                  autoComplete="off"
                   aria-required="true"
                   value={family_name}
                   data-form-type="name,last"
@@ -383,6 +385,7 @@ const SignUp = () => {
                   onBlur={handleConfirmPasswordBlur}
                 />
                 <AuthStyles.Label
+                  htmlFor="confirmPassword"
                   style={!confirmPasswordValid ? invalidStyle : {}}
                 >
                   Confirm Password

@@ -257,7 +257,7 @@ const Login = () => {
       </Head>
       <AuthStyles.AuthContainerWrapper>
         <AuthStyles.LogoBox>
-          <Image src={LogoSymbol} alt="TechNexus Logo" priority />
+          <Image src={LogoSymbol} alt="TechNexus Logo" priority={false} />
         </AuthStyles.LogoBox>
         <AuthStyles.HeaderText>Sign in to TechNexus</AuthStyles.HeaderText>
         {errorMessage && (

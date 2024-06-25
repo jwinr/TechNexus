@@ -396,7 +396,7 @@ const ForgotPassword = () => {
       ) : (
         <AuthStyles.AuthContainerWrapper>
           <AuthStyles.LogoBox>
-            <Image src={LogoSymbol} alt="TechNexus Logo" priority={true} />
+            <Image src={LogoSymbol} alt="TechNexus Logo" priority={false} />
           </AuthStyles.LogoBox>
           {currentStep === "initial" && (
             <>
