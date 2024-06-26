@@ -16,6 +16,7 @@ import {
   validateEmailDomain,
   validatePassword,
   handleBlur,
+  handleKeyDown,
 } from "../utils/AuthHelpers"
 
 const ContinueBtn = styled(AuthStyles.AuthBtn)`
@@ -381,11 +382,10 @@ const ForgotPassword = () => {
   return (
     <>
       <Head>
-        <title>Login: TechNexus</title>
-        <meta property="og:title" content="Login: TechNexus" key="title" />
+        <title>Login : TechNexus</title>
+        <meta property="og:title" content="Login : TechNexus" key="title" />
         <meta name="description" content="Reset your password." />
       </Head>
-
       {loading ? (
         <LoaderDots />
       ) : showError ? (
@@ -410,32 +410,43 @@ const ForgotPassword = () => {
                   TechNexus account.
                 </span>
               </SubheaderText>
-              <AuthStyles.EntryWrapper>
-                <AuthStyles.EntryContainer
-                  ref={emailRef}
-                  onChange={onChange}
-                  name="username"
-                  id="username"
-                  type="username"
-                  placeholder=""
-                  autoComplete="username"
-                  style={!emailValid ? invalidStyle : {}}
-                  onBlur={handleEmailBlur}
-                  value={username}
-                />
-                <AuthStyles.Label
-                  htmlFor="username"
-                  style={!emailValid ? invalidStyle : {}}
+              <AuthStyles.FormContainer
+                onSubmit={handleSendCode}
+                noValidate
+                data-form-type="forgot_password"
+              >
+                <AuthStyles.EntryWrapper>
+                  <AuthStyles.EntryContainer
+                    ref={emailRef}
+                    onChange={onChange}
+                    name="username"
+                    id="username"
+                    type="username"
+                    placeholder=""
+                    autoComplete="username"
+                    style={!emailValid ? invalidStyle : {}}
+                    onBlur={handleEmailBlur}
+                    value={username}
+                  />
+                  <AuthStyles.Label
+                    htmlFor="username"
+                    style={!emailValid ? invalidStyle : {}}
+                  >
+                    Email address
+                  </AuthStyles.Label>
+                </AuthStyles.EntryWrapper>
+                {!emailValid && (
+                  <AuthStyles.ValidationMessage>
+                    Please enter a valid email address.
+                  </AuthStyles.ValidationMessage>
+                )}
+                <ContinueBtn
+                  type="submit"
+                  data-form-type="action,forgot_password"
                 >
-                  Email address
-                </AuthStyles.Label>
-              </AuthStyles.EntryWrapper>
-              {!emailValid && (
-                <AuthStyles.ValidationMessage>
-                  Please enter a valid email address.
-                </AuthStyles.ValidationMessage>
-              )}
-              <ContinueBtn onClick={handleSendCode}>Continue</ContinueBtn>
+                  Continue
+                </ContinueBtn>
+              </AuthStyles.FormContainer>
             </>
           )}
           {currentStep === "verifyCode" && (
@@ -458,9 +469,10 @@ const ForgotPassword = () => {
                   Keep this browser tab open to enter your code below.
                 </span>
               </SuccessMessage>
-              <form
-                autoComplete="off"
-                style={{ width: "100%", textAlign: "center" }}
+              <AuthStyles.FormContainer
+                onSubmit={handleVerifyCode}
+                noValidate
+                data-form-type="login,final"
               >
                 <StyledInput
                   placeholder="Enter your code"
@@ -482,12 +494,13 @@ const ForgotPassword = () => {
                   }}
                 />
                 <VerifyBtn
-                  onClick={handleVerifyCode}
+                  type="submit"
+                  data-form-type="action,next"
                   disabled={code.length !== 6}
                 >
                   Verify
                 </VerifyBtn>
-              </form>
+              </AuthStyles.FormContainer>
             </>
           )}
           {currentStep === "resetPassword" && (
@@ -506,96 +519,105 @@ const ForgotPassword = () => {
                   you haven’t used before.
                 </span>
               </SuccessMessage>
-              <AuthStyles.EntryWrapper>
-                <AuthStyles.EntryContainer
-                  ref={passwordRef}
-                  type={showPassword ? "text" : "password"}
-                  placeholder=""
-                  value={newPassword}
-                  name="newPassword"
-                  onChange={onChange}
-                  style={!passwordValid ? invalidStyle : {}}
-                  onBlur={handlePasswordBlur}
-                />
-                <AuthStyles.Label
-                  htmlFor="password"
-                  style={!passwordValid ? invalidStyle : {}}
+              <AuthStyles.FormContainer
+                onSubmit={handleResetPassword}
+                noValidate
+                data-form-type="change_password"
+              >
+                <AuthStyles.EntryWrapper>
+                  <AuthStyles.EntryContainer
+                    ref={passwordRef}
+                    type={showPassword ? "text" : "password"}
+                    placeholder=""
+                    value={newPassword}
+                    name="newPassword"
+                    onChange={onChange}
+                    style={!passwordValid ? invalidStyle : {}}
+                    onBlur={handlePasswordBlur}
+                  />
+                  <AuthStyles.Label
+                    htmlFor="password"
+                    style={!passwordValid ? invalidStyle : {}}
+                  >
+                    Create password
+                  </AuthStyles.Label>
+                  <PasswordReveal
+                    onClick={() => setShowPassword(!showPassword)}
+                    clicked={showPassword}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                    role="button"
+                    className="password-reveal-button"
+                  />
+                  {!passwordValid && (
+                    <AuthStyles.ValidationMessage>
+                      Please enter a valid password.
+                    </AuthStyles.ValidationMessage>
+                  )}
+                  {reqsMet && (
+                    <RequirementListItemDone>
+                      <IoCheckmarkCircleSharp size={16} />
+                      Your password is ready to go!
+                    </RequirementListItemDone>
+                  )}
+                </AuthStyles.EntryWrapper>
+                {!reqsMet && (
+                  <>
+                    <RequirementTitle>Must contain:</RequirementTitle>
+                    <RequirementList>
+                      <RequirementListItem
+                        data-test={lengthMet ? "lengthSuccess" : "lengthNotMet"}
+                        met={lengthMet}
+                      >
+                        <span>8-20 characters</span>
+                      </RequirementListItem>
+                    </RequirementList>
+                    <RequirementTitle>And 1 of the following:</RequirementTitle>
+                    <RequirementList>
+                      <RequirementListItem
+                        data-test={
+                          lowerCaseMet ? "lowerCaseSuccess" : "lowerCaseNotMet"
+                        }
+                        met={lowerCaseMet}
+                      >
+                        <span>Lowercase letters</span>
+                      </RequirementListItem>
+                      <RequirementListItem
+                        data-test={
+                          upperCaseMet ? "upperCaseSuccess" : "upperCaseNotMet"
+                        }
+                        met={upperCaseMet}
+                      >
+                        <span>Uppercase letters</span>
+                      </RequirementListItem>
+                      <RequirementListItem
+                        data-test={numberMet ? "numberSuccess" : "numberNotMet"}
+                        met={numberMet}
+                      >
+                        <span>Numbers</span>
+                      </RequirementListItem>
+                      <RequirementListItem
+                        data-test={
+                          specialCharMet
+                            ? "specialCharSuccess"
+                            : "specialCharNotMet"
+                        }
+                        met={specialCharMet}
+                      >
+                        <span>Special characters, except {"< >"}</span>
+                      </RequirementListItem>
+                    </RequirementList>
+                  </>
+                )}
+                <VerifyBtn
+                  type="submit"
+                  data-form-type="action,change_password"
+                  disabled={!passwordValid || !reqsMet} // Just to be safe
                 >
                   Create password
-                </AuthStyles.Label>
-                <PasswordReveal
-                  onClick={() => setShowPassword(!showPassword)}
-                  clicked={showPassword}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  role="button"
-                  className="password-reveal-button"
-                />
-                {!passwordValid && (
-                  <AuthStyles.ValidationMessage>
-                    Please enter a valid password.
-                  </AuthStyles.ValidationMessage>
-                )}
-                {reqsMet && (
-                  <RequirementListItemDone>
-                    <IoCheckmarkCircleSharp size={16} />
-                    Your password is ready to go!
-                  </RequirementListItemDone>
-                )}
-              </AuthStyles.EntryWrapper>
-              {!reqsMet && (
-                <>
-                  <RequirementTitle>Must contain:</RequirementTitle>
-                  <RequirementList>
-                    <RequirementListItem
-                      data-test={lengthMet ? "lengthSuccess" : "lengthNotMet"}
-                      met={lengthMet}
-                    >
-                      <span>8-20 characters</span>
-                    </RequirementListItem>
-                  </RequirementList>
-                  <RequirementTitle>And 1 of the following:</RequirementTitle>
-                  <RequirementList>
-                    <RequirementListItem
-                      data-test={
-                        lowerCaseMet ? "lowerCaseSuccess" : "lowerCaseNotMet"
-                      }
-                      met={lowerCaseMet}
-                    >
-                      <span>Lowercase letters</span>
-                    </RequirementListItem>
-                    <RequirementListItem
-                      data-test={
-                        upperCaseMet ? "upperCaseSuccess" : "upperCaseNotMet"
-                      }
-                      met={upperCaseMet}
-                    >
-                      <span>Uppercase letters</span>
-                    </RequirementListItem>
-                    <RequirementListItem
-                      data-test={numberMet ? "numberSuccess" : "numberNotMet"}
-                      met={numberMet}
-                    >
-                      <span>Numbers</span>
-                    </RequirementListItem>
-                    <RequirementListItem
-                      data-test={
-                        specialCharMet
-                          ? "specialCharSuccess"
-                          : "specialCharNotMet"
-                      }
-                      met={specialCharMet}
-                    >
-                      <span>Special characters, except {"< >"}</span>
-                    </RequirementListItem>
-                  </RequirementList>
-                </>
-              )}
-              <VerifyBtn
-                onClick={handleResetPassword}
-                disabled={!passwordValid || !reqsMet} // Just to be safe
-              >
-                Create password
-              </VerifyBtn>
+                </VerifyBtn>
+              </AuthStyles.FormContainer>
             </>
           )}
         </AuthStyles.AuthContainerWrapper>

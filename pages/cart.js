@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { UserContext } from "../context/UserContext"
 import { CartContext } from "../context/CartContext"
 import { useRouter } from "next/router"
+import Head from "next/head"
 import styled from "styled-components"
 import LoaderDots from "../components/loaders/LoaderDots"
 import { BsCartX } from "react-icons/bs"
@@ -358,12 +359,24 @@ const Cart = () => {
   }
 
   if (loading) {
-    return <LoaderDots />
+    return (
+      <PageWrapper>
+        <Head>
+          <title>Cart : TechNexus</title>
+          <meta property="og:title" content="Cart : TechNexus" key="title" />
+        </Head>
+        <LoaderDots />
+      </PageWrapper>
+    )
   }
 
   if (!cart || cart.length === 0) {
     return (
       <PageWrapper>
+        <Head>
+          <title>Cart : TechNexus</title>
+          <meta property="og:title" content="Cart : TechNexus" key="title" />
+        </Head>
         <EmptyCartContainer>
           <EmptyCart>
             <EmptyHeader>Your cart is empty</EmptyHeader>
@@ -393,6 +406,10 @@ const Cart = () => {
 
   return (
     <PageWrapper>
+      <Head>
+        <title>Cart : TechNexus</title>
+        <meta property="og:title" content="Cart : TechNexus" key="title" />
+      </Head>
       <CartWrapper>
         <TitleWrapper>
           <Header>Your Cart</Header>

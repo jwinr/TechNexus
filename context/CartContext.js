@@ -90,9 +90,11 @@ export const CartProvider = ({ children }) => {
           }),
         })
         fetchCart()
-        toast.success("Added to cart!", {
-          position: "bottom-right",
-        })
+        setTimeout(() => {
+          toast.success("Added to cart!", {
+            position: "bottom-right",
+          })
+        }, 1000)
       } catch (error) {
         console.error("Error adding to cart:", error)
       }
@@ -123,6 +125,11 @@ export const CartProvider = ({ children }) => {
 
       localStorage.setItem("cart", JSON.stringify(localCart))
       fetchCart() // Fetch the updated cart with product details
+      setTimeout(() => {
+        toast.success("Added to cart!", {
+          position: "bottom-right",
+        })
+      }, 1000)
     }
   }
 
@@ -138,6 +145,11 @@ export const CartProvider = ({ children }) => {
           body: JSON.stringify({ cognitoSub: userAttributes.sub, productId }),
         })
         fetchCart()
+        setTimeout(() => {
+          toast.success("Removed from cart.", {
+            position: "bottom-right",
+          })
+        }, 1000)
       } catch (error) {
         console.error("Error removing product from cart:", error)
       }
@@ -147,7 +159,12 @@ export const CartProvider = ({ children }) => {
         (item) => item.product_id !== productId
       )
       localStorage.setItem("cart", JSON.stringify(updatedCart))
-      fetchCart() // Fetch the updated cart with product details
+      fetchCart()
+      setTimeout(() => {
+        toast.success("Removed from cart.", {
+          position: "bottom-right",
+        })
+      }, 1000)
     }
   }
 

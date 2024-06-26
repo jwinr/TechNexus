@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useContext } from "react"
 import { UserContext } from "../context/UserContext"
+import { useRouter } from "next/router"
+import Head from "next/head"
 import styled from "styled-components"
 import Link from "next/link"
+import LoaderDots from "../components/loaders/LoaderDots"
 
 const WishlistContainer = styled.div`
   max-width: 800px;
@@ -56,6 +59,9 @@ const RemoveButton = styled.button`
 const Wishlist = () => {
   const { userAttributes } = useContext(UserContext)
   const [wishlist, setWishlist] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [authLoading, setAuthLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     if (userAttributes) {
@@ -65,9 +71,25 @@ const Wishlist = () => {
         },
       })
         .then((response) => response.json())
-        .then((data) => setWishlist(data))
+        .then((data) => {
+          setWishlist(data)
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.error("Error fetching wishlist:", error)
+          setLoading(false)
+        })
+    } else {
+      setAuthLoading(false)
     }
   }, [userAttributes])
+
+  useEffect(() => {
+    //  Only redirect once the authentication state is known
+    if (!authLoading && !userAttributes) {
+      router.push("/login")
+    }
+  }, [authLoading, userAttributes, router])
 
   const removeFromWishlist = (productId) => {
     if (userAttributes) {
@@ -96,34 +118,50 @@ const Wishlist = () => {
   }
 
   return (
-    <WishlistContainer>
-      <Header>Your Wishlist</Header>
-      {wishlist.length === 0 ? (
-        <p>
-          Your wishlist is empty. <Link href="/">Continue shopping</Link>
-        </p>
-      ) : (
-        wishlist.map((product) => (
-          <ProductItem key={product.product_id}>
-            <ProductInfo>
-              <ProductImage
-                src={product.product_image_url}
-                alt={product.product_name}
-              />
-              <ProductDetails>
-                <h3>{product.product_name}</h3>
-                <p>{product.product_price}</p>
-              </ProductDetails>
-            </ProductInfo>
-            <RemoveButton
-              onClick={() => removeFromWishlist(product.product_id)}
-            >
-              Remove
-            </RemoveButton>
-          </ProductItem>
-        ))
-      )}
-    </WishlistContainer>
+    <>
+      <Head>
+        <title>Wishlist : TechNexus</title>
+        <meta property="og:title" content="Wishlist : TechNexus" key="title" />
+        <meta
+          name="description"
+          content="Save your favorites list. Once you've favorited items that you love or want to keep track of, they will be shown here."
+        />
+      </Head>
+      <WishlistContainer>
+        {loading ? (
+          <LoaderDots />
+        ) : (
+          <>
+            <Header>Your Wishlist</Header>
+            {wishlist.length === 0 ? (
+              <p>
+                Your wishlist is empty. <Link href="/">Continue shopping</Link>
+              </p>
+            ) : (
+              wishlist.map((product) => (
+                <ProductItem key={product.product_id}>
+                  <ProductInfo>
+                    <ProductImage
+                      src={product.product_image_url}
+                      alt={product.product_name}
+                    />
+                    <ProductDetails>
+                      <h3>{product.product_name}</h3>
+                      <p>{product.product_price}</p>
+                    </ProductDetails>
+                  </ProductInfo>
+                  <RemoveButton
+                    onClick={() => removeFromWishlist(product.product_id)}
+                  >
+                    Remove
+                  </RemoveButton>
+                </ProductItem>
+              ))
+            )}
+          </>
+        )}
+      </WishlistContainer>
+    </>
   )
 }
 

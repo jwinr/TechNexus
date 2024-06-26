@@ -5,8 +5,7 @@ import AddToCartButton from "../shopping/AddToCartButton"
 import styled from "styled-components"
 import StarRatings from "../review-stars/StarRatings"
 import { LiaTruckMovingSolid } from "react-icons/lia"
-import { LiaBookmark } from "react-icons/lia"
-import { UserContext } from "../../context/UserContext"
+import AddToWishlistButton from "../shopping/AddToWishlistButton"
 
 const CardContainer = styled.div`
   display: flex;
@@ -62,21 +61,12 @@ const Brand = styled.span`
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   margin-top: auto;
 
   button {
     font-size: 12px;
     min-height: auto;
-  }
-`
-
-const BookmarkWrapper = styled.div`
-  position: relative; // Keep the button inside of the product card
-  order: 2;
-
-  button {
-    font-size: 16px;
   }
 `
 
@@ -143,25 +133,6 @@ const ProductCard = ({
   id,
   addToCartFromList,
 }) => {
-  const { addToWishlist } = useContext(UserContext)
-
-  const handleAddToWishlist = () => {
-    if (addToWishlist) {
-      const product = {
-        slug: link,
-        id: id,
-        name: title,
-        price: parseFloat(price), // Convert string price to float
-        quantity: 1,
-        brand: brand || "",
-        rating: rating || [],
-        image: image[0],
-      }
-
-      addToWishlist(product)
-    }
-  }
-
   const [currentImage, setCurrentImage] = useState(
     image.find((image) => image.is_main)
   )
@@ -206,14 +177,7 @@ const ProductCard = ({
         </ShippingContainer>
         <ButtonWrapper>
           <AddToCartButton productId={id} quantity={1} />
-          <BookmarkWrapper>
-            <Bookmark
-              onClick={handleAddToWishlist}
-              aria-label={`Add ${title} to wishlist`}
-            >
-              <LiaBookmark aria-hidden="true" />
-            </Bookmark>
-          </BookmarkWrapper>
+          <AddToWishlistButton productId={id} quantity={1} />
         </ButtonWrapper>
       </Details>
     </CardContainer>

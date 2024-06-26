@@ -4,29 +4,21 @@ import { GoBookmarkFill } from "react-icons/go"
 import { UserContext } from "../../context/UserContext"
 import LoaderSpin from "../loaders/LoaderSpin"
 import PropFilter from "../../utils/PropFilter"
+import { LiaBookmark } from "react-icons/lia"
 
 const Container = styled.div`
-  width: 100%;
-  height: 44px;
-  max-width: 480px;
+  position: relative; // Keep the button inside of the product card
+  order: 2;
 `
 
 const buttonFilter = PropFilter("button")
 
 const Button = styled(buttonFilter(["isLoading"]))`
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s;
-  border-radius: 6px;
-  color: var(--sc-color-white);
-  border: medium;
-  font-weight: bold;
-  min-height: 44px;
-  padding: 0px 16px;
-  width: 100%;
-  text-align: center;
-  background-color: var(--sc-color-blue);
+  padding: 10px;
+  border-radius: 50%;
+  color: var(--sc-color-text);
   display: flex;
+  border: 1px solid var(--sc-color-border-gray);
 
   &:hover {
     background-color: var(--color-main-dark-blue);
@@ -75,7 +67,9 @@ export default function AddToWishlistButton({ productId }) {
 
   return (
     <Container>
-      <Button onClick={addToWishlist}>Add to Wishlist</Button>
+      <Button onClick={addToWishlist}>
+        <LiaBookmark aria-hidden="true" />
+      </Button>
     </Container>
   )
 }
