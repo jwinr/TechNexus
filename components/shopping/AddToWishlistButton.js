@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react"
 import styled, { keyframes, css } from "styled-components"
-import { IoBookmarkOutline, IoBookmark } from "react-icons/io5"
+import { LiaHeart, LiaHeartSolid } from "react-icons/lia"
 import { useRouter } from "next/router"
 import { UserContext } from "../../context/UserContext"
 import PropFilter from "../../utils/PropFilter"
@@ -60,9 +60,7 @@ const Button = styled.button`
   }
 `
 
-const IconOutline = styled(
-  PropFilter(IoBookmarkOutline)(["loading", "isAdding"])
-)`
+const IconOutline = styled(PropFilter(LiaHeart)(["loading", "isAdding"]))`
   ${({ loading, isAdding }) =>
     loading &&
     isAdding &&
@@ -71,7 +69,7 @@ const IconOutline = styled(
     `}
 `
 
-const IconFilled = styled(PropFilter(IoBookmark)(["loading", "isAdding"]))`
+const IconFilled = styled(PropFilter(LiaHeartSolid)(["loading", "isAdding"]))`
   ${({ loading, isAdding }) =>
     loading &&
     isAdding &&

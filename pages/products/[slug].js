@@ -24,7 +24,7 @@ import "swiper/css"
 import "swiper/css/pagination"
 import { Pagination } from "swiper/modules"
 import { useMobileView } from "../../context/MobileViewContext"
-import AddToWishlistButton from "../../components/shopping/AddToWishListButton"
+import AddToWishlistButton from "../../components/shopping/AddToWishlistButton"
 import AddToCartButton from "../../components/shopping/AddToCartButton"
 
 const fadeIn = keyframes`
@@ -236,11 +236,22 @@ const Product = styled.div`
   }
 `
 
+const OriginalPrice = styled.span`
+  font-weight: bold;
+  display: inline-block;
+  font-size: 19px;
+  text-decoration: line-through;
+`
+
 const CartBtnWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 10px;
   padding-top: 5px;
+  gap: 15px;
+
+  > button:first-child {
+    // Target the 'add to cart' button
+    width: 75%;
+  }
 `
 
 const ProductDescription = styled.div`
@@ -684,7 +695,8 @@ function ProductDetails() {
                 </ProductRatings>
               </ProductNameWrapper>
               <Product>
-                <h2>${product.price}</h2>
+                <OriginalPrice>${product.price}</OriginalPrice>
+                <h2>${product.sale_price}</h2>
                 <ExchangeWrapper>
                   <ExchangeBox>
                     <PiKeyReturn />
@@ -702,7 +714,10 @@ function ProductDetails() {
                     productId={product.product_id}
                     quantity={1}
                   />
-                  <AddToWishlistButton productId={product.product_id} />
+                  <AddToWishlistButton
+                    productId={product.product_id}
+                    productName={product.name}
+                  />
                 </CartBtnWrapper>
                 <ZipWrapper>
                   <IoLocationOutline style={{ marginRight: "5px" }} size={24} />
@@ -770,7 +785,8 @@ function ProductDetails() {
                 </p>
               </ProductRatings>
               <Product>
-                <h2>${product.price}</h2>
+                <OriginalPrice>${product.price}</OriginalPrice>
+                <h2>${product.sale_price}</h2>
                 <ExchangeWrapper>
                   <ExchangeBox>
                     <PiKeyReturn />
@@ -788,7 +804,10 @@ function ProductDetails() {
                     productId={product.product_id}
                     quantity={1}
                   />
-                  <AddToWishlistButton productId={product.product_id} />
+                  <AddToWishlistButton
+                    productId={product.product_id}
+                    productName={product.name}
+                  />
                 </CartBtnWrapper>
                 <ZipWrapper>
                   <IoLocationOutline style={{ marginRight: "5px" }} size={24} />

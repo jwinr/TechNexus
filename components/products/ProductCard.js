@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import AddToCartButton from "../shopping/AddToCartButton"
@@ -99,13 +99,26 @@ const Rating = styled.h1`
   color: rgb(102, 102, 102);
 `
 
+const PriceContainer = styled.div`
+  display: flex;
+  align-items: baseline;
+`
+
 const Price = styled.h1`
   font-size: 28px;
   font-weight: 500;
+  margin-right: 5px;
 
   @media (max-width: 768px) {
     font-size: 16px;
   }
+`
+
+const OriginalPrice = styled.span`
+  font-size: 16px;
+  font-weight: 400;
+  color: gray;
+  text-decoration: line-through;
 `
 
 const ShippingContainer = styled.div`
@@ -131,6 +144,7 @@ const ProductCard = ({
   link,
   title,
   price,
+  discount,
   brand,
   rating,
   image,
@@ -172,7 +186,14 @@ const ProductCard = ({
         <Rating>
           <StarRatings reviews={rating} />
         </Rating>
-        <Price>{`$${price}`}</Price>
+        <PriceContainer>
+          <Price>{`$${discount || price}`}</Price>
+          {discount && (
+            <span>
+              reg <OriginalPrice>{`$${price}`}</OriginalPrice>
+            </span>
+          )}
+        </PriceContainer>
         <ShippingContainer>
           <IconContainer>
             <LiaTruckMovingSolid aria-hidden="true" />
@@ -181,11 +202,7 @@ const ProductCard = ({
         </ShippingContainer>
         <ButtonWrapper>
           <AddToCartButton productId={id} quantity={1} />
-          <AddToWishlistButton
-            productId={id}
-            quantity={1}
-            productName={title}
-          />
+          <AddToWishlistButton productId={id} productName={title} />
         </ButtonWrapper>
       </Details>
     </CardContainer>

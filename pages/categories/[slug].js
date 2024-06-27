@@ -223,6 +223,7 @@ export default function CategoryPage() {
                     link={`/products/${item.slug}`}
                     title={item.name}
                     price={item.price}
+                    discount={item.sale_price}
                     brand={item.brand}
                     rating={item.rating}
                     image={item.images}
