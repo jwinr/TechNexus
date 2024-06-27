@@ -13,7 +13,7 @@ import ProductAccordion from "../../components/products/ProductAccordion"
 const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 25px 15px 75px 15px; // Leave some room for the breadcrumb component on mobile view
+  padding: 25px 15px 75px 15px;
 
   @media (min-width: 768px) {
     padding: 45px 75px 75px 75px;
@@ -37,7 +37,7 @@ function ProductDetails() {
   const [product, setProduct] = useState(null)
   const [categoryName, setCategoryName] = useState(null)
   const [categorySlug, setCategorySlug] = useState(null)
-  const [hoveredImage, setHoveredImage] = useState(null) // We update this during the API fetch
+  const [hoveredImage, setHoveredImage] = useState(null)
   const { zipCode, setZipCode, deliveryDate, dayOfWeek, returnDate } =
     ShippingInfo()
   const [zipCodeValid, setZipCodeValid] = useState(true)
