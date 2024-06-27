@@ -116,30 +116,35 @@ const ProductQna = styled.div`
   }
 `
 
-const ProductAccordion = ({ product }) => (
-  <AccordionWrapper>
-    <Accordion transition transitionTimeout={250}>
-      <AccordionItem header="Overview" initialEntered>
-        <ProductDescription>
-          <h1>Description</h1>
-          <p>{product.description}</p>
-        </ProductDescription>
-        <ProductHighlights highlights={product.highlights} />
-        <ProductIncludes inclusions={product.inclusions} />
-      </AccordionItem>
-      <AccordionItem header="Specifications">
-        <ProductSpecifications attributes={product.attributes} />
-      </AccordionItem>
-      <AccordionItem header="Reviews">
-        <ProductReviews reviews={product.reviews} />
-      </AccordionItem>
-      <AccordionItem header="Q&A">
-        <ProductQna>
-          <p>Todo: Implement Q&A logic</p>
-        </ProductQna>
-      </AccordionItem>
-    </Accordion>
-  </AccordionWrapper>
-)
+const ProductAccordion = ({ product }) => {
+  return (
+    <AccordionWrapper>
+      <Accordion transition transitionTimeout={250}>
+        <AccordionItem header="Overview" initialEntered>
+          <ProductDescription>
+            <h1>Description</h1>
+            <p>{product.description}</p>
+          </ProductDescription>
+          <ProductHighlights highlights={product.highlights} />
+          <ProductIncludes inclusions={product.inclusions} />
+        </AccordionItem>
+        <AccordionItem header="Specifications">
+          <ProductSpecifications attributes={product.attributes} />
+        </AccordionItem>
+        <AccordionItem header="Reviews">
+          <ProductReviews
+            reviews={product.reviews}
+            productId={product.product_id}
+          />
+        </AccordionItem>
+        <AccordionItem header="Q&A">
+          <ProductQna>
+            <p>Todo: Implement Q&A logic</p>
+          </ProductQna>
+        </AccordionItem>
+      </Accordion>
+    </AccordionWrapper>
+  )
+}
 
 export default ProductAccordion
