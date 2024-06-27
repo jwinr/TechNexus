@@ -67,6 +67,10 @@ const ButtonWrapper = styled.div`
   button {
     font-size: 12px;
     min-height: auto;
+
+    svg {
+      font-size: 16px;
+    }
   }
 `
 
@@ -131,7 +135,7 @@ const ProductCard = ({
   rating,
   image,
   id,
-  addToCartFromList,
+  name,
 }) => {
   const [currentImage, setCurrentImage] = useState(
     image.find((image) => image.is_main)
@@ -177,7 +181,11 @@ const ProductCard = ({
         </ShippingContainer>
         <ButtonWrapper>
           <AddToCartButton productId={id} quantity={1} />
-          <AddToWishlistButton productId={id} quantity={1} />
+          <AddToWishlistButton
+            productId={id}
+            quantity={1}
+            productName={title}
+          />
         </ButtonWrapper>
       </Details>
     </CardContainer>
