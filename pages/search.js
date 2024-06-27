@@ -12,8 +12,6 @@ import { useMobileView } from "../../context/MobileViewContext"
 import ErrorBoundary from "../components/common/ErrorBoundary"
 import PropFilter from "../utils/PropFilter"
 
-const divFilter = PropFilter("div")
-
 // Lazy-loaded components
 const ProductFilters = React.lazy(() =>
   import("../components/products/ProductFilters")
@@ -32,7 +30,7 @@ const SearchGridContainer = styled.div`
     "pagination pagination pagination";
 `
 
-const CategorizedItemsContainer = styled(divFilter(["isVisible"]))`
+const CategorizedItemsContainer = styled(PropFilter("div")(["isVisible"]))`
   display: grid;
   grid-area: items;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

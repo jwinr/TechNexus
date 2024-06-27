@@ -45,11 +45,7 @@ const Dropdown = styled.div`
   }
 `
 
-const buttonFilter = PropFilter("button")
-
-const CategoryButton = buttonFilter(["isOpen"])
-
-const StyledCategoryButton = styled(CategoryButton)`
+const CategoryButton = styled(PropFilter("button")(["isOpen"]))`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -259,11 +255,11 @@ function NavItem(props) {
         onClick={handleToggle}
       />
       {isMobileView ? (
-        <StyledCategoryButton isOpen={!isOpen} onClick={onToggle}>
+        <CategoryButton isOpen={!isOpen} onClick={onToggle}>
           <FiMenu />
-        </StyledCategoryButton>
+        </CategoryButton>
       ) : (
-        <StyledCategoryButton
+        <CategoryButton
           onClick={onToggle}
           onKeyDown={handleKeyDown}
           ref={btnRef}
@@ -278,7 +274,7 @@ function NavItem(props) {
           <div className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}>
             <RiArrowDownSLine />
           </div>
-        </StyledCategoryButton>
+        </CategoryButton>
       )}
       {React.cloneElement(props.children, {
         dropdownLeft: isMobileView ? 0 : dropdownLeft,

@@ -4,8 +4,6 @@ import styled from "styled-components"
 import LoaderSpin from "../loaders/LoaderSpin"
 import PropFilter from "../../utils/PropFilter"
 
-const spanFilter = PropFilter("span")
-
 const Button = styled.button`
   position: relative; // Allow the loader to be positioned absolutely within the button
   justify-content: center;
@@ -32,7 +30,7 @@ const Button = styled.button`
   }
 `
 
-const ButtonText = styled(spanFilter(["loading"]))`
+const ButtonText = styled(PropFilter("span")(["loading"]))`
   opacity: ${({ loading }) => (loading ? 0.2 : 1)};
   transition: opacity 0.3s ease-in-out;
 `

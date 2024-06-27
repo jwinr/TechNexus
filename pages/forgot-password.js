@@ -33,9 +33,8 @@ const SubheaderText = styled.div`
   margin-bottom: 15px;
   text-align: center;
 `
-const inputFilter = PropFilter("input")
 
-const StyledInput = styled(inputFilter(["hasValue"]))`
+const StyledInput = styled(PropFilter("input")(["hasValue"]))`
   border-width: 0px 0px 4px;
   border-bottom-style: solid;
   border-bottom-color: var(--sc-color-button-disabled);
@@ -121,9 +120,7 @@ const RequirementList = styled.ul`
   align-self: flex-start;
 `
 
-const liFilter = PropFilter("li")
-
-const RequirementListItem = styled(liFilter(["met"]))`
+const RequirementListItem = styled(PropFilter("li")(["met"]))`
   margin-bottom: 4px;
   color: var(--sc-color-green);
   list-style: none;

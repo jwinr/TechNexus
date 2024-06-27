@@ -3,9 +3,8 @@ import React from "react"
 // Helper function to filter out unwanted props and prevent the "unknown prop on DOM element" console warning
 
 /* Can be used like this;
-const divFilter = PropFilter("div")
-const StyledComponent = styled(divFilter(["loading"]))`
-where 'loading' is replaced with the prop name.
+const StyledComponent = styled(PropFilter("div")(["loading"]))`
+where 'div' is the element and 'loading' is replaced with the prop name.
 */
 
 const e = React.createElement

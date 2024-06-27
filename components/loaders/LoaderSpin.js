@@ -2,8 +2,6 @@ import React from "react"
 import styled, { keyframes } from "styled-components"
 import PropFilter from "../../utils/PropFilter"
 
-const divFilter = PropFilter("div")
-
 const spin = keyframes`
     0% {
         transform: rotate(0);
@@ -22,7 +20,7 @@ const spinner = keyframes`
     }
 `
 
-const LoaderSpinner = styled(divFilter(["loading"]))`
+const LoaderSpinner = styled(PropFilter("div")(["loading"]))`
   position: absolute;
   display: flex;
   justify-content: center;

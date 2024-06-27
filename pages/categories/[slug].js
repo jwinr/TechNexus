@@ -17,8 +17,6 @@ import ErrorBoundary from "../../components/common/ErrorBoundary"
 import { useFilters } from "../../context/FilterContext"
 import PropFilter from "../../utils/PropFilter"
 
-const divFilter = PropFilter("div")
-
 // Lazy-loaded components
 const ProductFilters = lazy(() =>
   import("../../components/products/ProductFilters")
@@ -36,8 +34,7 @@ const CategoryGridContainer = styled.div`
     "items items items"
     "pagination pagination pagination";
 `
-
-const CategorizedItemsContainer = styled(divFilter(["isVisible"]))`
+const CategorizedItemsContainer = styled(PropFilter("div")(["isVisible"]))`
   display: grid;
   grid-area: items;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

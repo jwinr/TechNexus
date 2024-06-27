@@ -78,7 +78,7 @@ const IconFilled = styled(PropFilter(LiaHeartSolid)(["loading", "isAdding"]))`
     `}
 `
 
-const Tooltip = styled.div`
+const Tooltip = styled(PropFilter("div")(["visible"]))`
   position: absolute;
   bottom: 100%;
   left: 50%;
@@ -99,7 +99,7 @@ const Tooltip = styled.div`
   animation: ${({ visible }) =>
     visible
       ? css`
-          ${fadeInUp} 0.3s ease-in-out
+          ${fadeInUp} 0.3s ease-in-out;
         `
       : "none"};
 

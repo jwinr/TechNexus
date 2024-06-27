@@ -3,8 +3,6 @@ import styled, { css } from "styled-components"
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
 import PropFilter from "../../utils/PropFilter"
 
-const buttonFilter = PropFilter("button")
-
 const PaginationWrapper = styled.div`
   display: flex;
   grid-area: pagination;
@@ -14,7 +12,7 @@ const PaginationWrapper = styled.div`
   width: fit-content;
 `
 
-const PaginationButton = styled(buttonFilter(["isActive"]))`
+const PaginationButton = styled(PropFilter("button")(["isActive"]))`
   position: relative;
   border: none;
   display: flex;

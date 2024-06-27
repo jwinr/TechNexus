@@ -16,9 +16,7 @@ import { signOut } from "aws-amplify/auth"
 import PropFilter from "../../utils/PropFilter"
 import { useRouter } from "next/router"
 
-const FilteredDiv = PropFilter("div")(["isOpen"])
-
-const Dropdown = styled(FilteredDiv)`
+const Dropdown = styled(PropFilter("div")(["isOpen"]))`
   position: absolute;
   top: 65px;
   width: 275px;
@@ -55,11 +53,7 @@ const Dropdown = styled(FilteredDiv)`
   }
 `
 
-const buttonFilter = PropFilter("button")
-
-const UserButton = buttonFilter(["isOpen"])
-
-const StyledUserButton = styled(UserButton)`
+const UserButton = styled(PropFilter("button")(["isOpen"]))`
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -296,7 +290,7 @@ function NavItem(props) {
         className={initialLoad ? "initial-hidden" : isOpen ? "visible" : ""}
         onClick={handleToggle}
       />
-      <StyledUserButton
+      <UserButton
         onClick={onToggle}
         onKeyDown={handleKeyDown}
         ref={userBtnRef}
@@ -314,7 +308,7 @@ function NavItem(props) {
         <div className={`arrow-icon ${isOpen ? "rotate-arrow" : ""}`}>
           <RiArrowDownSLine />
         </div>
-      </StyledUserButton>
+      </UserButton>
       {React.cloneElement(props.children, {
         dropdownRight: dropdownRight,
         setOpen: onToggle,
