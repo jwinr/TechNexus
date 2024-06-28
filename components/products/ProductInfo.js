@@ -194,7 +194,7 @@ const ProductInfo = ({
   returnDate,
 }) => {
   const isMobileView = useMobileView()
-
+  console.log(product.reviews)
   return (
     <>
       <ProductNameWrapper>
