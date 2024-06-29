@@ -72,11 +72,12 @@ h1 {
 
 .breadcrumb-part a {
   text-decoration: underline;
-  /* Add underline to all links */
+  color: var(--sc-color-text-light-gray);
 }
 
 .breadcrumb-part a:hover {
   text-decoration: none;
+  color: var(--sc-color-text);
 }
 
 .item-image-shrink {

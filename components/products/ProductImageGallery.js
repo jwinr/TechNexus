@@ -19,7 +19,7 @@ const AdditionalImageContainer = styled.div`
 `
 
 const AdditionalImageThumbnail = styled.div`
-  border: 1px solid gray;
+  border: 1px solid var(--sc-color-divider);
   border-radius: 6px;
   cursor: pointer;
   padding: 3px;
@@ -32,17 +32,8 @@ const AdditionalImageThumbnail = styled.div`
   background-color: white;
 
   &:hover {
-    border: 1px solid var(--sc-color-blue-highlight);
-  }
-
-  img {
-    width: 100%;
-    height: 100%;
-    padding: 3px;
-    object-fit: scale-down;
-    position: absolute;
-    top: 0;
-    left: 0;
+    border: 2px solid var(--sc-color-blue-highlight);
+    padding: 2px; // Retain the image size when the border is present
   }
 `
 
@@ -51,8 +42,6 @@ const CarouselContainer = styled.div`
   border-radius: 8px;
   width: 100%;
   background-color: white;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   order: 2; // Make sure main image is below the product details in mobile view
 
   .swiper-slide {
@@ -73,7 +62,7 @@ const CarouselContainer = styled.div`
   }
 `
 
-const MainImageContainer = styled(PropFilter("div")(["zoomed"]))`
+const MainImageContainer = styled(PropFilter("div")(["zoomed", "slideIndex"]))`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -110,9 +99,10 @@ const MainImageContainer = styled(PropFilter("div")(["zoomed"]))`
     outline: none;
 
     img {
-      max-height: 100%;
-      max-width: 100%;
-      object-fit: contain;
+      width: auto;
+      height: auto;
+      transition: transform 0.3s ease;
+      transform: ${(props) => (props.zoomed ? "scale(3)" : "scale(1)")};
     }
   }
 `
@@ -126,24 +116,30 @@ const ProductImageGallery = ({
   const [zoomed, setZoomed] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
   const mainImageContainerRef = useRef(null)
-  const imageRef = useRef(null)
+  const imageRefs = useRef([])
 
   const handleImageClick = (e) => {
-    const { left, top, width, height } =
-      mainImageContainerRef.current.getBoundingClientRect()
-    const x = ((e.clientX - left) / width) * 100
-    const y = ((e.clientY - top) / height) * 100
-    imageRef.current.style.transformOrigin = `${x}% ${y}%`
-    setZoomed((prevZoomed) => !prevZoomed)
-  }
-
-  const handleMouseMove = (e) => {
-    if (zoomed) {
+    const imageRef = imageRefs.current[currentIndex]
+    if (imageRef) {
       const { left, top, width, height } =
         mainImageContainerRef.current.getBoundingClientRect()
       const x = ((e.clientX - left) / width) * 100
       const y = ((e.clientY - top) / height) * 100
-      imageRef.current.style.transformOrigin = `${x}% ${y}%`
+      imageRef.style.transformOrigin = `${x}% ${y}%`
+      setZoomed((prevZoomed) => !prevZoomed)
+    }
+  }
+
+  const handleMouseMove = (e) => {
+    if (zoomed) {
+      const imageRef = imageRefs.current[currentIndex]
+      if (imageRef) {
+        const { left, top, width, height } =
+          mainImageContainerRef.current.getBoundingClientRect()
+        const x = ((e.clientX - left) / width) * 100
+        const y = ((e.clientY - top) / height) * 100
+        imageRef.style.transformOrigin = `${x}% ${y}%`
+      }
     }
   }
 
@@ -212,6 +208,7 @@ const ProductImageGallery = ({
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           zoomed={zoomed}
+          slideIndex={currentIndex}
         >
           <div
             className="image-row"
@@ -222,11 +219,19 @@ const ProductImageGallery = ({
             {product.images.map((image, index) => (
               <div key={index} className="image-container">
                 <Image
+                  ref={(el) => (imageRefs.current[index] = el)}
                   src={image.image_url}
                   width="500"
                   height="500"
                   alt="Inventory item"
-                  priority="true"
+                  priority={true}
+                  as="image"
+                  style={{
+                    transform:
+                      zoomed && currentIndex === index
+                        ? "scale(3)"
+                        : "scale(1)",
+                  }}
                 />
               </div>
             ))}

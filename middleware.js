@@ -21,7 +21,8 @@ const securityHeaders = {
     style-src 'self' 'unsafe-inline';
     connect-src 'self' ${
       isDevelopment ? "ws://127.0.0.1:* ws://localhost:*" : ""
-    } https://cognito-idp.us-east-2.amazonaws.com/;
+    } https://cognito-idp.us-east-2.amazonaws.com/ https://ipinfo.io/;
+    font-src 'self' data:;
   `
     .replace(/\s{2,}/g, " ")
     .trim(),
@@ -33,7 +34,7 @@ const securityHeaders = {
 }
 
 export async function middleware(req) {
-  const { nextUrl: url, geo, headers } = req
+  const { nextUrl: url, headers } = req
   const apiKey = headers.get("x-api-key")
 
   // Extract the IP address
