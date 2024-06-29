@@ -62,7 +62,6 @@ const CarouselContainer = styled.div`
   }
 
   img {
-    padding: 25px; // Applying padding to the image itself so there isn't horizontal white space
     height: 500px;
     object-fit: contain;
   }
@@ -77,13 +76,12 @@ const CarouselContainer = styled.div`
 const MainImageContainer = styled(PropFilter("div")(["zoomed"]))`
   display: flex;
   justify-content: center;
+  align-items: center;
   border-radius: 8px;
   padding: 25px;
   height: 500px;
   width: 100%;
   background-color: var(--sc-color-white);
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   overflow: hidden;
   position: relative;
   cursor: ${(props) => (props.zoomed ? "zoom-out" : "zoom-in")};
@@ -91,20 +89,31 @@ const MainImageContainer = styled(PropFilter("div")(["zoomed"]))`
   outline: none;
 
   @media (max-width: 768px) {
-    padding: 25px 0; // We don't need side padding, or else there will be white space during the carousel transitions
     height: 350px;
     width: 100%;
     order: 2; // Make sure main image is below the product details in mobile view
   }
 
-  img {
-    height: min-content;
-    width: auto;
-    align-self: center;
-    transition: transform 0.3s ease;
-    transform: ${(props) => (props.zoomed ? "scale(1.5)" : "scale(1)")};
-    user-select: none; /* Prevent text selection */
-    outline: none; /* Remove outline */
+  .image-row {
+    display: flex;
+    transition: transform 0.5s ease;
+    height: 100%;
+    width: 100%;
+  }
+
+  .image-container {
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    outline: none;
+
+    img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
   }
 `
 
@@ -115,6 +124,7 @@ const ProductImageGallery = ({
   isMobileView,
 }) => {
   const [zoomed, setZoomed] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(0)
   const mainImageContainerRef = useRef(null)
   const imageRef = useRef(null)
 
@@ -143,6 +153,11 @@ const ProductImageGallery = ({
     }
   }
 
+  const handleThumbnailHover = (index) => {
+    setCurrentIndex(index)
+    setHoveredImage(product.images[index].image_url)
+  }
+
   return (
     <>
       {!isMobileView && (
@@ -158,7 +173,7 @@ const ProductImageGallery = ({
               onMouseOver={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                setHoveredImage(image.image_url)
+                handleThumbnailHover(index)
               }}
             >
               <Image
@@ -198,14 +213,24 @@ const ProductImageGallery = ({
           onMouseLeave={handleMouseLeave}
           zoomed={zoomed}
         >
-          <Image
-            ref={imageRef}
-            src={hoveredImage}
-            width="500"
-            height="500"
-            alt="Inventory item"
-            priority="true"
-          />
+          <div
+            className="image-row"
+            style={{
+              transform: `translate3d(${-100 * currentIndex}%, 0, 0)`,
+            }}
+          >
+            {product.images.map((image, index) => (
+              <div key={index} className="image-container">
+                <Image
+                  src={image.image_url}
+                  width="500"
+                  height="500"
+                  alt="Inventory item"
+                  priority="true"
+                />
+              </div>
+            ))}
+          </div>
         </MainImageContainer>
       )}
     </>

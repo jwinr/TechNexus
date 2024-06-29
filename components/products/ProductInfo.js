@@ -177,6 +177,11 @@ const ValidationMessage = styled.div`
   text-align: left;
 `
 
+const ReviewWrapper = styled.div`
+  display: flex;
+  font-size: 14px;
+`
+
 const ProductInfo = ({
   product,
   zipCode,
@@ -198,16 +203,16 @@ const ProductInfo = ({
     <>
       <ProductNameWrapper>
         <h1>{product.name}</h1>
-        <div>
+        <ReviewWrapper>
           <StarRating reviews={product.reviews} />
-        </div>
-        <p>
-          {product.reviews.length === 0
-            ? "Be the first to write a review"
-            : `(${product.reviews.length} review${
-                product.reviews.length !== 1 ? "s" : ""
-              })`}
-        </p>
+          <p>
+            {product.reviews.length === 0
+              ? "Be the first to write a review"
+              : `(${product.reviews.length} review${
+                  product.reviews.length !== 1 ? "s" : ""
+                })`}
+          </p>
+        </ReviewWrapper>
         {!isMobileView && (
           <Product>
             <OriginalPrice>${product.price}</OriginalPrice>

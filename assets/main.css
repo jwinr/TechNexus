@@ -146,7 +146,7 @@ h1 {
 .star-rating {
   display: flex;
   align-items: center;
-  gap: 1px;
+  font-size: 14px;
 
   & span {
     /* Hide the review text */
@@ -162,8 +162,8 @@ h1 {
 }
 
 .c-star {
-  width: var(--size, 18px);
-  height: var(--size, 18px);
+  width: var(--size, 17px);
+  height: var(--size, 16px);
   fill: #fed94b;
 
   &.active {
@@ -172,8 +172,8 @@ h1 {
 }
 
 .c-star-h {
-  width: var(--size, 18px);
-  height: var(--size, 18px);
+  width: var(--size, 17px);
+  height: var(--size, 16px);
 
   &.active {
     fill: none;
@@ -183,7 +183,8 @@ h1 {
 }
 
 .average-rating-text {
-  padding: 0 5px;
+  margin: 0 5px;
+  font-weight: 600;
 }
 
 .go3958317564 {
