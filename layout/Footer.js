@@ -10,6 +10,20 @@ import {
 } from "react-icons/ri"
 import LogoSymbol from "../public/images/logo_dark.svg"
 import { GoChecklist, GoShieldCheck } from "react-icons/go"
+import { useMobileView } from "../context/MobileViewContext"
+import FooterAccordion from "./FooterAccordion"
+
+const ItemWithChevron = ({ header, ...rest }) => (
+  <Item
+    {...rest}
+    header={
+      <>
+        {header}
+        <ChevronDown className="chevron-down" alt="Chevron Down" />
+      </>
+    }
+  />
+)
 
 const FooterContainer = styled.footer`
   display: flex;
@@ -154,6 +168,7 @@ const CopyrightText = styled.p`
 
 const Footer = () => {
   const router = useRouter()
+  const isMobileView = useMobileView()
 
   // Check if the current route is /login, /signup, /forgot-password or /404
   const isLoginPage = router.pathname === "/login"
@@ -162,107 +177,112 @@ const Footer = () => {
   const is404Page = router.pathname === "/404"
 
   // Render the Footer only if the route is not /login, /signup, /forgot-password or /404
-  // This also extends to any invalid path routes, i.e. /<any-nonexistent-path>
-  const renderFooter = !isLoginPage &&
-    !isSignupPage &&
-    !isForgotPassPage &&
-    !is404Page && (
-      <FooterContainer>
-        <FooterColumnContainer>
-          <FooterColumn>
-            <FooterTitle>About Us</FooterTitle>
-            <Link href="/about-us">
-              <FooterLink>About TechNexus</FooterLink>
-            </Link>
-            <Link href="/careers">
-              <FooterLink>Careers</FooterLink>
-            </Link>
-            <Link href="/accessibility">
-              <FooterLink>Accessibility Commitment</FooterLink>
-            </Link>
-          </FooterColumn>
-          <FooterColumn>
-            <FooterTitle>Customer Service</FooterTitle>
-            <Link href="/hc">
-              <FooterLink>Help Center</FooterLink>
-            </Link>
-            <Link href="/return-policy">
-              <FooterLink>Returns</FooterLink>
-            </Link>
-            <Link href="/shipping-policy">
-              <FooterLink>Shipping</FooterLink>
-            </Link>
-            <Link href="/contact-us">
-              <FooterLink>Contact Us</FooterLink>
-            </Link>
-            <Link href="/hc">
-              <FooterLink>Order Status</FooterLink>
-            </Link>
-          </FooterColumn>
-          <FooterColumn>
-            <FooterTitle>Follow Us</FooterTitle>
-            <SocialMedia>
-              <a
-                href="https://www.facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-              >
-                <RiFacebookFill />
-              </a>
-              <a
-                href="https://www.x.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Twitter"
-              >
-                <RiTwitterXFill />
-              </a>
-              <a
-                href="https://www.instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-              >
-                <RiInstagramLine />
-              </a>
-              <a
-                href="https://www.youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="YouTube"
-              >
-                <RiYoutubeFill />
-              </a>
-            </SocialMedia>
-          </FooterColumn>
-        </FooterColumnContainer>
-      </FooterContainer>
-    )
+  const renderFooter =
+    !isLoginPage && !isSignupPage && !isForgotPassPage && !is404Page
 
   return (
     <>
-      {renderFooter}
-      <SlimFooter>
-        <LogoBox>
-          <LogoSymbol />
-        </LogoBox>
-        <CopyrightText>© TechNexus, Inc. All Rights Reserved.</CopyrightText>
-        <BottomLinksWrapper>
-          <Link href="/terms-of-service">
-            <FooterLinkBottom>
-              <GoChecklist />
-              Terms Of Service
-            </FooterLinkBottom>
-          </Link>
-          <Link href="/privacy-policy">
-            <FooterLinkBottom>
-              <GoShieldCheck />
-              Privacy Policy
-            </FooterLinkBottom>
-          </Link>
-        </BottomLinksWrapper>
-      </SlimFooter>
+      {renderFooter && (
+        <>
+          {isMobileView ? (
+            <FooterAccordion />
+          ) : (
+            <FooterContainer>
+              <FooterColumnContainer>
+                <FooterColumn>
+                  <FooterTitle>About Us</FooterTitle>
+                  <Link href="/about-us">
+                    <FooterLink>About TechNexus</FooterLink>
+                  </Link>
+                  <Link href="/careers">
+                    <FooterLink>Careers</FooterLink>
+                  </Link>
+                  <Link href="/accessibility">
+                    <FooterLink>Accessibility Commitment</FooterLink>
+                  </Link>
+                </FooterColumn>
+                <FooterColumn>
+                  <FooterTitle>Customer Service</FooterTitle>
+                  <Link href="/hc">
+                    <FooterLink>Help Center</FooterLink>
+                  </Link>
+                  <Link href="/return-policy">
+                    <FooterLink>Returns</FooterLink>
+                  </Link>
+                  <Link href="/shipping-policy">
+                    <FooterLink>Shipping</FooterLink>
+                  </Link>
+                  <Link href="/contact-us">
+                    <FooterLink>Contact Us</FooterLink>
+                  </Link>
+                  <Link href="/hc">
+                    <FooterLink>Order Status</FooterLink>
+                  </Link>
+                </FooterColumn>
+                <FooterColumn>
+                  <FooterTitle>Follow Us</FooterTitle>
+                  <SocialMedia>
+                    <a
+                      href="https://www.facebook.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Facebook"
+                    >
+                      <RiFacebookFill />
+                    </a>
+                    <a
+                      href="https://www.x.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Twitter"
+                    >
+                      <RiTwitterXFill />
+                    </a>
+                    <a
+                      href="https://www.instagram.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                    >
+                      <RiInstagramLine />
+                    </a>
+                    <a
+                      href="https://www.youtube.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="YouTube"
+                    >
+                      <RiYoutubeFill />
+                    </a>
+                  </SocialMedia>
+                </FooterColumn>
+              </FooterColumnContainer>
+            </FooterContainer>
+          )}
+          <SlimFooter>
+            <LogoBox>
+              <LogoSymbol />
+            </LogoBox>
+            <CopyrightText>
+              © TechNexus, Inc. All Rights Reserved.
+            </CopyrightText>
+            <BottomLinksWrapper>
+              <Link href="/terms-of-service">
+                <FooterLinkBottom>
+                  <GoChecklist />
+                  Terms Of Service
+                </FooterLinkBottom>
+              </Link>
+              <Link href="/privacy-policy">
+                <FooterLinkBottom>
+                  <GoShieldCheck />
+                  Privacy Policy
+                </FooterLinkBottom>
+              </Link>
+            </BottomLinksWrapper>
+          </SlimFooter>
+        </>
+      )}
     </>
   )
 }
