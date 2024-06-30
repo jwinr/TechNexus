@@ -80,11 +80,6 @@ h1 {
   color: var(--sc-color-text);
 }
 
-.item-image-shrink {
-  max-height: 175px;
-  padding: 6px;
-}
-
 .arrow-icon {
   font-size: 18px;
   color: var(--sc-color-text);

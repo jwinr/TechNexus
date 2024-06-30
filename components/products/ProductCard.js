@@ -32,6 +32,11 @@ const ImageWrapper = styled.div`
   padding: 8px;
   height: 218px;
 
+  img {
+    width: 100%;
+    height: 100%;
+  }
+
   @media (max-width: 768px) {
     order: 2;
     width: 45%; /* Leaving some room for the add cart button on small displays */
@@ -169,13 +174,7 @@ const ProductCard = ({
     <CardContainer>
       <ImageWrapper>
         <Link href={`${link}`} aria-label={`View details of ${title}`}>
-          <Image
-            alt={title}
-            src={imageUrl}
-            width={500}
-            height={500}
-            className="item-image-shrink"
-          />
+          <Image alt={title} src={imageUrl} width={500} height={500} />
         </Link>
       </ImageWrapper>
       <Title href={`${link}`} aria-label={`View details of ${title}`}>

@@ -35,6 +35,7 @@ const NavbarFlex = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  height: 100%;
   padding: 5px 20px;
 
   @media (max-width: 768px) {
@@ -56,7 +57,7 @@ const Logo = styled.a`
     flex: 1 1 auto;
     margin: 0;
     padding-left: 77px; // Using an entire button width x 1.75
-    padding-right: 33px; // Button width x 0.75 (smaller value since we have two buttons on the right side)
+    padding-right: 23px; // Button width x 0.75 (smaller value since we have two buttons on the right side) - 10px (margin for the user dropdown button)
     padding-top: 0;
     order: 1; // Center element on mobile layouts
   }

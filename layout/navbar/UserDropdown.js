@@ -60,6 +60,7 @@ const UserButton = styled(PropFilter("button")(["isOpen"]))`
   color: var(--sc-color-text);
   padding-left: 16px;
   padding-right: 8px;
+  margin-right: 10px;
   border-radius: 10px;
   align-items: center;
   display: flex;

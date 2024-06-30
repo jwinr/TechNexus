@@ -64,6 +64,9 @@ const MainImageContainer = styled(PropFilter("div")(["zoomed", "slideIndex"]))`
   justify-content: center;
   align-items: center;
   border-radius: 8px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: ${(props) => (props.zoomed ? "#000" : "transparent")};
   width: 100%;
   background-color: var(--sc-color-white);
   overflow: hidden;
