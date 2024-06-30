@@ -28,7 +28,6 @@ const ProductCard = styled.li`
   background-color: var(--sc-color-white);
   border-radius: 8px;
   box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
-  height: 100%;
 `
 
 const ImageWrapper = styled.div`
@@ -38,6 +37,10 @@ const ImageWrapper = styled.div`
   border-radius: 8px;
   padding: 8px;
   order: 2;
+
+  img {
+    object-fit: contain;
+  }
 `
 
 const Title = styled(Link)`
@@ -415,14 +418,14 @@ const Cart = () => {
           <Header>Your Cart</Header>
         </TitleWrapper>
         <CartContainer>
-          {cart.map((item) => (
+          {cart.map((item, index) => (
             <React.Fragment key={item.product_id}>
               <RemoveButtonWrapper>
                 <RemoveButton onClick={() => removeFromCart(item.product_id)}>
                   <VscClose size={28} />
                 </RemoveButton>
               </RemoveButtonWrapper>
-              <ProductCard key={item.product_id}>
+              <ProductCard>
                 <ImageWrapper>
                   <Link
                     href={`/products/${item.product_slug}`}
@@ -433,6 +436,7 @@ const Cart = () => {
                       alt={item.product_name}
                       width={150}
                       height={150}
+                      priority={index === 0}
                     />
                   </Link>
                 </ImageWrapper>

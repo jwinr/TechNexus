@@ -3,7 +3,7 @@ import styled from "styled-components"
 import { CSSTransition } from "react-transition-group"
 import { RiArrowDownSLine, RiArrowLeftSLine } from "react-icons/ri"
 import { useMobileView } from "../../context/MobileViewContext"
-import { FiMenu } from "react-icons/fi"
+import { IoIosMenu } from "react-icons/io"
 import Link from "next/link"
 import Backdrop from "../Backdrop"
 import PropFilter from "../../utils/PropFilter"
@@ -41,7 +41,7 @@ const Dropdown = styled.div`
   }
 
   @media (max-width: 768px) {
-    top: 125px;
+    top: 110px;
   }
 `
 
@@ -55,7 +55,6 @@ const CategoryButton = styled(PropFilter("button")(["isOpen"]))`
   height: 100%;
   border-radius: 10px;
   align-items: center;
-  width: 100%;
   background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "#fff")};
   display: flex;
   align-items: center;
@@ -70,21 +69,27 @@ const CategoryButton = styled(PropFilter("button")(["isOpen"]))`
     opacity: 1;
   }
 
-  @media (max-width: 768px) {
-    font-size: 28px;
-    grid-area: nav-cat;
-    width: fit-content;
-    padding: 0px;
-
-    &:hover {
-      background-color: transparent;
-    }
-  }
-
   &.initial-hidden {
     opacity: 0;
     transform: translateY(20px);
     transition: none;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 30px;
+    height: 44px;
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+    background-color: transparent;
+
+    &:active {
+      background-color: var(--sc-color-white-highlight);
+    }
+
+    &:hover {
+      background-color: transparent;
+    }
   }
 `
 
@@ -256,7 +261,7 @@ function NavItem(props) {
       />
       {isMobileView ? (
         <CategoryButton isOpen={!isOpen} onClick={onToggle}>
-          <FiMenu />
+          <IoIosMenu />
         </CategoryButton>
       ) : (
         <CategoryButton

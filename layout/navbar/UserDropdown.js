@@ -49,23 +49,22 @@ const Dropdown = styled(PropFilter("div")(["isOpen"]))`
   }
 
   @media (max-width: 768px) {
-    top: 125px;
+    top: 110px;
+    left: 0;
   }
 `
 
 const UserButton = styled(PropFilter("button")(["isOpen"]))`
   font-size: 15px;
   font-weight: 500;
-  cursor: pointer;
   color: var(--sc-color-text);
   padding-left: 16px;
   padding-right: 8px;
-  height: 100%;
   border-radius: 10px;
   align-items: center;
   display: flex;
-  width: fit-content;
-  justify-self: flex-end;
+  width: auto;
+  height: 100%;
   background-color: ${({ isOpen }) => (isOpen ? "#f7f7f7" : "#fff")};
   transition: background-color 0.3s;
   border: 1px transparent;
@@ -79,21 +78,31 @@ const UserButton = styled(PropFilter("button")(["isOpen"]))`
     opacity: 1;
   }
 
-  @media (max-width: 768px) {
-    font-size: 28px;
-    grid-area: nav-user;
-    width: fit-content;
-    padding: 0px;
-
-    &:hover {
-      background-color: transparent;
-    }
-  }
-
   &.initial-hidden {
     opacity: 0;
     transform: translateY(20px);
     transition: none;
+  }
+
+  @media (max-width: 768px) {
+    height: 44px;
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+    order: 2; // Between the logo and cart icon on mobile layouts
+
+    &:active {
+      background-color: var(--sc-color-white-highlight);
+    }
+
+    &:hover {
+      background-color: transparent;
+    }
+
+    .arrow-icon {
+      display: none;
+      width: 0;
+    }
   }
 `
 
@@ -147,19 +156,19 @@ const ListHeader = styled.div`
 
 const IconContainer = styled.div`
   justify-content: center;
-  display: grid;
+  display: flex;
 
   svg {
-    width: 26px;
-  }
-
-  @media (max-width: 768px) {
-    width: 28px;
+    width: 24px;
   }
 `
 
 const BtnText = styled.div`
   padding: 0 5px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `
 
 const UserDropdown = ({ isOpen: parentIsOpen, onToggle }) => {

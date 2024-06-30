@@ -127,6 +127,12 @@ h1 {
   color: #555;
 }
 
+.additional-image-hovered {
+  border: 2px solid var(--sc-color-blue-highlight) !important;
+  padding: 2px !important;
+  /* Retain the image size when the border is present */
+}
+
 .rotate-arrow {
   transition: transform 0.3s;
   transform: rotate(180deg);

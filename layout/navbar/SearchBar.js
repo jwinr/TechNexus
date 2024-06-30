@@ -12,24 +12,15 @@ const InputForm = styled.form`
   align-items: center;
 `
 
-const SearchBarContainer = styled.div`
-  position: relative;
-  display: flex;
-  width: 100%;
-
-  @media (max-width: 768px) {
-    display: grid;
-    grid-area: nav-search;
-  }
-`
-
 const SearchContainer = styled.div`
   position: relative;
   display: flex;
-  width: 100%;
+  flex: 1 1 auto;
+  margin: 0 20px;
 
   @media (max-width: 768px) {
-    display: flex; /* Take up the full width of the parent container */
+    margin: 0; // Match the margin of the other elements
+    order: 4; // Beneath the other navbar elements
   }
 `
 
@@ -107,27 +98,25 @@ const SearchBar = () => {
   }, [])
 
   return (
-    <SearchBarContainer>
-      <SearchContainer>
-        <InputForm onSubmit={handleSearch}>
-          <SearchInput
-            type="text"
-            placeholder="What can we help you find?"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            aria-label="Search for products"
-          />
-          <SubmitButton type="submit" aria-label="Submit search">
-            <IoIosSearch />
-          </SubmitButton>
-        </InputForm>
-        {searchTerm && (
-          <ClearButton onClick={clearSearch} aria-label="Clear search">
-            <FontAwesomeIcon icon={faTimes} />
-          </ClearButton>
-        )}
-      </SearchContainer>
-    </SearchBarContainer>
+    <SearchContainer>
+      <InputForm onSubmit={handleSearch}>
+        <SearchInput
+          type="text"
+          placeholder="What can we help you find?"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          aria-label="Search for products"
+        />
+        <SubmitButton type="submit" aria-label="Submit search">
+          <IoIosSearch />
+        </SubmitButton>
+      </InputForm>
+      {searchTerm && (
+        <ClearButton onClick={clearSearch} aria-label="Clear search">
+          <FontAwesomeIcon icon={faTimes} />
+        </ClearButton>
+      )}
+    </SearchContainer>
   )
 }
 

@@ -23,17 +23,22 @@ const AdditionalImageThumbnail = styled.div`
   border-radius: 6px;
   cursor: pointer;
   padding: 3px;
-  width: 110px;
-  height: 110px;
+  width: 70px;
+  height: 70px;
   display: grid;
   align-content: center;
   overflow: hidden;
   position: relative;
   background-color: white;
 
-  &:hover {
+  &:focus-visible {
     border: 2px solid var(--sc-color-blue-highlight);
     padding: 2px; // Retain the image size when the border is present
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
   }
 `
 
@@ -47,18 +52,10 @@ const CarouselContainer = styled.div`
   .swiper-slide {
     display: flex;
     justify-content: center;
-    align-items: center;
   }
 
   img {
-    height: 500px;
     object-fit: contain;
-  }
-
-  @media (max-width: 768px) {
-    img {
-      height: 300px;
-    }
   }
 `
 
@@ -67,8 +64,6 @@ const MainImageContainer = styled(PropFilter("div")(["zoomed", "slideIndex"]))`
   justify-content: center;
   align-items: center;
   border-radius: 8px;
-  padding: 25px;
-  height: 500px;
   width: 100%;
   background-color: var(--sc-color-white);
   overflow: hidden;
@@ -76,12 +71,6 @@ const MainImageContainer = styled(PropFilter("div")(["zoomed", "slideIndex"]))`
   cursor: ${(props) => (props.zoomed ? "zoom-out" : "zoom-in")};
   user-select: none;
   outline: none;
-
-  @media (max-width: 768px) {
-    height: 350px;
-    width: 100%;
-    order: 2; // Make sure main image is below the product details in mobile view
-  }
 
   .image-row {
     display: flex;
@@ -98,11 +87,19 @@ const MainImageContainer = styled(PropFilter("div")(["zoomed", "slideIndex"]))`
     user-select: none;
     outline: none;
 
+    @media (max-width: 1024px) {
+      padding: 25px; // Spacing for the image slides on tablet displays
+    }
+
     img {
       width: auto;
       height: auto;
       transition: transform 0.3s ease;
       transform: ${(props) => (props.zoomed ? "scale(3)" : "scale(1)")};
+
+      @media (max-width: 1024px) {
+        width: 100%; // Constrain the image on tablets
+      }
     }
   }
 `
@@ -174,8 +171,8 @@ const ProductImageGallery = ({
             >
               <Image
                 src={image.image_url}
-                width="500"
-                height="500"
+                width={500}
+                height={500}
                 alt={`Product Thumbnail ${index} - ${product.name}`}
               />
             </AdditionalImageThumbnail>
@@ -193,9 +190,10 @@ const ProductImageGallery = ({
               <SwiperSlide key={index}>
                 <Image
                   src={image.image_url}
-                  width="500"
-                  height="500"
+                  width={250}
+                  height={250}
                   alt={`Product Image ${index} - ${product.name}`}
+                  priority={index === 0}
                 />
               </SwiperSlide>
             ))}
@@ -221,11 +219,10 @@ const ProductImageGallery = ({
                 <Image
                   ref={(el) => (imageRefs.current[index] = el)}
                   src={image.image_url}
-                  width="500"
-                  height="500"
+                  width={500}
+                  height={500}
                   alt="Inventory item"
-                  priority={true}
-                  as="image"
+                  priority={index === 0}
                   style={{
                     transform:
                       zoomed && currentIndex === index

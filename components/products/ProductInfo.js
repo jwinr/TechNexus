@@ -61,6 +61,16 @@ const OriginalPrice = styled.span`
   text-decoration: line-through;
 `
 
+const Price = styled.h1`
+  font-size: 28px;
+  font-weight: bold;
+  margin-right: 5px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+`
+
 const CartBtnWrapper = styled.div`
   display: flex;
   padding-top: 5px;
@@ -215,8 +225,12 @@ const ProductInfo = ({
         </ReviewWrapper>
         {!isMobileView && (
           <Product>
-            <OriginalPrice>${product.price}</OriginalPrice>
-            <h2>${product.sale_price}</h2>
+            <Price>{`$${product.sale_price || product.price}`}</Price>
+            {product.sale_price && (
+              <span>
+                reg <OriginalPrice>{`$${product.price}`}</OriginalPrice>
+              </span>
+            )}
             <ExchangeWrapper>
               <ExchangeBox>
                 <PiKeyReturn />
@@ -289,8 +303,12 @@ const ProductInfo = ({
       </ProductNameWrapper>
       {isMobileView && (
         <Product>
-          <OriginalPrice>${product.price}</OriginalPrice>
-          <h2>${product.sale_price}</h2>
+          <Price>{`$${product.sale_price || product.price}`}</Price>
+          {product.sale_price && (
+            <span>
+              reg <OriginalPrice>{`$${product.price}`}</OriginalPrice>
+            </span>
+          )}
           <ExchangeWrapper>
             <ExchangeBox>
               <PiKeyReturn />

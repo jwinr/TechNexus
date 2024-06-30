@@ -6,6 +6,7 @@ import CategoryDropdown from "./CategoryDropdown"
 import SearchBar from "./SearchBar"
 import CartIcon from "./CartIcon"
 import UserDropdown from "./UserDropdown"
+import { useMobileView } from "../../context/MobileViewContext"
 
 const NavbarContainer = styled.div`
   font-size: 16px;
@@ -23,45 +24,47 @@ const NavbarContainer = styled.div`
 `
 
 const NavbarWrapper = styled.div`
-  display: flex;
   background-color: var(--sc-color-white) !important;
   border-bottom: 1px solid #e4e4e4;
   padding: 7px 0px 7px 0px;
+  width: 100%;
 `
 
-const NavbarGrid = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 2fr 13fr 9fr 1fr;
-  grid-template-rows: 1fr;
-  padding: 5px 20px;
-  grid-gap: 20px;
+const NavbarFlex = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
+  padding: 5px 20px;
 
   @media (max-width: 768px) {
-    grid-template-rows: auto; /* Allow rows to expand based on content */
-    grid-template-columns: 0.75fr 0.75fr 0.5fr 0.25fr;
-    grid-template-areas:
-      "nav-cat nav-logo nav-user nav-cart"
-      "nav-search nav-search nav-search nav-search";
-    grid-gap: 5px; /* Reduce the gap between items */
-    padding: 10px 15px; /* Adjust padding for smaller screens */
+    flex-wrap: wrap;
   }
 `
 
 const Logo = styled.a`
   display: flex;
+  width: 135px;
+  height: 100%;
   align-items: center;
   border: 1px transparent;
   border-radius: 10px;
+  padding: 2px;
+  margin-right: 20px;
 
   @media (max-width: 768px) {
-    margin: 3px;
-    grid-area: nav-logo;
+    flex: 1 1 auto;
+    margin: 0;
+    padding-left: 77px; // Using an entire button width x 1.75
+    padding-right: 33px; // Button width x 0.75 (smaller value since we have two buttons on the right side)
+    padding-top: 0;
+    order: 1; // Center element on mobile layouts
   }
 `
 
 const Navbar = ({ openDropdown, handleToggle }) => {
   const router = useRouter()
+  const isMobileView = useMobileView()
 
   // Check if the current route is /login, /signup, /forgot-password or /404
   const isLoginPage = router.pathname === "/login"
@@ -78,7 +81,7 @@ const Navbar = ({ openDropdown, handleToggle }) => {
   return (
     <NavbarContainer>
       <NavbarWrapper>
-        <NavbarGrid>
+        <NavbarFlex>
           <Logo href="/" aria-label="Home">
             <BannerLogo alt="TechNexus Logo" />
           </Logo>
@@ -86,14 +89,15 @@ const Navbar = ({ openDropdown, handleToggle }) => {
             isOpen={openDropdown === "category"}
             onToggle={() => handleToggle("category")}
           />
-          <SearchBar />
+          {!isMobileView && <SearchBar />}
           <UserDropdown
             isOpen={openDropdown === "user"}
             onToggle={() => handleToggle("user")}
             aria-label="User Menu"
           />
           <CartIcon aria-label="Shopping Cart" />
-        </NavbarGrid>
+          {isMobileView && <SearchBar />}
+        </NavbarFlex>
       </NavbarWrapper>
     </NavbarContainer>
   )

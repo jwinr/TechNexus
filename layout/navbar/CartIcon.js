@@ -7,13 +7,11 @@ import { CartContext } from "../../context/CartContext"
 const Container = styled(Link)`
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
   width: fit-content;
+  height: 100%;
 
   @media (max-width: 768px) {
-    justify-content: flex-end;
-    grid-area: nav-cart;
+    order: 3; // Top-right element on mobile layouts
   }
 `
 
@@ -24,14 +22,28 @@ const Button = styled.button`
   padding: 7px 10px;
   border-radius: 10px;
   position: relative;
-  align-items: center;
   display: flex;
-  width: fit-content;
-  justify-content: flex-end;
+  height: 100%;
+  align-items: center;
   transition: background-color 0.2s;
 
   &:hover {
     background-color: var(--sc-color-white-highlight);
+  }
+
+  @media (max-width: 768px) {
+    height: 44px;
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+
+    &:active {
+      background-color: var(--sc-color-white-highlight);
+    }
+
+    &:hover {
+      background-color: transparent;
+    }
   }
 `
 
