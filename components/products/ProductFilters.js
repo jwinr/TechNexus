@@ -58,7 +58,28 @@ const DropdownContent = styled.div`
   z-index: 200;
 `
 
-function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
+const ResetButton = styled.button`
+  background-color: var(--sc-color-blue);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-top: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+
+  &:hover {
+    background-color: var(--sc-color-dark-blue);
+  }
+`
+
+function ProductFilters({
+  inventoryItems,
+  onFilterChange,
+  attributes,
+  resetFilters,
+}) {
   const router = useRouter()
   const { filterState, setFilterState } = useFilters()
   const isMobileView = useMobileView()
@@ -219,12 +240,7 @@ function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
 
     if (filteredItems.length === 0 && inventoryItems.length > 0) {
       // If no items meet the filter criteria, reset the filters
-      setFilterState({
-        selectedPriceRanges: [],
-        selectedAttributes: {},
-      })
-      setSelectedPriceRanges([])
-      setSelectedAttributes({})
+      resetFilters()
       // And show a message to the user
       toast(
         "We couldn't find any products with those filters. Your filters have been reset.",
@@ -276,12 +292,13 @@ function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
     filterItems()
   }, [selectedPriceRanges, selectedAttributes])
 
-  // Function to update the URL with new query parameters
+  // Update the URL with new query parameters
   const updateURL = (filters) => {
     const newQuery = {
       ...router.query,
       filters: encodeURIComponent(JSON.stringify(filters)),
-      page: 1, // Reset to page 1 when filters change
+      // Make sure the current page is included unless filters are reset
+      page: router.query.page || 1,
     }
     router.push(
       {
@@ -293,7 +310,7 @@ function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
     )
   }
 
-  // Use effect to update the URL when filters change
+  // Update the URL when filters change
   useEffect(() => {
     updateURL(filterState.selectedAttributes)
   }, [filterState.selectedAttributes])
@@ -404,6 +421,7 @@ function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
           </DropdownContent>
         )}
       </Container>
+      <ResetButton onClick={resetFilters}>Reset Filters</ResetButton>
     </div>
   )
 }

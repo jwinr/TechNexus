@@ -81,13 +81,17 @@ export default function CategoryPage() {
 
   // Fetch category data with pagination
   const fetchCategoryData = useCallback(
-    (page) => {
+    (page, filters = filterState.selectedAttributes) => {
       setLoading(true)
-      fetch(`/api/categories/${slug}?page=${page}&limit=${productsPerPage}`, {
-        headers: {
-          "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
-        },
-      })
+      const filterQuery = encodeURIComponent(JSON.stringify(filters))
+      fetch(
+        `/api/categories/${slug}?page=${page}&limit=${productsPerPage}&filters=${filterQuery}`,
+        {
+          headers: {
+            "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+          },
+        }
+      )
         .then((response) => {
           if (response.ok) {
             return response.json()
@@ -111,7 +115,7 @@ export default function CategoryPage() {
           setLoading(false)
         })
     },
-    [slug]
+    [slug, filterState.selectedAttributes]
   )
 
   useEffect(() => {
@@ -152,10 +156,8 @@ export default function CategoryPage() {
       )
 
       // Fetch filtered data from the server
-      const slug = router.query.slug // Get the current category slug
-
       fetch(
-        `/api/categories/${slug}?filters=${encodeURIComponent(
+        `/api/categories/${slug}?page=${currentPage}&filters=${encodeURIComponent(
           JSON.stringify(filters)
         )}`,
         {
@@ -180,7 +182,7 @@ export default function CategoryPage() {
           console.error("Error fetching filtered products:", error)
         })
     },
-    [router.query.slug]
+    [router.query.slug, currentPage]
   )
 
   // Function to handle pagination
@@ -205,6 +207,55 @@ export default function CategoryPage() {
       categoryData ? Math.ceil(categoryData.totalCount / productsPerPage) : 1,
     [categoryData, productsPerPage]
   )
+
+  // Function to update the URL with new query parameters
+  const updateURL = (filters, resetPage = false) => {
+    const newQuery = {
+      ...router.query,
+      slug, // Make sure the slug is included in the query
+      filters: encodeURIComponent(JSON.stringify(filters)),
+    }
+    if (resetPage) {
+      newQuery.page = 1
+    } else {
+      newQuery.page = currentPage
+    }
+
+    router.push(
+      {
+        pathname: `/categories/${slug}`,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  // Update the URL when filters change
+  useEffect(() => {
+    updateURL(filterState.selectedAttributes, false, currentPage)
+  }, [filterState.selectedAttributes, fetchCategoryData])
+
+  useEffect(() => {
+    if (isFilterActive) {
+      fetchCategoryData(currentPage, filterState.selectedAttributes) // Fetch with current page and filters
+    }
+  }, [
+    currentPage,
+    isFilterActive,
+    fetchCategoryData,
+    filterState.selectedAttributes,
+  ])
+
+  const resetFilters = () => {
+    setFilterState({
+      selectedPriceRanges: [],
+      selectedAttributes: {},
+    })
+    setIsFilterActive(false)
+    updateURL({}, true)
+    fetchCategoryData(1, {})
+  }
 
   if (loading) {
     return <LoaderDots />
@@ -231,6 +282,7 @@ export default function CategoryPage() {
               inventoryItems={categoryData.products}
               onFilterChange={handleFilterChange}
               attributes={categoryData.attributes}
+              resetFilters={resetFilters}
             />
           </ErrorBoundary>
         </Suspense>
