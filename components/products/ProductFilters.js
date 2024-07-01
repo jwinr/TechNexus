@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"
+import { useRouter } from "next/router"
 import { RiArrowDownSLine } from "react-icons/ri"
 import styled, { keyframes } from "styled-components"
 import Checkbox from "../common/Checkbox"
@@ -58,6 +59,7 @@ const DropdownContent = styled.div`
 `
 
 function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
+  const router = useRouter()
   const { filterState, setFilterState } = useFilters()
   const isMobileView = useMobileView()
 
@@ -217,11 +219,12 @@ function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
 
     if (filteredItems.length === 0 && inventoryItems.length > 0) {
       // If no items meet the filter criteria, reset the filters
-      setFilterState((prev) => ({
-        ...prev,
+      setFilterState({
         selectedPriceRanges: [],
         selectedAttributes: {},
-      }))
+      })
+      setSelectedPriceRanges([])
+      setSelectedAttributes({})
       // And show a message to the user
       toast(
         "We couldn't find any products with those filters. Your filters have been reset.",
@@ -243,7 +246,7 @@ function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
         }
       )
     } else {
-      onFilterChange(filteredItems) // Update the display based on filtered items
+      onFilterChange(filterState.selectedAttributes)
     }
   }
 
@@ -272,6 +275,28 @@ function ProductFilters({ inventoryItems, onFilterChange, attributes }) {
   useEffect(() => {
     filterItems()
   }, [selectedPriceRanges, selectedAttributes])
+
+  // Function to update the URL with new query parameters
+  const updateURL = (filters) => {
+    const newQuery = {
+      ...router.query,
+      filters: encodeURIComponent(JSON.stringify(filters)),
+      page: 1, // Reset to page 1 when filters change
+    }
+    router.push(
+      {
+        pathname: router.pathname,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  // Use effect to update the URL when filters change
+  useEffect(() => {
+    updateURL(filterState.selectedAttributes)
+  }, [filterState.selectedAttributes])
 
   // Prevent the filter container from disappearing when the user scrolls down
   const containerClass = `brand-filter-container ${isSticky ? "sticky" : ""}`

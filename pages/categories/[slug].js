@@ -136,27 +136,51 @@ export default function CategoryPage() {
     }
   }, [router.events, handleRouteChange])
 
-  // Callback function to update filtered items
   const handleFilterChange = useCallback(
-    (filteredItems) => {
-      // console.log("Filter change, filtered items:", filteredItems)
+    (selectedAttributes) => {
       setShowFilteredItems(false) // Hide items to trigger the fade-out animation
 
-      setTimeout(() => {
-        if (filteredItems.length === 0) {
-          // If there are no filtered items, reset the filters locally
-          setFilteredItems(categoryData.products)
-          setIsFilterActive(false)
-        } else {
-          // Update the filtered items locally
-          setFilteredItems(filteredItems)
-          setIsFilterActive(true)
-        }
+      // Construct the filter object to send to the backend
+      const filters = Object.entries(selectedAttributes).reduce(
+        (acc, [attribute_type, values]) => {
+          if (values.length > 0) {
+            acc[attribute_type] = values
+          }
+          return acc
+        },
+        {}
+      )
 
-        setShowFilteredItems(true) // Show items to trigger the fade-in animation
-      }, 300)
+      // Fetch filtered data from the server
+      const slug = router.query.slug // Get the current category slug
+
+      fetch(
+        `/api/categories/${slug}?filters=${encodeURIComponent(
+          JSON.stringify(filters)
+        )}`,
+        {
+          headers: {
+            "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
+          },
+        }
+      )
+        .then((response) => {
+          if (response.ok) {
+            return response.json()
+          } else {
+            throw new Error("Failed to fetch filtered products")
+          }
+        })
+        .then((data) => {
+          setFilteredItems(data.products)
+          setIsFilterActive(true)
+          setShowFilteredItems(true) // Show items to trigger the fade-in animation
+        })
+        .catch((error) => {
+          console.error("Error fetching filtered products:", error)
+        })
     },
-    [categoryData]
+    [router.query.slug]
   )
 
   // Function to handle pagination
